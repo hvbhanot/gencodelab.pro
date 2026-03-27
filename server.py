@@ -197,7 +197,7 @@ def get_row_value(row, column, columns=None):
 @app.route("/api/auth/register", methods=["POST"])
 def register():
     data = request.get_json()
-    username = data.get("username", "").strip()
+    username = data.get("username", "").strip().lower()
     password = data.get("password", "")
 
     if len(username) < 3:
@@ -223,7 +223,7 @@ def register():
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     data = request.get_json()
-    username = data.get("username", "").strip()
+    username = data.get("username", "").strip().lower()
     password = data.get("password", "")
 
     db = get_db()
@@ -244,6 +244,7 @@ def login():
 
 @app.route("/api/progress/<username>", methods=["GET"])
 def get_progress(username):
+    username = username.lower()
     db = get_db()
     rows = db_fetchall(db, "SELECT * FROM progress WHERE username = ?", (username,))
 
@@ -263,6 +264,7 @@ def get_progress(username):
 
 @app.route("/api/progress/<username>/<int:problem_id>", methods=["POST"])
 def update_progress(username, problem_id):
+    username = username.lower()
     data = request.get_json()
     score = data.get("score", 0)
     solved = data.get("solved", False)
