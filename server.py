@@ -45,9 +45,10 @@ try:
 except ImportError:
     psycopg2_module = None
 
-STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "dist")
 
-app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="")
+app = Flask(__name__, static_folder=None)
 CORS(app)
 
 # ---------------------------------------------------------------------------
@@ -294,14 +295,32 @@ def health():
     return jsonify({"status": "healthy"})
 
 
+# Debug route — check if dist exists on Railway
+@app.route("/debug/dist", methods=["GET"])
+def debug_dist():
+    exists = os.path.isdir(STATIC_DIR)
+    files = os.listdir(STATIC_DIR) if exists else []
+    cwd = os.getcwd()
+    cwd_files = os.listdir(cwd)
+    return jsonify({
+        "STATIC_DIR": STATIC_DIR,
+        "exists": exists,
+        "files": files,
+        "cwd": cwd,
+        "cwd_files": cwd_files,
+    })
+
+
 # Serve React frontend — catch all non-API routes
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
-    file_path = os.path.join(STATIC_DIR, path)
-    if path and os.path.exists(file_path):
+    if path and os.path.isfile(os.path.join(STATIC_DIR, path)):
         return send_from_directory(STATIC_DIR, path)
-    return send_from_directory(STATIC_DIR, "index.html")
+    index = os.path.join(STATIC_DIR, "index.html")
+    if os.path.isfile(index):
+        return send_from_directory(STATIC_DIR, "index.html")
+    return jsonify({"error": "Frontend not built", "dist_path": STATIC_DIR, "exists": os.path.isdir(STATIC_DIR)}), 500
 
 
 init_db()
