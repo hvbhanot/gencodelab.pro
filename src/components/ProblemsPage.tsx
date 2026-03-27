@@ -257,7 +257,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
           </div>
 
           {/* Filter Bar */}
-          <div className="glass-card rounded-xl p-3 mb-6">
+          <div className="glass-card rounded-xl p-3 mb-6" style={{ overflow: 'visible' }}>
             <div className="flex flex-wrap items-center gap-2">
               {/* Search */}
               <div className="relative flex-1 min-w-[200px]">
@@ -320,7 +320,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                 {showCategoryDropdown && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowCategoryDropdown(false)} />
-                    <div className="absolute top-full mt-1 left-0 z-50 w-48 rounded-lg border border-white/10 py-1 shadow-2xl bg-[#141420] backdrop-blur-xl">
+                    <div className="absolute top-full mt-1 left-0 z-50 w-48 rounded-lg border border-white/10 py-1 shadow-2xl bg-[#141420] max-h-[400px] overflow-y-auto">
                       <button
                         onClick={() => { setCategoryFilter('all'); setShowCategoryDropdown(false); }}
                         className={`w-full text-left px-3 py-2 text-xs hover:bg-white/5 transition-colors ${categoryFilter === 'all' ? 'text-white' : 'text-gray-400'}`}
