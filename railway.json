@@ -2,10 +2,10 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm ci && npm run build && python -m venv .venv && .venv/bin/pip install --no-cache-dir -r requirements.txt"
+    "buildCommand": "npm ci && python -m venv /app/.venv && /app/.venv/bin/pip install --no-cache-dir -r requirements.txt && npm run build"
   },
   "deploy": {
-    "startCommand": ".venv/bin/gunicorn server:app --bind 0.0.0.0:$PORT",
+    "startCommand": "/app/.venv/bin/gunicorn server:app --bind 0.0.0.0:$PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

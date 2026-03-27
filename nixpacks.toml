@@ -2,10 +2,10 @@
 nixPkgs = ["nodejs_20", "python311", "python311Packages.pip", "gcc"]
 
 [phases.install]
-cmds = ["npm ci", "pip install --no-cache-dir -r requirements.txt"]
+cmds = ["npm ci", "python -m venv /app/.venv && /app/.venv/bin/pip install --no-cache-dir -r requirements.txt"]
 
 [phases.build]
-cmds = ["node --version", "npm run build", "ls -la dist/"]
+cmds = ["npm run build"]
 
 [start]
-cmd = "python -m gunicorn server:app --bind 0.0.0.0:$PORT"
+cmd = "/app/.venv/bin/gunicorn server:app --bind 0.0.0.0:$PORT"
