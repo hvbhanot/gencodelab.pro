@@ -150,7 +150,7 @@ export function ProblemSolver({
   // Server-side Python code execution
   const runPythonCode = async (code: string): Promise<{ output: string[]; error?: string }> => {
     try {
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
       const response = await fetch(`${apiBase}/execute`, {
         method: 'POST',
         headers: {

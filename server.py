@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify, g, send_from_directory
 from flask_cors import CORS
 import io
 import sys
@@ -45,7 +45,9 @@ try:
 except ImportError:
     psycopg2_module = None
 
-app = Flask(__name__)
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
+
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="")
 CORS(app)
 
 # ---------------------------------------------------------------------------
@@ -290,6 +292,16 @@ def execute_code():
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"})
+
+
+# Serve React frontend — catch all non-API routes
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_frontend(path):
+    file_path = os.path.join(STATIC_DIR, path)
+    if path and os.path.exists(file_path):
+        return send_from_directory(STATIC_DIR, path)
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 init_db()
