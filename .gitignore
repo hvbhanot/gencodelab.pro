@@ -42,11 +42,11 @@ venv/
 ENV/
 build/
 develop-eggs/
-dist/
+# Only ignore lib at root level (Python packages)
+/lib/
+/lib64/
 eggs/
 .eggs/
-lib/
-lib64/
 parts/
 sdist/
 var/
