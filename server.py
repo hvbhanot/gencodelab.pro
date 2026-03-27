@@ -6,11 +6,10 @@ import traceback
 import contextlib
 import builtins
 import hashlib as _hashlib
-import smtplib
 import random
 import string
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import urllib.request
+import urllib.error
 
 # Import standard library modules used in problems
 import math
@@ -61,13 +60,10 @@ app = Flask(__name__, static_folder=None)
 CORS(app)
 
 # ---------------------------------------------------------------------------
-# Email verification config
+# Email verification config (Resend)
 # ---------------------------------------------------------------------------
-SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
-SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
-SMTP_USER = os.environ.get('SMTP_USER', '')
-SMTP_PASS = os.environ.get('SMTP_PASS', '')
-SMTP_FROM = os.environ.get('SMTP_FROM', SMTP_USER)
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+RESEND_FROM = os.environ.get('RESEND_FROM', 'VibeClub <onboarding@resend.dev>')
 ALLOWED_EMAIL_DOMAIN = 'islander.tamucc.edu'
 
 # In-memory store for pending verifications: {email: {code, expires, attempts}}
@@ -219,19 +215,14 @@ def _generate_code():
 
 
 def _send_verification_email(email, code):
-    """Send a 6-digit verification code to the given email."""
-    if not SMTP_USER or not SMTP_PASS:
-        # If SMTP not configured, log code to console (dev mode)
+    """Send a 6-digit verification code via Resend API."""
+    if not RESEND_API_KEY:
+        # If Resend not configured, log code to console (dev mode)
         print(f"[DEV] Verification code for {email}: {code}")
         return True
 
-    msg = MIMEMultipart()
-    msg['From'] = SMTP_FROM
-    msg['To'] = email
-    msg['Subject'] = 'VibeClub - Verify Your Islander Email'
-
-    body = f"""
-    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+    html_body = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
         <h2 style="color: #a855f7; margin-bottom: 8px;">VibeClub</h2>
         <p style="color: #666; margin-bottom: 24px;">Verify your Islander email to create your account.</p>
         <div style="background: #1a1a2e; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
@@ -241,17 +232,34 @@ def _send_verification_email(email, code):
         <p style="color: #999; font-size: 13px;">This code expires in 10 minutes. If you didn't request this, ignore this email.</p>
     </div>
     """
-    msg.attach(MIMEText(body, 'html'))
+
+    payload = json_module.dumps({
+        "from": RESEND_FROM,
+        "to": [email],
+        "subject": "VibeClub - Verify Your Islander Email",
+        "html": html_body,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
 
     try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-        server.sendmail(SMTP_FROM, email, msg.as_string())
-        server.quit()
-        return True
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print(f"[RESEND] Sent verification to {email}, status {resp.status}")
+            return True
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")
+        print(f"[RESEND ERROR] {e.code}: {body}")
+        return False
     except Exception as e:
-        print(f"[EMAIL ERROR] {e}")
+        print(f"[RESEND ERROR] {e}")
         return False
 
 
