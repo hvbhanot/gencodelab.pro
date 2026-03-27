@@ -57,12 +57,9 @@ const POINTS_PER_DIFFICULTY = {
   hard: 30
 };
 
-// Penalty per difficulty
-const PENALTY_PER_DIFFICULTY = {
-  easy: 10,
-  medium: 20,
-  hard: 30
-};
+// Hint penalty = 25% of max points, Solution penalty = 50%
+const HINT_PENALTY_FRACTION = 0.25;
+const SOLUTION_PENALTY_FRACTION = 0.50;
 
 interface ProblemSolverProps {
   problem: Problem;
@@ -134,8 +131,8 @@ export function ProblemSolver({
   };
 
   const getMaxPoints = () => POINTS_PER_DIFFICULTY[problem.difficulty];
-  const getHintPenalty = () => PENALTY_PER_DIFFICULTY[problem.difficulty];
-  const getSolutionPenalty = () => PENALTY_PER_DIFFICULTY[problem.difficulty];
+  const getHintPenalty = () => Math.round(getMaxPoints() * HINT_PENALTY_FRACTION);
+  const getSolutionPenalty = () => Math.round(getMaxPoints() * SOLUTION_PENALTY_FRACTION);
 
   const handleLineClick = (lineNumber: number) => {
     if (showResult) return;
@@ -733,7 +730,7 @@ export function ProblemSolver({
                     {problem.fixedCode && (
                       <>
                         <h3 className="text-sm font-medium text-white mt-6 mb-3">Fixed Code</h3>
-                        <div className="code-block p-4 overflow-x-auto">
+                        <div className="code-block p-4 overflow-x-auto" style={{ backgroundColor: '#282C34' }}>
                           <pre className="text-sm text-gray-300">
                             <code>{problem.fixedCode}</code>
                           </pre>
@@ -798,7 +795,7 @@ export function ProblemSolver({
           {/* Code Area */}
           <div className="flex-1 overflow-auto p-4">
             {problem.type === 'find' ? (
-              <div className="font-mono text-sm">
+              <div className="font-mono text-sm rounded-xl overflow-hidden border border-purple-500/20 p-4" style={{ backgroundColor: '#282C34' }}>
                 {renderCodeLines()}
               </div>
             ) : (

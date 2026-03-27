@@ -169,9 +169,9 @@
   color: white;
 }
 
-/* Code block styling */
+/* Code block styling - One Dark theme */
 .code-block {
-  background: rgba(0, 0, 0, 0.4);
+  background: #282C34;
   border: 1px solid rgba(168, 85, 247, 0.2);
   border-radius: 0.5rem;
 }
