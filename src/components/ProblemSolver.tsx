@@ -20,7 +20,7 @@ import {
   Play,
   Terminal
 } from 'lucide-react';
-import type { Problem, Difficulty, ProblemProgress, SubmissionResult, TestCase } from '@/types';
+import type { Problem, Difficulty, ProblemProgress, SubmissionResult } from '@/types';
 
 // GitHub One Dark theme colors
 const oneDarkTheme: any = {
