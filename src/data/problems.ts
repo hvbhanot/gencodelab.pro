@@ -3289,7 +3289,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "You can iterate through the string backwards, or build a new string by prepending each character.",
+    hint: "Start with an empty result string. Loop through each character in the input and prepend it to the result (result = char + result). Alternatively, use a for loop that iterates from the last index down to 0.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Basic string", input: `print(reverse_string("hello"))`, expectedOutput: "olleh" },
@@ -3297,7 +3297,12 @@ generate_password()`,
       { id: 3, description: "Single character", input: `print(reverse_string("a"))`, expectedOutput: "a" },
       { id: 4, description: "Palindrome", input: `print(reverse_string("racecar"))`, expectedOutput: "racecar" },
       { id: 5, description: "String with spaces", input: `print(reverse_string("hello world"))`, expectedOutput: "dlrow olleh" },
-    ]
+    ],
+    fixedCode: `def reverse_string(s):
+    result = ""
+    for char in s:
+        result = char + result
+    return result`,
   },
 {
     id: 127,
@@ -3312,7 +3317,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Check divisibility by 15 first (both 3 and 5), then by 3, then by 5, otherwise convert the number to a string.",
+    hint: "Loop from 1 to n (inclusive). The key is checking divisibility by 15 FIRST (since 15 is divisible by both 3 and 5). Use the modulo operator (%). Append each result as a string to a list.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "First 5 numbers", input: `print(fizzbuzz(5))`, expectedOutput: "['1', '2', 'Fizz', '4', 'Buzz']" },
@@ -3320,7 +3325,19 @@ generate_password()`,
       { id: 3, description: "Single number", input: `print(fizzbuzz(1))`, expectedOutput: "['1']" },
       { id: 4, description: "Check index 2 is Fizz", input: `print(fizzbuzz(3)[2])`, expectedOutput: "Fizz" },
       { id: 5, description: "Length check", input: `print(len(fizzbuzz(20)))`, expectedOutput: "20" },
-    ]
+    ],
+    fixedCode: `def fizzbuzz(n):
+    result = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            result.append("FizzBuzz")
+        elif i % 3 == 0:
+            result.append("Fizz")
+        elif i % 5 == 0:
+            result.append("Buzz")
+        else:
+            result.append(str(i))
+    return result`,
   },
 {
     id: 128,
@@ -3335,7 +3352,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use a dictionary to store numbers you have seen and their indices. For each number, check if (target - number) is already in the dictionary.",
+    hint: "Create an empty dictionary called 'seen'. Loop through the list with enumerate(nums) to get both index and value. For each number, compute complement = target - num. If complement is in 'seen', return (seen[complement], index). Otherwise, add num: index to 'seen'.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Basic case", input: `print(two_sum([2, 7, 11, 15], 9))`, expectedOutput: "(0, 1)" },
@@ -3343,7 +3360,14 @@ generate_password()`,
       { id: 3, description: "Negative numbers", input: `print(two_sum([-1, -2, -3, -4, -5], -8))`, expectedOutput: "(2, 4)" },
       { id: 4, description: "Large list", input: `print(two_sum([1, 5, 3, 7, 2, 8], 10))`, expectedOutput: "(3, 5)" },
       { id: 5, description: "Zeroes", input: `print(two_sum([0, 4, 3, 0], 0))`, expectedOutput: "(0, 3)" },
-    ]
+    ],
+    fixedCode: `def two_sum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return (seen[complement], i)
+        seen[num] = i`,
   },
 {
     id: 129,
@@ -3358,7 +3382,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "First clean the string: lowercase it and keep only alphanumeric characters. Then compare it with its reverse.",
+    hint: "First, build a cleaned string: use s.lower() and keep only characters where char.isalnum() is True. Then compare the cleaned string to its reverse (cleaned == cleaned[::-1]).",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Simple palindrome", input: `print(is_palindrome("racecar"))`, expectedOutput: "True" },
@@ -3366,7 +3390,10 @@ generate_password()`,
       { id: 3, description: "Mixed case and punctuation", input: `print(is_palindrome("A man, a plan, a canal: Panama"))`, expectedOutput: "True" },
       { id: 4, description: "Empty string", input: `print(is_palindrome(""))`, expectedOutput: "True" },
       { id: 5, description: "Single character", input: `print(is_palindrome("a"))`, expectedOutput: "True" },
-    ]
+    ],
+    fixedCode: `def is_palindrome(s):
+    cleaned = "".join(char.lower() for char in s if char.isalnum())
+    return cleaned == cleaned[::-1]`,
   },
 {
     id: 130,
@@ -3381,7 +3408,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use recursion. If an element is a list, recursively flatten it. Otherwise, add it to the result.",
+    hint: "Create a result list. Loop through each element. Use isinstance(element, list) to check if it's a list — if so, call flatten(element) recursively and extend the result. Otherwise, append the element directly.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Simple nesting", input: `print(flatten([1, [2, 3], 4]))`, expectedOutput: "[1, 2, 3, 4]" },
@@ -3389,7 +3416,15 @@ generate_password()`,
       { id: 3, description: "Already flat", input: `print(flatten([1, 2, 3]))`, expectedOutput: "[1, 2, 3]" },
       { id: 4, description: "Empty list", input: `print(flatten([]))`, expectedOutput: "[]" },
       { id: 5, description: "Nested empties", input: `print(flatten([[], [1], [[], 2]]))`, expectedOutput: "[1, 2]" },
-    ]
+    ],
+    fixedCode: `def flatten(lst):
+    result = []
+    for item in lst:
+        if isinstance(item, list):
+            result.extend(flatten(item))
+        else:
+            result.append(item)
+    return result`,
   },
 {
     id: 131,
@@ -3404,7 +3439,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use a Python list internally. push uses append(), pop uses list pop(), peek accesses the last element.",
+    hint: "In __init__, create self.items = []. push() uses self.items.append(item). pop() should check if empty first and return None, otherwise return self.items.pop(). peek() returns self.items[-1] if not empty, else None. is_empty() returns len(self.items) == 0.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Push and peek", input: `s = Stack()\ns.push(1)\ns.push(2)\nprint(s.peek())`, expectedOutput: "2" },
@@ -3412,7 +3447,26 @@ generate_password()`,
       { id: 3, description: "Pop on empty returns None", input: `s = Stack()\nprint(s.pop())`, expectedOutput: "None" },
       { id: 4, description: "is_empty check", input: `s = Stack()\nprint(s.is_empty())\ns.push(1)\nprint(s.is_empty())`, expectedOutput: "True\nFalse" },
       { id: 5, description: "Push, pop, push, peek", input: `s = Stack()\ns.push(1)\ns.push(2)\ns.pop()\ns.push(3)\nprint(s.peek())`, expectedOutput: "3" },
-    ]
+    ],
+    fixedCode: `class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        if self.is_empty():
+            return None
+        return self.items.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.items[-1]
+
+    def is_empty(self):
+        return len(self.items) == 0`,
   },
 {
     id: 132,
@@ -3427,7 +3481,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Split the string by spaces, lowercase each word, and use a dictionary to count occurrences.",
+    hint: "Handle the empty string case first (return {}). Use text.lower().split() to get a list of lowercase words. Create an empty dictionary, then loop through the words: if the word is already a key, increment its count; otherwise, set it to 1.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Simple count", input: `print(word_count("the cat sat on the mat")["the"])`, expectedOutput: "2" },
@@ -3435,7 +3489,14 @@ generate_password()`,
       { id: 3, description: "Case insensitive", input: `print(word_count("Hello hello HELLO")["hello"])`, expectedOutput: "3" },
       { id: 4, description: "Empty string", input: `print(word_count(""))`, expectedOutput: "{}" },
       { id: 5, description: "All unique", input: `result = word_count("a b c")\nprint(len(result))`, expectedOutput: "3" },
-    ]
+    ],
+    fixedCode: `def word_count(text):
+    if not text:
+        return {}
+    counts = {}
+    for word in text.lower().split():
+        counts[word] = counts.get(word, 0) + 1
+    return counts`,
   },
 {
     id: 133,
@@ -3450,7 +3511,7 @@ generate_password()`,
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Maintain two pointers (low and high). Compute mid, compare nums[mid] with target. If equal, return mid. If target is smaller, search left half. If larger, search right half.",
+    hint: "Set low = 0 and high = len(nums) - 1. While low <= high: compute mid = (low + high) // 2. If nums[mid] == target, return mid. If nums[mid] < target, set low = mid + 1. If nums[mid] > target, set high = mid - 1. If the loop ends, return -1.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Found in middle", input: `print(binary_search([1, 3, 5, 7, 9], 5))`, expectedOutput: "2" },
@@ -3458,7 +3519,19 @@ generate_password()`,
       { id: 3, description: "Found at end", input: `print(binary_search([1, 3, 5, 7, 9], 9))`, expectedOutput: "4" },
       { id: 4, description: "Not found", input: `print(binary_search([1, 3, 5, 7, 9], 4))`, expectedOutput: "-1" },
       { id: 5, description: "Single element found", input: `print(binary_search([42], 42))`, expectedOutput: "0" },
-    ]
+    ],
+    fixedCode: `def binary_search(nums, target):
+    low = 0
+    high = len(nums) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1`,
   },
 {
     id: 134,
@@ -3513,7 +3586,7 @@ def verify_password(password, hash_value):
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use hashlib.sha256(password.encode()).hexdigest() to hash, then compare for verification.",
+    hint: "For hash_password: encode the string to bytes with password.encode(), then pass to hashlib.sha256(), then call .hexdigest() to get the hex string. For verify_password: hash the input password the same way and compare it to the given hash_value.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Hash a password", input: `h = hash_password("secret123")\nprint(len(h))`, expectedOutput: "64" },
@@ -3521,7 +3594,14 @@ def verify_password(password, hash_value):
       { id: 3, description: "Verify wrong password", input: `h = hash_password("mypass")\nprint(verify_password("wrongpass", h))`, expectedOutput: "False" },
       { id: 4, description: "Consistent hashing", input: `print(hash_password("test") == hash_password("test"))`, expectedOutput: "True" },
       { id: 5, description: "Different inputs differ", input: `print(hash_password("a") == hash_password("b"))`, expectedOutput: "False" },
-    ]
+    ],
+    fixedCode: `import hashlib
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(password, hash_value):
+    return hash_password(password) == hash_value`,
   },
 {
     id: 136,
@@ -3536,14 +3616,16 @@ def verify_password(password, hash_value):
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "The number of rows in the result equals the number of columns in the input. Use nested loops or a list comprehension with zip.",
+    hint: "Use zip(*matrix) to unpack the rows and zip them together by columns. Convert each zipped tuple back to a list. The result is [list(row) for row in zip(*matrix)].",
     hasBugs: false,
     testCases: [
       { id: 1, description: "3x3 matrix", input: `print(transpose([[1,2,3],[4,5,6],[7,8,9]]))`, expectedOutput: "[[1, 4, 7], [2, 5, 8], [3, 6, 9]]" },
       { id: 2, description: "2x3 matrix", input: `print(transpose([[1,2,3],[4,5,6]]))`, expectedOutput: "[[1, 4], [2, 5], [3, 6]]" },
       { id: 3, description: "1x1 matrix", input: `print(transpose([[5]]))`, expectedOutput: "[[5]]" },
       { id: 4, description: "1 row", input: `print(transpose([[1,2,3]]))`, expectedOutput: "[[1], [2], [3]]" },
-    ]
+    ],
+    fixedCode: `def transpose(matrix):
+    return [list(row) for row in zip(*matrix)]`,
   },
 {
     id: 137,
@@ -3558,14 +3640,23 @@ def verify_password(password, hash_value):
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use a dictionary inside the decorator to store (args) → result. Use functools.wraps to preserve the original function's metadata.",
+    hint: "Define memoize(func) that creates a cache dictionary. Inside it, define a wrapper(*args) function that checks if args is in cache — if so, return cached value; otherwise, call func(*args), store in cache, and return. Return the wrapper function.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Caches results", input: `@memoize\ndef add(a, b):\n    return a + b\nprint(add(1, 2))\nprint(add(1, 2))`, expectedOutput: "3\n3" },
       { id: 2, description: "Different args return different results", input: `@memoize\ndef square(n):\n    return n * n\nprint(square(3))\nprint(square(4))`, expectedOutput: "9\n16" },
       { id: 3, description: "Works with fibonacci", input: `@memoize\ndef fib(n):\n    if n < 2: return n\n    return fib(n-1) + fib(n-2)\nprint(fib(10))`, expectedOutput: "55" },
       { id: 4, description: "Caches string functions", input: `@memoize\ndef greet(name):\n    return f"Hello {name}"\nprint(greet("World"))`, expectedOutput: "Hello World" },
-    ]
+    ],
+    fixedCode: `def memoize(func):
+    cache = {}
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper`,
   },
 {
     id: 138,
@@ -3580,7 +3671,7 @@ def verify_password(password, hash_value):
     pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "You can use Python's html.escape() function, or manually replace each character. Remember to replace & first to avoid double-escaping.",
+    hint: "Replace characters in this order to avoid double-escaping: & → &amp; first, then < → &lt;, > → &gt;, \" → &quot;, and ' → &#x27;. Use the string .replace() method chained together.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Script tag", input: `print(sanitize_html("<script>alert('xss')</script>"))`, expectedOutput: "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;" },
@@ -3588,7 +3679,14 @@ def verify_password(password, hash_value):
       { id: 3, description: "Ampersand", input: `print(sanitize_html("A & B"))`, expectedOutput: "A &amp; B" },
       { id: 4, description: "Quotes", input: `print(sanitize_html('He said "hello"'))`, expectedOutput: "He said &quot;hello&quot;" },
       { id: 5, description: "Empty string", input: `print(sanitize_html(""))`, expectedOutput: "" },
-    ]
+    ],
+    fixedCode: `def sanitize_html(user_input):
+    return (user_input
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&#x27;"))`,
   },
 {
     id: 139,
@@ -3610,7 +3708,7 @@ def verify_password(password, hash_value):
         pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Use an OrderedDict from collections. On get/put, move the key to the end (most recent). On put with full capacity, pop the first item (least recent).",
+    hint: "Use collections.OrderedDict. In __init__, store self.capacity and self.cache = OrderedDict(). In get(): if key exists, call self.cache.move_to_end(key) and return the value; otherwise return -1. In put(): if key exists, update and move_to_end. If at capacity, call self.cache.popitem(last=False) to remove the oldest. Then insert the new key.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "Basic put and get", input: `c = LRUCache(2)\nc.put(1, 1)\nc.put(2, 2)\nprint(c.get(1))`, expectedOutput: "1" },
@@ -3618,7 +3716,26 @@ def verify_password(password, hash_value):
       { id: 3, description: "Access refreshes order", input: `c = LRUCache(2)\nc.put(1, 1)\nc.put(2, 2)\nc.get(1)\nc.put(3, 3)\nprint(c.get(2))`, expectedOutput: "-1" },
       { id: 4, description: "Update existing key", input: `c = LRUCache(2)\nc.put(1, 1)\nc.put(1, 10)\nprint(c.get(1))`, expectedOutput: "10" },
       { id: 5, description: "Miss returns -1", input: `c = LRUCache(1)\nprint(c.get(99))`, expectedOutput: "-1" },
-    ]
+    ],
+    fixedCode: `from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.cache = OrderedDict()
+
+    def get(self, key):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+            return self.cache[key]
+        return -1
+
+    def put(self, key, value):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        elif len(self.cache) >= self.capacity:
+            self.cache.popitem(last=False)
+        self.cache[key] = value`,
   },
 {
     id: 140,
@@ -3639,14 +3756,31 @@ class RateLimiter:
         pass`,
     bugLines: [],
     bugExplanations: {},
-    hint: "Store a dictionary mapping user_id to a list of request timestamps. On each request, remove timestamps outside the window, then check if the count is under the limit.",
+    hint: "In __init__, store max_requests, window_seconds, and self.requests = {} (dict of user_id → list of timestamps). In allow_request(): get current time with time.time(). Filter out old timestamps (older than now - window_seconds). If len(timestamps) < max_requests, append now and return True. Otherwise return False.",
     hasBugs: false,
     testCases: [
       { id: 1, description: "First request allowed", input: `rl = RateLimiter(3, 60)\nprint(rl.allow_request("user1"))`, expectedOutput: "True" },
       { id: 2, description: "Within limit", input: `rl = RateLimiter(3, 60)\nrl.allow_request("user1")\nrl.allow_request("user1")\nprint(rl.allow_request("user1"))`, expectedOutput: "True" },
       { id: 3, description: "Exceeds limit", input: `rl = RateLimiter(2, 60)\nrl.allow_request("user1")\nrl.allow_request("user1")\nprint(rl.allow_request("user1"))`, expectedOutput: "False" },
       { id: 4, description: "Different users independent", input: `rl = RateLimiter(1, 60)\nrl.allow_request("user1")\nprint(rl.allow_request("user2"))`, expectedOutput: "True" },
-    ]
+    ],
+    fixedCode: `import time
+
+class RateLimiter:
+    def __init__(self, max_requests, window_seconds):
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self.requests = {}
+
+    def allow_request(self, user_id):
+        now = time.time()
+        if user_id not in self.requests:
+            self.requests[user_id] = []
+        self.requests[user_id] = [t for t in self.requests[user_id] if now - t < self.window_seconds]
+        if len(self.requests[user_id]) < self.max_requests:
+            self.requests[user_id].append(now)
+            return True
+        return False`,
   }
 ];
 
