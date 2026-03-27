@@ -239,8 +239,12 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
                   </div>
 
                   <div className="col-span-1">
-                    <span className={`text-xs ${problem.type === 'find' ? 'text-[#58a6ff]' : 'text-[#a371f7]'}`}>
-                      {problem.type === 'find' ? 'Find' : 'Fix'}
+                    <span className={`text-xs ${
+                      problem.type === 'find' ? 'text-[#58a6ff]'
+                        : problem.type === 'recall' ? 'text-[#3fb950]'
+                        : 'text-[#a371f7]'
+                    }`}>
+                      {problem.type === 'find' ? 'Find' : problem.type === 'recall' ? 'Recall' : 'Fix'}
                     </span>
                   </div>
 

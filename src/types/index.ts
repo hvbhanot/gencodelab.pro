@@ -1,5 +1,5 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
-export type ProblemType = 'find' | 'fix';
+export type ProblemType = 'find' | 'fix' | 'recall';
 export type Category = 
   | 'logic' 
   | 'scope' 
@@ -28,6 +28,15 @@ export interface Problem {
   fixedCode?: string;
   expectedOutput?: string;
   hasBugs: boolean;
+  starterCode?: string;
+  testCases?: TestCase[];
+}
+
+export interface TestCase {
+  id: number;
+  description: string;
+  input: string;
+  expectedOutput: string;
 }
 
 export interface User {

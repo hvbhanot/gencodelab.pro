@@ -20,7 +20,7 @@ import {
   Play,
   Terminal
 } from 'lucide-react';
-import type { Problem, Difficulty, ProblemProgress, SubmissionResult } from '@/types';
+import type { Problem, Difficulty, ProblemProgress, SubmissionResult, TestCase } from '@/types';
 
 // GitHub One Dark theme colors
 const oneDarkTheme: any = {
@@ -99,6 +99,7 @@ export function ProblemSolver({
   const [isRunning, setIsRunning] = useState(false);
   const [terminalError, setTerminalError] = useState<string | null>(null);
   const [lastExecutionResult, setLastExecutionResult] = useState<{ output: string[]; error?: string } | null>(null);
+  const [testResults, setTestResults] = useState<{ id: number; passed: boolean; actual: string; expected: string; error: string | null }[]>([]);
 
   const handleEditorWillMount = (monaco: Monaco) => {
     monaco.editor.defineTheme('one-dark', oneDarkTheme);
@@ -106,7 +107,7 @@ export function ProblemSolver({
 
   useEffect(() => {
     setSelectedLines([]);
-    setFixedCode(problem.code);
+    setFixedCode(problem.type === 'recall' ? (problem.starterCode || '') : problem.code);
     setShowHint(false);
     setShowSolution(false);
     setActiveTab('description');
@@ -117,6 +118,7 @@ export function ProblemSolver({
     setTerminalOutput([]);
     setTerminalError(null);
     setLastExecutionResult(null);
+    setTestResults([]);
   }, [problem]);
 
   const getDifficultyBadge = (difficulty: Difficulty) => {
@@ -189,6 +191,39 @@ export function ProblemSolver({
     setIsRunning(false);
   };
 
+  const handleRunTests = async () => {
+    if (!problem.testCases || problem.testCases.length === 0) return;
+    setIsRunning(true);
+    setTestResults([]);
+    setTerminalOutput([]);
+    setTerminalError(null);
+
+    try {
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiBase}/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: fixedCode, testCases: problem.testCases }),
+      });
+      const data = await response.json();
+      setTestResults(data.results || []);
+
+      const passed = (data.results || []).filter((r: { passed: boolean }) => r.passed).length;
+      const total = problem.testCases.length;
+      setTerminalOutput([`${passed}/${total} test cases passed`]);
+      if (data.error) setTerminalError(data.error);
+
+      setLastExecutionResult({
+        output: [`${passed}/${total}`],
+        error: data.error || undefined,
+      });
+    } catch {
+      setTerminalError('Failed to connect to test server');
+      setLastExecutionResult({ output: [], error: 'Failed to connect to test server' });
+    }
+    setIsRunning(false);
+  };
+
   const calculateScore = useCallback((): SubmissionResult => {
     const maxPoints = getMaxPoints();
     
@@ -252,7 +287,59 @@ export function ProblemSolver({
         explanations: problem.bugExplanations,
       };
     }
-    
+
+    // Recall mode - check test case results
+    if (problem.type === 'recall') {
+      if (testResults.length === 0) {
+        return {
+          score: 0,
+          passed: false,
+          correctFinds: [],
+          missedBugs: [],
+          falsePositives: [],
+          explanations: { 0: 'Please run tests first before submitting' },
+        };
+      }
+
+      const totalTests = problem.testCases?.length || 0;
+      const passedTests = testResults.filter(r => r.passed).length;
+      const allPassed = passedTests === totalTests;
+
+      if (!allPassed) {
+        const failedExplanations: Record<number, string> = {};
+        testResults.forEach(r => {
+          if (!r.passed) {
+            const tc = problem.testCases?.find(t => t.id === r.id);
+            failedExplanations[r.id] = r.error
+              ? `Test "${tc?.description}": Error — ${r.error}`
+              : `Test "${tc?.description}": Expected "${r.expected}" but got "${r.actual}"`;
+          }
+        });
+
+        return {
+          score: 0,
+          passed: false,
+          correctFinds: [],
+          missedBugs: [],
+          falsePositives: [],
+          explanations: failedExplanations,
+        };
+      }
+
+      let finalScore = maxPoints;
+      if (hasUsedHint) finalScore -= getHintPenalty();
+      if (hasViewedSolution) finalScore -= getSolutionPenalty();
+
+      return {
+        score: Math.max(0, finalScore),
+        passed: true,
+        correctFinds: [],
+        missedBugs: [],
+        falsePositives: [],
+        explanations: { 0: `All ${totalTests} test cases passed!` },
+      };
+    }
+
     // Find mode - check selected lines
     if (!problem.hasBugs) {
       const falsePositives = selectedLines.length;
@@ -314,7 +401,7 @@ export function ProblemSolver({
       falsePositives,
       explanations: problem.bugExplanations,
     };
-  }, [problem, selectedLines, hasUsedHint, hasViewedSolution, lastExecutionResult]);
+  }, [problem, selectedLines, hasUsedHint, hasViewedSolution, lastExecutionResult, testResults]);
 
   const handleSubmit = () => {
     const result = calculateScore();
@@ -332,6 +419,7 @@ export function ProblemSolver({
     setTerminalOutput([]);
     setTerminalError(null);
     setLastExecutionResult(null);
+    setTestResults([]);
   };
 
   const handleUseHint = () => {
@@ -634,6 +722,63 @@ export function ProblemSolver({
                   </div>
                 )}
 
+                {problem.type === 'recall' && (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-xl">
+                      <div className="flex items-start gap-3">
+                        <Terminal className="w-5 h-5 text-green-400 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-green-400 mb-1">Blank Page Challenge</p>
+                          <p className="text-sm text-gray-400">
+                            Write your solution from scratch in the editor. No starter code is provided beyond the function signature.
+                            Click "Run Tests" to validate against {problem.testCases?.length || 0} test cases. All tests must pass to earn points.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {problem.testCases && (
+                      <div>
+                        <p className="text-sm font-medium text-white mb-2">Test Cases</p>
+                        <div className="space-y-2">
+                          {problem.testCases.map((tc) => {
+                            const result = testResults.find(r => r.id === tc.id);
+                            return (
+                              <div key={tc.id} className={`p-3 rounded-lg border text-sm font-mono ${
+                                result
+                                  ? result.passed
+                                    ? 'bg-green-500/10 border-green-500/30'
+                                    : 'bg-red-500/10 border-red-500/30'
+                                  : 'bg-white/5 border-white/10'
+                              }`}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-gray-300 text-xs font-sans">{tc.description}</span>
+                                  {result && (
+                                    result.passed
+                                      ? <CheckCircle2 className="w-4 h-4 text-green-400" />
+                                      : <XCircle className="w-4 h-4 text-red-400" />
+                                  )}
+                                </div>
+                                <div className="text-gray-500 text-xs">
+                                  <span className="text-gray-600">Input:</span> <code>{tc.input}</code>
+                                </div>
+                                <div className="text-gray-500 text-xs">
+                                  <span className="text-gray-600">Expected:</span> <code>{tc.expectedOutput}</code>
+                                </div>
+                                {result && !result.passed && (
+                                  <div className="text-red-400 text-xs mt-1">
+                                    <span className="text-red-500">Got:</span> <code>{result.error || result.actual || '(empty)'}</code>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {userProgress && (
                   <div className="pt-4 border-t border-purple-500/20">
                     <div className="flex items-center gap-2 mb-3">
@@ -732,7 +877,7 @@ export function ProblemSolver({
                             <code>{problem.fixedCode}</code>
                           </pre>
                         </div>
-                        {problem.type === 'fix' && (
+                        {(problem.type === 'fix' || problem.type === 'recall') && (
                           <Button
                             onClick={() => {
                               setFixedCode(problem.fixedCode!);
@@ -775,6 +920,17 @@ export function ProblemSolver({
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {isRunning ? 'Running...' : 'Run Code'}
+                </Button>
+              )}
+              {problem.type === 'recall' && !showResult && (
+                <Button
+                  onClick={handleRunTests}
+                  disabled={isRunning}
+                  variant="outline"
+                  className="border-green-500/30 text-green-400 hover:bg-green-500/10 text-sm h-8"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  {isRunning ? 'Running...' : 'Run Tests'}
                 </Button>
               )}
               {!showResult && (
@@ -822,8 +978,8 @@ export function ProblemSolver({
             )}
           </div>
 
-          {/* Terminal Output Panel - Always visible for fix problems */}
-          {problem.type === 'fix' && !showResult && (
+          {/* Terminal Output Panel - Always visible for fix and recall problems */}
+          {(problem.type === 'fix' || problem.type === 'recall') && !showResult && (
             <div className="border-t border-green-500/20 bg-black/90 h-[200px] flex flex-col">
               <div className="px-4 py-2 bg-green-500/10 border-b border-green-500/20 flex items-center gap-2 shrink-0">
                 <Terminal className="w-4 h-4 text-green-400" />

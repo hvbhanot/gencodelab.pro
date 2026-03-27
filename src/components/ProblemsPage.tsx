@@ -275,11 +275,13 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                     {/* Type */}
                     <div className="col-span-1">
                       <span className={`text-xs px-2 py-1 rounded ${
-                        problem.type === 'find' 
-                          ? 'bg-purple-500/20 text-purple-400' 
+                        problem.type === 'find'
+                          ? 'bg-purple-500/20 text-purple-400'
+                          : problem.type === 'recall'
+                          ? 'bg-green-500/20 text-green-400'
                           : 'bg-cyan-500/20 text-cyan-400'
                       }`}>
-                        {problem.type === 'find' ? 'Find' : 'Fix'}
+                        {problem.type === 'find' ? 'Find' : problem.type === 'recall' ? 'Recall' : 'Fix'}
                       </span>
                     </div>
 

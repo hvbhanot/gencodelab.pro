@@ -387,6 +387,91 @@ def execute_code():
         return jsonify({"output": [], "error": str(e)}), 500
 
 
+@app.route("/api/test", methods=["POST"])
+def run_tests():
+    """Run user code against multiple test cases for recall mode."""
+    try:
+        data = request.get_json()
+        code = data.get("code", "")
+        test_cases = data.get("testCases", [])
+
+        if not code:
+            return jsonify({"results": [], "error": "No code provided"}), 400
+        if not test_cases:
+            return jsonify({"results": [], "error": "No test cases provided"}), 400
+
+        results = []
+        for tc in test_cases:
+            tc_id = tc.get("id", 0)
+            tc_input = tc.get("input", "")
+            tc_expected = tc.get("expectedOutput", "").strip()
+
+            full_code = code + "\n" + tc_input
+            output_buffer = io.StringIO()
+
+            try:
+                with contextlib.redirect_stdout(output_buffer):
+                    safe_builtins = dict(vars(builtins))
+                    for name in ["exit", "quit", "__loader__", "__spec__"]:
+                        safe_builtins.pop(name, None)
+
+                    exec_globals = {
+                        "__builtins__": safe_builtins,
+                        "__name__": "__main__",
+                        "math": math,
+                        "hashlib": hashlib,
+                        "sqlite3": sqlite3,
+                        "ast": ast,
+                        "threading": threading,
+                        "os": os,
+                        "itertools": itertools,
+                        "asyncio": asyncio,
+                        "copy": copy,
+                        "dataclasses": dataclasses,
+                        "functools": functools,
+                        "pickle": pickle,
+                        "re": re,
+                        "signal": signal,
+                        "time": time,
+                        "typing": typing,
+                        "weakref": weakref,
+                        "collections": collections,
+                        "json": json_module,
+                        "abc": abc,
+                    }
+                    if requests_module:
+                        exec_globals["requests"] = requests_module
+                    if bcrypt_module:
+                        exec_globals["bcrypt"] = bcrypt_module
+                    if psycopg2_module:
+                        exec_globals["psycopg2"] = psycopg2_module
+
+                    exec(full_code, exec_globals)
+
+                actual = output_buffer.getvalue().strip()
+                passed = actual == tc_expected
+                results.append({
+                    "id": tc_id,
+                    "passed": passed,
+                    "actual": actual,
+                    "expected": tc_expected,
+                    "error": None,
+                })
+            except Exception as e:
+                results.append({
+                    "id": tc_id,
+                    "passed": False,
+                    "actual": output_buffer.getvalue().strip(),
+                    "expected": tc_expected,
+                    "error": f"{type(e).__name__}: {str(e)}",
+                })
+
+        return jsonify({"results": results, "error": None})
+
+    except Exception as e:
+        return jsonify({"results": [], "error": str(e)}), 500
+
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"})
