@@ -457,13 +457,21 @@ class CodeExecutionTimeout(Exception):
     pass
 
 
-def _exec_with_timeout(code, exec_globals, timeout):
-    """Execute code with a timeout using a thread."""
+def _exec_with_timeout(code, exec_globals, timeout, output_buffer=None):
+    """Execute code with a timeout using a thread.
+
+    If output_buffer is provided, stdout is redirected inside the thread
+    so that print() output is captured correctly.
+    """
     result = {"error": None, "traceback": None}
 
     def target():
         try:
-            exec(code, exec_globals)
+            if output_buffer is not None:
+                with contextlib.redirect_stdout(output_buffer):
+                    exec(code, exec_globals)
+            else:
+                exec(code, exec_globals)
         except Exception as e:
             result["error"] = e
             result["traceback"] = traceback_module.format_exc()
@@ -502,9 +510,8 @@ def execute_code():
         output_buffer = io.StringIO()
 
         try:
-            with contextlib.redirect_stdout(output_buffer):
-                exec_globals = _build_safe_globals()
-                _exec_with_timeout(code, exec_globals, EXEC_TIMEOUT_SECONDS)
+            exec_globals = _build_safe_globals()
+            _exec_with_timeout(code, exec_globals, EXEC_TIMEOUT_SECONDS, output_buffer)
 
             output = output_buffer.getvalue()
             output_lines = output.split("\n") if output else []
@@ -567,9 +574,8 @@ def run_tests():
             output_buffer = io.StringIO()
 
             try:
-                with contextlib.redirect_stdout(output_buffer):
-                    exec_globals = _build_safe_globals()
-                    _exec_with_timeout(full_code, exec_globals, EXEC_TIMEOUT_SECONDS)
+                exec_globals = _build_safe_globals()
+                _exec_with_timeout(full_code, exec_globals, EXEC_TIMEOUT_SECONDS, output_buffer)
 
                 actual = output_buffer.getvalue().strip()
                 passed = actual == tc_expected
