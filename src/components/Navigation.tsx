@@ -29,7 +29,7 @@ export function Navigation({ currentUser, totalPoints, onLogout }: NavigationPro
             className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
               isActive('/problems') || isActive('/')
                 ? 'text-[#EDEDED] bg-[#1E1E1E]'
-                : 'text-[#666] hover:text-[#EDEDED]'
+                : 'text-[#999] hover:text-[#EDEDED]'
             }`}
           >
             Problems
@@ -39,7 +39,7 @@ export function Navigation({ currentUser, totalPoints, onLogout }: NavigationPro
             className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
               isActive('/tips')
                 ? 'text-[#EDEDED] bg-[#1E1E1E]'
-                : 'text-[#666] hover:text-[#EDEDED]'
+                : 'text-[#999] hover:text-[#EDEDED]'
             }`}
           >
             Tips
@@ -48,16 +48,16 @@ export function Navigation({ currentUser, totalPoints, onLogout }: NavigationPro
 
         {/* User */}
         <div className="flex items-center gap-4">
-          <span className="text-xs font-mono text-[#666]">
+          <span className="text-xs font-mono text-[#999]">
             <span className="text-[#4F8CFF]">{totalPoints}</span> pts
           </span>
           <div className="w-px h-4 bg-[#1E1E1E]" />
-          <span className="text-sm text-[#666]">{currentUser}</span>
+          <span className="text-sm text-[#999]">{currentUser}</span>
           <Button
             variant="ghost"
             size="icon"
             onClick={onLogout}
-            className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-8 w-8"
+            className="text-[#999] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-8 w-8"
           >
             <LogOut className="w-3.5 h-3.5" />
           </Button>

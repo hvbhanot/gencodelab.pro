@@ -120,7 +120,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
               by reading real bugs
             </h1>
 
-            <p className="text-[#666] mb-10 leading-relaxed max-w-md">
+            <p className="text-[#999] mb-10 leading-relaxed max-w-md">
               Find bugs, fix them, write solutions from scratch. The fastest way to develop the instinct you need to ship real code.
             </p>
 
@@ -146,17 +146,17 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
             <div className="flex items-center gap-8 text-sm">
               <div>
                 <div className="text-xl font-bold text-[#EDEDED] font-mono">140</div>
-                <div className="text-[#555] text-xs">Problems</div>
+                <div className="text-[#888] text-sm">Problems</div>
               </div>
               <div className="w-px h-8 bg-[#1E1E1E]" />
               <div>
                 <div className="text-xl font-bold text-[#EDEDED] font-mono">3</div>
-                <div className="text-[#555] text-xs">Modes</div>
+                <div className="text-[#888] text-sm">Modes</div>
               </div>
               <div className="w-px h-8 bg-[#1E1E1E]" />
               <div>
                 <div className="text-xl font-bold text-[#EDEDED] font-mono">12</div>
-                <div className="text-[#555] text-xs">Categories</div>
+                <div className="text-[#888] text-sm">Categories</div>
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
               <div className="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <div className="w-2.5 h-2.5 rounded-full bg-[#333]" />
-              <span className="ml-3 text-xs text-[#555] font-mono">bug_challenge.py</span>
+              <span className="ml-3 text-xs text-[#888] font-mono">bug_challenge.py</span>
             </div>
             {/* Code */}
             <div className="p-5 font-mono text-sm leading-7">
@@ -179,7 +179,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
                     i < visibleLines ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                   } ${showBugHighlight && line.bug ? 'bg-red-500/5' : ''}`}
                 >
-                  <span className="w-8 text-[#333] select-none flex-shrink-0">{line.num}</span>
+                  <span className="w-8 text-[#666] select-none flex-shrink-0">{line.num}</span>
                   <span className={`${showBugHighlight && line.bug ? 'text-red-400' : line.color}`}>
                     {line.text}
                   </span>
@@ -194,7 +194,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
             {showBugHighlight && (
               <div className="px-5 py-3 border-t border-[#1E1E1E] flex items-center gap-2">
                 <Bug className="w-3.5 h-3.5 text-red-400" />
-                <span className="text-xs text-[#666]">Bug found on line 6 — assignment operator error</span>
+                <span className="text-sm text-[#888]">Bug found on line 6 — assignment operator error</span>
               </div>
             )}
           </div>
@@ -233,7 +233,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
             >
               <mode.icon className="w-5 h-5 text-[#4F8CFF] mb-4" />
               <h3 className="text-sm font-semibold text-[#EDEDED] mb-2">{mode.title}</h3>
-              <p className="text-[#555] text-xs leading-relaxed">{mode.desc}</p>
+              <p className="text-[#888] text-sm leading-relaxed">{mode.desc}</p>
             </div>
           ))}
         </div>
@@ -268,9 +268,9 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
         <div className="max-w-6xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-[#4F8CFF]">&lt;v/&gt;</span>
-            <span className="text-[#333] text-xs">vibeclub</span>
+            <span className="text-[#666] text-xs">vibeclub</span>
           </div>
-          <div className="flex items-center gap-6 text-xs text-[#333]">
+          <div className="flex items-center gap-6 text-xs text-[#666]">
             <span onClick={() => navigate('/problems')} className="hover:text-[#666] cursor-pointer transition-colors">Problems</span>
             <span onClick={() => navigate('/tips')} className="hover:text-[#666] cursor-pointer transition-colors">Tips</span>
           </div>

@@ -22,6 +22,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +51,11 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     setIsLoading(true);
     const result = await onRegister(username, password, trimmedEmail);
     if (!result.success) {
@@ -66,6 +72,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setEmail('');
     setUsername('');
     setPassword('');
+    setConfirmPassword('');
   };
 
   const switchToLogin = () => {
@@ -73,30 +80,30 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setError('');
     setUsername('');
     setPassword('');
+    setConfirmPassword('');
   };
 
-  const inputClass = "bg-[#111] border-[#1E1E1E] text-[#EDEDED] placeholder:text-[#444] focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/20 rounded-md h-10";
+  const inputClass = "bg-[#111] border-[#222] text-[#EDEDED] placeholder:text-[#555] focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/20 rounded-md h-11 text-sm";
 
   if (isLogin) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#0B0B0B]">
         <div className="w-full max-w-sm">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="font-mono text-lg font-bold text-[#4F8CFF] mb-1">&lt;v/&gt;</div>
-            <h1 className="text-xl font-semibold text-[#EDEDED] mb-1">vibeclub</h1>
-            <p className="text-[#555] text-sm">Welcome back</p>
+          <div className="text-center mb-10">
+            <div className="font-mono text-2xl font-bold text-[#4F8CFF] mb-2">&lt;v/&gt;</div>
+            <h1 className="text-2xl font-semibold text-[#EDEDED] mb-1">vibeclub</h1>
+            <p className="text-[#888] text-sm">Welcome back</p>
           </div>
 
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
+          <form onSubmit={handleLoginSubmit} className="space-y-5">
             {error && (
-              <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-md px-3 py-2">
+              <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/15 rounded-md px-4 py-3">
                 {error}
               </div>
             )}
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#888]">Username</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#CCC]">Username</label>
               <Input
                 type="text"
                 value={username}
@@ -107,8 +114,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#888]">Password</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#CCC]">Password</label>
               <Input
                 type="password"
                 value={password}
@@ -121,7 +128,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
 
             <Button
               type="submit"
-              className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-10 rounded-md"
+              className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-11 rounded-md text-sm"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -131,8 +138,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
               )}
             </Button>
 
-            <div className="text-center">
-              <button type="button" onClick={switchToRegister} className="text-xs text-[#555] hover:text-[#4F8CFF] transition-colors">
+            <div className="text-center pt-2">
+              <button type="button" onClick={switchToRegister} className="text-sm text-[#888] hover:text-[#4F8CFF] transition-colors">
                 New here? Create an account
               </button>
             </div>
@@ -145,22 +152,21 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#0B0B0B]">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="font-mono text-lg font-bold text-[#4F8CFF] mb-1">&lt;v/&gt;</div>
-          <h1 className="text-xl font-semibold text-[#EDEDED] mb-1">Join vibeclub</h1>
-          <p className="text-[#555] text-sm">TAMUCC students only</p>
+        <div className="text-center mb-10">
+          <div className="font-mono text-2xl font-bold text-[#4F8CFF] mb-2">&lt;v/&gt;</div>
+          <h1 className="text-2xl font-semibold text-[#EDEDED] mb-1">Join vibeclub</h1>
+          <p className="text-[#888] text-sm">TAMUCC students only</p>
         </div>
 
-        <form onSubmit={handleRegisterSubmit} className="space-y-4">
+        <form onSubmit={handleRegisterSubmit} className="space-y-5">
           {error && (
-            <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-md px-3 py-2">
+            <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/15 rounded-md px-4 py-3">
               {error}
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#888]">Islander email</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[#CCC]">Islander email</label>
             <Input
               type="email"
               value={email}
@@ -169,11 +175,11 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
               className={inputClass}
               required
             />
-            <p className="text-[10px] text-[#444]">@islander.tamucc.edu or @tamucc.edu</p>
+            <p className="text-xs text-[#666]">@islander.tamucc.edu or @tamucc.edu</p>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#888]">Username</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[#CCC]">Username</label>
             <Input
               type="text"
               value={username}
@@ -185,8 +191,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[#888]">Password</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[#CCC]">Password</label>
             <Input
               type="password"
               value={password}
@@ -198,9 +204,22 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[#CCC]">Confirm password</label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter your password"
+              className={inputClass}
+              required
+              minLength={6}
+            />
+          </div>
+
           <Button
             type="submit"
-            className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-10 rounded-md"
+            className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-11 rounded-md text-sm"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -210,8 +229,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             )}
           </Button>
 
-          <div className="text-center">
-            <button type="button" onClick={switchToLogin} className="text-xs text-[#555] hover:text-[#4F8CFF] transition-colors">
+          <div className="text-center pt-2">
+            <button type="button" onClick={switchToLogin} className="text-sm text-[#888] hover:text-[#4F8CFF] transition-colors">
               Already have an account? Sign in
             </button>
           </div>

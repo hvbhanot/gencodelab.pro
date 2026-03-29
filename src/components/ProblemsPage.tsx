@@ -169,7 +169,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
           {/* Progress */}
           <div className="rounded-lg border border-[#1E1E1E] p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[#555] text-xs">Progress</span>
+              <span className="text-[#888] text-xs">Progress</span>
               <span className="text-sm font-bold text-[#4F8CFF] font-mono">{progressPercent}%</span>
             </div>
             <div className="h-1 bg-[#1E1E1E] rounded-full overflow-hidden">
@@ -178,7 +178,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <p className="text-[10px] text-[#444] mt-2">{stats.total.solved}/{stats.total.total} solved</p>
+            <p className="text-xs text-[#666] mt-2">{stats.total.solved}/{stats.total.total} solved</p>
           </div>
 
           {/* Easy */}
@@ -188,9 +188,9 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
             }`}
             onClick={() => setDifficultyFilter(difficultyFilter === 'easy' ? 'all' : 'easy')}
           >
-            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Easy</div>
+            <div className="text-xs text-[#888] uppercase tracking-wider mb-1">Easy</div>
             <div className="text-lg font-bold text-green-400 font-mono">
-              {stats.easy.solved}<span className="text-[#444] text-xs font-normal">/{stats.easy.total}</span>
+              {stats.easy.solved}<span className="text-[#666] text-sm font-normal">/{stats.easy.total}</span>
             </div>
           </div>
 
@@ -201,9 +201,9 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
             }`}
             onClick={() => setDifficultyFilter(difficultyFilter === 'medium' ? 'all' : 'medium')}
           >
-            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Medium</div>
+            <div className="text-xs text-[#888] uppercase tracking-wider mb-1">Medium</div>
             <div className="text-lg font-bold text-yellow-400 font-mono">
-              {stats.medium.solved}<span className="text-[#444] text-xs font-normal">/{stats.medium.total}</span>
+              {stats.medium.solved}<span className="text-[#666] text-sm font-normal">/{stats.medium.total}</span>
             </div>
           </div>
 
@@ -214,9 +214,9 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
             }`}
             onClick={() => setDifficultyFilter(difficultyFilter === 'hard' ? 'all' : 'hard')}
           >
-            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Hard</div>
+            <div className="text-xs text-[#888] uppercase tracking-wider mb-1">Hard</div>
             <div className="text-lg font-bold text-red-400 font-mono">
-              {stats.hard.solved}<span className="text-[#444] text-xs font-normal">/{stats.hard.total}</span>
+              {stats.hard.solved}<span className="text-[#666] text-sm font-normal">/{stats.hard.total}</span>
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                 placeholder="Search problems..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#111] border border-[#1E1E1E] rounded-md pl-9 pr-3 py-1.5 text-sm text-[#EDEDED] placeholder-[#444] focus:outline-none focus:border-[#4F8CFF] transition-colors"
+                className="w-full bg-[#111] border border-[#1E1E1E] rounded-md pl-9 pr-3 py-1.5 text-sm text-[#EDEDED] placeholder-[#666] focus:outline-none focus:border-[#4F8CFF] transition-colors"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#444] hover:text-[#EDEDED]">
@@ -256,7 +256,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
                       isActive
                         ? 'text-[#4F8CFF] bg-[#4F8CFF]/10'
-                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                        : 'text-[#888] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
                     }`}
                   >
                     <Icon className="w-3 h-3" />
@@ -275,7 +275,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
                 categoryFilter !== 'all'
                   ? 'text-[#4F8CFF] bg-[#4F8CFF]/10'
-                  : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                  : 'text-[#888] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
               }`}
             >
               <Filter className="w-3 h-3" />
@@ -293,7 +293,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
                       statusFilter === 'solved'
                         ? 'text-green-400 bg-green-400/10'
-                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                        : 'text-[#888] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
                     }`}
                   >
                     <CheckCircle2 className="w-3 h-3" />
@@ -304,7 +304,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
                       statusFilter === 'unsolved'
                         ? 'text-[#EDEDED] bg-[#1E1E1E]'
-                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                        : 'text-[#888] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
                     }`}
                   >
                     <Circle className="w-3 h-3" />
@@ -319,7 +319,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
             {activeFilterCount > 0 && (
               <button
                 onClick={clearAllFilters}
-                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E] transition-colors"
+                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-[#888] hover:text-[#EDEDED] hover:bg-[#1E1E1E] transition-colors"
               >
                 <X className="w-3 h-3" />
                 Clear ({activeFilterCount})
@@ -339,7 +339,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
 
         {/* Results Count */}
         <div className="flex items-center justify-between mb-2 px-1">
-          <span className="text-[10px] text-[#444]">
+          <span className="text-xs text-[#888]">
             {filteredProblems.length === allProblems.length
               ? `${allProblems.length} problems`
               : `${filteredProblems.length} of ${allProblems.length} problems`
@@ -350,7 +350,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
         {/* Problem List */}
         <div className="rounded-lg border border-[#1E1E1E] overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-12 gap-4 px-5 py-2.5 bg-[#111] border-b border-[#1E1E1E] text-[10px] text-[#444] uppercase tracking-wider">
+          <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-[#111] border-b border-[#1E1E1E] text-xs text-[#888] uppercase tracking-wider">
             <div className="col-span-1"></div>
             <div className="col-span-1">#</div>
             <div className="col-span-5">Title</div>
@@ -372,41 +372,41 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                   <div
                     key={problem.id}
                     onClick={() => handleProblemClick(problem)}
-                    className={`grid grid-cols-12 gap-4 px-5 py-3 hover:bg-[#141414] transition-colors cursor-pointer group items-center`}
+                    className={`grid grid-cols-12 gap-4 px-5 py-3.5 hover:bg-[#141414] transition-colors cursor-pointer group items-center`}
                   >
                     <div className="col-span-1">
                       {isSolved ? (
                         <CheckCircle2 className="w-4 h-4 text-green-400" />
                       ) : (
-                        <Circle className="w-4 h-4 text-[#2A2A2A] group-hover:text-[#444] transition-colors" />
+                        <Circle className="w-4 h-4 text-[#333] group-hover:text-[#555] transition-colors" />
                       )}
                     </div>
 
-                    <div className="col-span-1 text-[#444] font-mono text-xs">
+                    <div className="col-span-1 text-[#666] font-mono text-xs">
                       {displayNumber}
                     </div>
 
                     <div className={`col-span-5 text-sm ${
-                      isSolved ? 'text-[#666]' : 'text-[#EDEDED]/80 group-hover:text-[#EDEDED]'
+                      isSolved ? 'text-[#888]' : 'text-[#EDEDED] group-hover:text-white'
                     } transition-colors`}>
                       {problem.title}
                     </div>
 
                     <div className="col-span-2">
-                      <span className="text-[10px] text-[#555] border border-[#1E1E1E] rounded px-1.5 py-0.5">
+                      <span className="text-xs text-[#999] border border-[#222] rounded px-2 py-0.5">
                         {getCategoryLabel(problem.category)}
                       </span>
                     </div>
 
                     <div className="col-span-1">
-                      <span className="text-[10px] text-[#555] flex items-center gap-1">
-                        <tc.icon className="w-2.5 h-2.5" />
+                      <span className="text-xs text-[#999] flex items-center gap-1">
+                        <tc.icon className="w-3 h-3" />
                         {tc.label}
                       </span>
                     </div>
 
                     <div className="col-span-2 text-right">
-                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
+                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
                         {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
                       </span>
                     </div>
@@ -467,7 +467,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
           >
             <button
               onClick={() => { setCategoryFilter('all'); setShowCategoryDropdown(false); }}
-              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#1E1E1E] transition-colors ${categoryFilter === 'all' ? 'text-[#EDEDED]' : 'text-[#555]'}`}
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-[#1E1E1E] transition-colors ${categoryFilter === 'all' ? 'text-[#EDEDED]' : 'text-[#888]'}`}
             >
               All Categories
             </button>
@@ -475,7 +475,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
               <button
                 key={cat}
                 onClick={() => { setCategoryFilter(cat); setShowCategoryDropdown(false); }}
-                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#1E1E1E] transition-colors ${categoryFilter === cat ? 'text-[#EDEDED]' : 'text-[#555]'}`}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-[#1E1E1E] transition-colors ${categoryFilter === cat ? 'text-[#EDEDED]' : 'text-[#888]'}`}
               >
                 {getCategoryLabel(cat)}
               </button>
