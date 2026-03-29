@@ -18,10 +18,13 @@ function isAllowedEmail(email: string): boolean {
   return ALLOWED_DOMAINS.some(d => email.endsWith(`@${d}`));
 }
 
+const API_BASE_AUTH = import.meta.env.VITE_API_URL || '/api';
+
 type Mode = 'login' | 'register' | 'reset';
 
 export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess }: AuthFormProps) {
   const [mode, setMode] = useState<Mode>(initialMode);
+  const inviteCode = new URLSearchParams(window.location.search).get('invite') || '';
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -51,8 +54,19 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     if (password !== confirmPassword) { setError('Passwords do not match'); return; }
     setIsLoading(true);
     const result = await onRegister(username, password, email.trim().toLowerCase());
-    if (!result.success) setError(result.error || 'An error occurred');
-    else if (onSuccess) onSuccess();
+    if (!result.success) { setError(result.error || 'An error occurred'); }
+    else {
+      // Redeem invite code if present
+      if (inviteCode) {
+        try {
+          await fetch(`${API_BASE_AUTH}/invite/use`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: inviteCode, username }),
+          });
+        } catch { /* ignore */ }
+      }
+      if (onSuccess) onSuccess();
+    }
     setIsLoading(false);
   };
 
@@ -83,6 +97,11 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           </p>
         </div>
 
+        {mode === 'register' && inviteCode && (
+          <div className="mb-4 px-4 py-3 rounded-lg bg-[#A78BFA]/[0.06] border border-[#A78BFA]/[0.12] text-center">
+            <p className="text-sm text-[#A78BFA]">You've been invited! Sign up to join vibeclub.</p>
+          </div>
+        )}
         {mode === 'register' && (
           <div className="mb-5 px-4 py-3 rounded-lg bg-[#4ADE80]/[0.05] border border-[#4ADE80]/[0.12] text-center">
             <p className="text-sm text-white/60">

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   Trophy,
   Flame,
@@ -7,7 +7,14 @@ import {
   Calendar,
   TrendingUp,
   CheckCircle2,
+  Copy,
+  Check,
+  Users,
+  ExternalLink,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 import { problems as allProblems } from '@/data/problems';
 import type { UserProgress, Difficulty, Category } from '@/types';
 
@@ -34,6 +41,51 @@ const allCategories: Category[] = [
 ];
 
 export function ProfilePage({ currentUser, userProgress, currentStreak, longestStreak }: ProfilePageProps) {
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [invitedCount, setInvitedCount] = useState(0);
+  const [invitedBy, setInvitedBy] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [profileCopied, setProfileCopied] = useState(false);
+
+  useEffect(() => {
+    const loadInvite = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/invite/stats/${currentUser}`);
+        const data = await res.json();
+        setInviteCode(data.activeCode);
+        setInvitedCount(data.invitedCount || 0);
+        setInvitedBy(data.invitedBy);
+      } catch { /* ignore */ }
+    };
+    loadInvite();
+  }, [currentUser]);
+
+  const generateInvite = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/invite/generate`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: currentUser }),
+      });
+      const data = await res.json();
+      if (data.code) setInviteCode(data.code);
+    } catch { /* ignore */ }
+  };
+
+  const copyInviteLink = () => {
+    if (!inviteCode) return;
+    const link = `${window.location.origin}/?invite=${inviteCode}`;
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copyProfileLink = () => {
+    const link = `${window.location.origin}/u/${currentUser}`;
+    navigator.clipboard.writeText(link);
+    setProfileCopied(true);
+    setTimeout(() => setProfileCopied(false), 2000);
+  };
+
   const stats = useMemo(() => {
     const count = (d: Difficulty) => allProblems.filter(p => p.difficulty === d).length;
     const solved = (d: Difficulty) => Object.values(userProgress.problems).filter(p => allProblems.find(pr => pr.id === p.problemId)?.difficulty === d && p.solved).length;
@@ -246,8 +298,8 @@ export function ProfilePage({ currentUser, userProgress, currentStreak, longestS
         </div>
       </div>
 
-      {/* Streak info */}
-      <div className="grid grid-cols-2 gap-4 mt-8">
+      {/* Streak + Invite */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
         <div className="rounded-xl p-5" style={{ background: 'var(--vc-surface)', border: '1px solid var(--vc-border)' }}>
           <Flame className="w-5 h-5 text-[#F97316] mb-2" />
           <p className="text-xs" style={{ color: 'var(--vc-text-muted)' }}>Current Streak</p>
@@ -259,6 +311,72 @@ export function ProfilePage({ currentUser, userProgress, currentStreak, longestS
           <p className="text-xs" style={{ color: 'var(--vc-text-muted)' }}>Longest Streak</p>
           <p className="text-3xl font-bold font-mono text-[#FBBF24]">{longestStreak}</p>
           <p className="text-xs" style={{ color: 'var(--vc-text-faint)' }}>days</p>
+        </div>
+        <div className="rounded-xl p-5" style={{ background: 'var(--vc-surface)', border: '1px solid var(--vc-border)' }}>
+          <Users className="w-5 h-5 text-[#A78BFA] mb-2" />
+          <p className="text-xs" style={{ color: 'var(--vc-text-muted)' }}>Friends Invited</p>
+          <p className="text-3xl font-bold font-mono text-[#A78BFA]">{invitedCount}</p>
+          <p className="text-xs" style={{ color: 'var(--vc-text-faint)' }}>people</p>
+        </div>
+        <div className="rounded-xl p-5" style={{ background: 'var(--vc-surface)', border: '1px solid var(--vc-border)' }}>
+          <Award className="w-5 h-5 text-[#4ADE80] mb-2" />
+          <p className="text-xs" style={{ color: 'var(--vc-text-muted)' }}>Achievements</p>
+          <p className="text-3xl font-bold font-mono text-[#4ADE80]">{achievements.filter(a => a.unlocked).length}</p>
+          <p className="text-xs" style={{ color: 'var(--vc-text-faint)' }}>/ {achievements.length}</p>
+        </div>
+      </div>
+
+      {/* Invite & Share */}
+      <div className="grid md:grid-cols-2 gap-4 mt-8">
+        {/* Invite a friend */}
+        <div className="rounded-xl p-5" style={{ background: 'var(--vc-surface)', border: '1px solid var(--vc-border)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="w-5 h-5 text-[#A78BFA]" />
+            <h2 className="text-[15px] font-semibold" style={{ color: 'var(--vc-text)' }}>Invite a Friend</h2>
+          </div>
+          <p className="text-sm mb-4" style={{ color: 'var(--vc-text-muted)' }}>
+            Share your invite link. When they sign up, you both get the referral badge.
+          </p>
+
+          {inviteCode ? (
+            <div className="flex items-center gap-2">
+              <div className="flex-1 px-3 py-2.5 rounded-lg font-mono text-sm truncate" style={{ background: 'var(--vc-surface-2)', color: 'var(--vc-text-secondary)', border: '1px solid var(--vc-border)' }}>
+                {window.location.origin}/?invite={inviteCode}
+              </div>
+              <Button onClick={copyInviteLink} className={`h-10 px-4 rounded-lg text-sm font-medium ${copied ? 'bg-[#4ADE80] text-black' : 'bg-[#A78BFA] hover:bg-[#8B5CF6] text-white'}`}>
+                {copied ? <><Check className="w-4 h-4 mr-1" />Copied</> : <><Copy className="w-4 h-4 mr-1" />Copy</>}
+              </Button>
+            </div>
+          ) : (
+            <Button onClick={generateInvite} className="bg-[#A78BFA] hover:bg-[#8B5CF6] text-white h-10 px-5 rounded-lg text-sm font-medium">
+              Generate Invite Link
+            </Button>
+          )}
+
+          {invitedBy && (
+            <p className="text-xs mt-3" style={{ color: 'var(--vc-text-muted)' }}>
+              You were invited by <span className="text-[#4ADE80] font-medium">{invitedBy}</span>
+            </p>
+          )}
+        </div>
+
+        {/* Share profile */}
+        <div className="rounded-xl p-5" style={{ background: 'var(--vc-surface)', border: '1px solid var(--vc-border)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <ExternalLink className="w-5 h-5 text-[#4ADE80]" />
+            <h2 className="text-[15px] font-semibold" style={{ color: 'var(--vc-text)' }}>Public Profile</h2>
+          </div>
+          <p className="text-sm mb-4" style={{ color: 'var(--vc-text-muted)' }}>
+            Share your profile on LinkedIn, your resume, or social media. Anyone can view your stats.
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-3 py-2.5 rounded-lg font-mono text-sm truncate" style={{ background: 'var(--vc-surface-2)', color: 'var(--vc-text-secondary)', border: '1px solid var(--vc-border)' }}>
+              {window.location.origin}/u/{currentUser}
+            </div>
+            <Button onClick={copyProfileLink} className={`h-10 px-4 rounded-lg text-sm font-medium ${profileCopied ? 'bg-[#4ADE80] text-black' : 'bg-[#4ADE80] hover:bg-[#22C55E] text-black'}`}>
+              {profileCopied ? <><Check className="w-4 h-4 mr-1" />Copied</> : <><Copy className="w-4 h-4 mr-1" />Copy</>}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -154,6 +154,13 @@ def init_db():
             created_at TEXT NOT NULL,
             PRIMARY KEY (username, problem_id)
         );""",
+        """CREATE TABLE IF NOT EXISTS invites (
+            code TEXT PRIMARY KEY,
+            inviter TEXT NOT NULL,
+            invitee TEXT DEFAULT '',
+            created_at TEXT NOT NULL,
+            used_at TEXT DEFAULT ''
+        );""",
     ]
     if USE_POSTGRES:
         conn = psycopg2_module.connect(DATABASE_URL)
@@ -384,6 +391,161 @@ def toggle_bookmark(username, problem_id):
             cursor.close()
         db.commit()
         return jsonify({"bookmarked": True})
+
+
+# ---------------------------------------------------------------------------
+# Public Profile API
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/profile/<username>", methods=["GET"])
+def get_public_profile(username):
+    """Public profile data for any user."""
+    username = username.lower()
+    db = get_db()
+
+    user = db_fetchone(db, "SELECT username, created_at FROM users WHERE username = ?", (username,))
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    uname = get_row_value(user, "username") if not USE_POSTGRES else user[0]
+    created = get_row_value(user, "created_at") if not USE_POSTGRES else user[1]
+
+    # Progress stats
+    rows = db_fetchall(db, "SELECT * FROM progress WHERE username = ?", (username,))
+    problems = {}
+    for r in rows:
+        problems[get_row_value(r, "problem_id") if not USE_POSTGRES else r[1]] = {
+            "problemId": get_row_value(r, "problem_id") if not USE_POSTGRES else r[1],
+            "bestScore": get_row_value(r, "best_score") if not USE_POSTGRES else r[2],
+            "attempts": get_row_value(r, "attempts") if not USE_POSTGRES else r[3],
+            "lastAttempt": get_row_value(r, "last_attempt") if not USE_POSTGRES else r[4],
+            "solved": bool(get_row_value(r, "solved") if not USE_POSTGRES else r[5]),
+        }
+
+    # Streak
+    streak_row = db_fetchone(db, "SELECT * FROM streaks WHERE username = ?", (username,))
+    streak = {
+        "currentStreak": (get_row_value(streak_row, "current_streak") if not USE_POSTGRES else streak_row[1]) if streak_row else 0,
+        "longestStreak": (get_row_value(streak_row, "longest_streak") if not USE_POSTGRES else streak_row[2]) if streak_row else 0,
+    }
+
+    # Invite stats
+    invited_count = db_fetchone(db, "SELECT COUNT(*) FROM invites WHERE inviter = ? AND invitee != ''", (username,))
+    invited_by = db_fetchone(db, "SELECT inviter FROM invites WHERE invitee = ?", (username,))
+
+    return jsonify({
+        "username": uname,
+        "createdAt": created,
+        "problems": problems,
+        "streak": streak,
+        "invitedCount": (invited_count[0] if invited_count else 0),
+        "invitedBy": ((get_row_value(invited_by, "inviter") if not USE_POSTGRES else invited_by[0]) if invited_by else None),
+    })
+
+
+# ---------------------------------------------------------------------------
+# Invite API
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/invite/generate", methods=["POST"])
+def generate_invite():
+    """Generate a unique invite code for a user."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid request"}), 400
+
+    username = data.get("username", "").strip().lower()
+    if not username:
+        return jsonify({"error": "Username required"}), 400
+
+    db = get_db()
+    # Check if user already has an unused invite
+    existing = db_fetchone(db, "SELECT code FROM invites WHERE inviter = ? AND invitee = ''", (username,))
+    if existing:
+        code = get_row_value(existing, "code") if not USE_POSTGRES else existing[0]
+        return jsonify({"code": code})
+
+    # Generate new code
+    code = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    cursor = db_execute(db,
+        "INSERT INTO invites (code, inviter, invitee, created_at, used_at) VALUES (?, ?, '', ?, '')",
+        (code, username, now))
+    if USE_POSTGRES:
+        cursor.close()
+    db.commit()
+
+    return jsonify({"code": code})
+
+
+@app.route("/api/invite/<code>", methods=["GET"])
+def check_invite(code):
+    """Check if an invite code is valid."""
+    db = get_db()
+    row = db_fetchone(db, "SELECT * FROM invites WHERE code = ?", (code,))
+    if not row:
+        return jsonify({"valid": False, "error": "Invalid invite code"}), 404
+
+    invitee = get_row_value(row, "invitee") if not USE_POSTGRES else row[2]
+    inviter = get_row_value(row, "inviter") if not USE_POSTGRES else row[1]
+
+    if invitee:
+        return jsonify({"valid": False, "error": "Invite already used"})
+
+    return jsonify({"valid": True, "inviter": inviter})
+
+
+@app.route("/api/invite/use", methods=["POST"])
+def use_invite():
+    """Mark an invite as used by a new user."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid request"}), 400
+
+    code = data.get("code", "").strip()
+    invitee = data.get("username", "").strip().lower()
+
+    if not code or not invitee:
+        return jsonify({"error": "Code and username required"}), 400
+
+    db = get_db()
+    row = db_fetchone(db, "SELECT * FROM invites WHERE code = ? AND invitee = ''", (code,))
+    if not row:
+        return jsonify({"error": "Invalid or used invite code"}), 400
+
+    now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    cursor = db_execute(db,
+        "UPDATE invites SET invitee = ?, used_at = ? WHERE code = ?",
+        (invitee, now, code))
+    if USE_POSTGRES:
+        cursor.close()
+    db.commit()
+
+    inviter = get_row_value(row, "inviter") if not USE_POSTGRES else row[1]
+    return jsonify({"success": True, "inviter": inviter})
+
+
+@app.route("/api/invite/stats/<username>", methods=["GET"])
+def invite_stats(username):
+    """Get invite stats for a user."""
+    username = username.lower()
+    db = get_db()
+
+    # Get their active invite code
+    active = db_fetchone(db, "SELECT code FROM invites WHERE inviter = ? AND invitee = ''", (username,))
+    active_code = (get_row_value(active, "code") if not USE_POSTGRES else active[0]) if active else None
+
+    # Count successful invites
+    count_row = db_fetchone(db, "SELECT COUNT(*) FROM invites WHERE inviter = ? AND invitee != ''", (username,))
+    count = count_row[0] if count_row else 0
+
+    # Who invited them
+    invited_by = db_fetchone(db, "SELECT inviter FROM invites WHERE invitee = ?", (username,))
+    inviter = (get_row_value(invited_by, "inviter") if not USE_POSTGRES else invited_by[0]) if invited_by else None
+
+    return jsonify({"activeCode": active_code, "invitedCount": count, "invitedBy": inviter})
 
 
 # ---------------------------------------------------------------------------

@@ -4,6 +4,7 @@ import { Navigation } from '@/components/Navigation';
 import { LandingPage } from '@/components/LandingPage';
 import { ProblemsPage } from '@/components/ProblemsPage';
 import { ProfilePage } from '@/components/ProfilePage';
+import { PublicProfilePage } from '@/components/PublicProfilePage';
 import { TipsPage } from '@/components/TipsPage';
 import { ProblemSolver } from '@/components/ProblemSolver';
 import { useAuth, getUserProgress, saveUserProgress, getStreaks, getDailyChallenge, getBookmarks, toggleBookmark } from '@/hooks/useAuth';
@@ -126,6 +127,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage onRegister={handleRegister} onLogin={login} />} />
           <Route path="/problems" element={<ProblemsPage userProgress={{ username: '', problems: {} }} onSelectProblem={() => {}} />} />
+          <Route path="/u/:username" element={<PublicProfilePage />} />
           <Route path="/tips" element={<TipsPage />} />
         </Routes>
       </BrowserRouter>
@@ -160,6 +162,7 @@ function App() {
           <Route path="/" element={<ProblemsPage {...problemsPageProps} />} />
           <Route path="/problems" element={<ProblemsPage {...problemsPageProps} />} />
           <Route path="/profile" element={<ProfilePage currentUser={currentUser} userProgress={userProgress} currentStreak={currentStreak} longestStreak={longestStreak} />} />
+          <Route path="/u/:username" element={<PublicProfilePage />} />
           <Route path="/tips" element={<TipsPage />} />
         </Routes>
       </div>
