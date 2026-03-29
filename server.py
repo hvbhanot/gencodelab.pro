@@ -490,9 +490,11 @@ def update_progress(username, problem_id):
 def get_leaderboard():
     db = get_db()
     rows = db_fetchall(db,
-        """SELECT username, SUM(best_score) as total_score,
-                  COUNT(CASE WHEN solved = 1 THEN 1 END) as solved_count
-           FROM progress GROUP BY username ORDER BY total_score DESC LIMIT 50""")
+        """SELECT p.username, SUM(p.best_score) as total_score,
+                  COUNT(CASE WHEN p.solved = 1 THEN 1 END) as solved_count
+           FROM progress p
+           INNER JOIN users u ON p.username = u.username
+           GROUP BY p.username ORDER BY total_score DESC LIMIT 50""")
 
     leaderboard = []
     for i, r in enumerate(rows):
