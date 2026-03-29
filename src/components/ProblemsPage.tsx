@@ -1,15 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   CheckCircle2,
   Circle,
   Shuffle,
-  Target,
-  Zap,
-  Shield,
-  TrendingUp,
   Lock,
   ArrowRight,
   Eye,
@@ -37,16 +32,6 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-const getCategoryIcon = (category: Category) => {
-  switch (category) {
-    case 'security': return <Shield className="w-3 h-3" />;
-    case 'performance': return <Zap className="w-3 h-3" />;
-    case 'type': return <Target className="w-3 h-3" />;
-    case 'logic': return <TrendingUp className="w-3 h-3" />;
-    default: return <Target className="w-3 h-3" />;
-  }
-};
-
 const getCategoryLabel = (category: Category) => {
   const labels: Record<Category, string> = {
     'logic': 'Logic',
@@ -65,28 +50,10 @@ const getCategoryLabel = (category: Category) => {
   return labels[category] || category;
 };
 
-const getCategoryColor = (category: Category) => {
-  const colors: Record<Category, string> = {
-    'security': 'text-red-400 border-red-400/30 bg-red-400/10',
-    'performance': 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10',
-    'type': 'text-cyan-400 border-cyan-400/30 bg-cyan-400/10',
-    'logic': 'text-purple-400 border-purple-400/30 bg-purple-400/10',
-    'scope': 'text-pink-400 border-pink-400/30 bg-pink-400/10',
-    'concurrency': 'text-orange-400 border-orange-400/30 bg-orange-400/10',
-    'algorithm': 'text-green-400 border-green-400/30 bg-green-400/10',
-    'syntax': 'text-blue-400 border-blue-400/30 bg-blue-400/10',
-    'edge-case': 'text-indigo-400 border-indigo-400/30 bg-indigo-400/10',
-    'pitfall': 'text-amber-400 border-amber-400/30 bg-amber-400/10',
-    'oop': 'text-teal-400 border-teal-400/30 bg-teal-400/10',
-    'advanced': 'text-rose-400 border-rose-400/30 bg-rose-400/10',
-  };
-  return colors[category] || 'text-gray-400 border-gray-400/30 bg-gray-400/10';
-};
-
-const typeConfig: Record<ProblemType, { label: string; color: string; icon: typeof Eye }> = {
-  find: { label: 'Find', color: 'bg-purple-500/15 text-purple-400 border-purple-500/25', icon: Eye },
-  fix: { label: 'Fix', color: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/25', icon: Terminal },
-  recall: { label: 'Recall', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25', icon: RefreshCw },
+const typeConfig: Record<ProblemType, { label: string; icon: typeof Eye }> = {
+  find: { label: 'Find', icon: Eye },
+  fix: { label: 'Fix', icon: Terminal },
+  recall: { label: 'Recall', icon: RefreshCw },
 };
 
 const allCategories: Category[] = [
@@ -196,321 +163,292 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
 
   return (
     <div className="min-h-screen pb-12">
-      {/* Header */}
-      <div className="relative pt-8 pb-6">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-purple-500/8 rounded-full blur-[120px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            {/* Progress */}
-            <div className="glass-card rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-gray-500 text-xs font-medium uppercase tracking-wider">Progress</span>
-                <span className="text-xl font-bold gradient-text">{progressPercent}%</span>
-              </div>
-              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 transition-all duration-500 rounded-full"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <p className="text-xs text-gray-600 mt-2">{stats.total.solved}/{stats.total.total} solved</p>
+      <div className="max-w-6xl mx-auto px-6 pt-8">
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          {/* Progress */}
+          <div className="rounded-lg border border-[#1E1E1E] p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[#555] text-xs">Progress</span>
+              <span className="text-sm font-bold text-[#4F8CFF] font-mono">{progressPercent}%</span>
             </div>
-
-            {/* Easy */}
-            <div
-              className={`glass-card rounded-xl p-4 cursor-pointer transition-all ${difficultyFilter === 'easy' ? 'border-green-500/40 bg-green-500/5' : 'hover:border-green-500/20'}`}
-              onClick={() => setDifficultyFilter(difficultyFilter === 'easy' ? 'all' : 'easy')}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Easy</div>
-                  <div className="text-lg font-bold text-green-400">{stats.easy.solved}<span className="text-gray-600 text-sm font-normal">/{stats.easy.total}</span></div>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-              </div>
+            <div className="h-1 bg-[#1E1E1E] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#4F8CFF] transition-all duration-500 rounded-full"
+                style={{ width: `${progressPercent}%` }}
+              />
             </div>
+            <p className="text-[10px] text-[#444] mt-2">{stats.total.solved}/{stats.total.total} solved</p>
+          </div>
 
-            {/* Medium */}
-            <div
-              className={`glass-card rounded-xl p-4 cursor-pointer transition-all ${difficultyFilter === 'medium' ? 'border-yellow-500/40 bg-yellow-500/5' : 'hover:border-yellow-500/20'}`}
-              onClick={() => setDifficultyFilter(difficultyFilter === 'medium' ? 'all' : 'medium')}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Medium</div>
-                  <div className="text-lg font-bold text-yellow-400">{stats.medium.solved}<span className="text-gray-600 text-sm font-normal">/{stats.medium.total}</span></div>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                </div>
-              </div>
-            </div>
-
-            {/* Hard */}
-            <div
-              className={`glass-card rounded-xl p-4 cursor-pointer transition-all ${difficultyFilter === 'hard' ? 'border-red-500/40 bg-red-500/5' : 'hover:border-red-500/20'}`}
-              onClick={() => setDifficultyFilter(difficultyFilter === 'hard' ? 'all' : 'hard')}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Hard</div>
-                  <div className="text-lg font-bold text-red-400">{stats.hard.solved}<span className="text-gray-600 text-sm font-normal">/{stats.hard.total}</span></div>
-                </div>
-                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                </div>
-              </div>
+          {/* Easy */}
+          <div
+            className={`rounded-lg border p-4 cursor-pointer transition-colors ${
+              difficultyFilter === 'easy' ? 'border-green-500/30 bg-green-500/5' : 'border-[#1E1E1E] hover:border-[#2A2A2A]'
+            }`}
+            onClick={() => setDifficultyFilter(difficultyFilter === 'easy' ? 'all' : 'easy')}
+          >
+            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Easy</div>
+            <div className="text-lg font-bold text-green-400 font-mono">
+              {stats.easy.solved}<span className="text-[#444] text-xs font-normal">/{stats.easy.total}</span>
             </div>
           </div>
 
-          {/* Filter Bar */}
-          <div className="glass-card rounded-xl p-3 mb-6" style={{ overflow: 'visible' }}>
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Search */}
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Search problems..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/40 focus:ring-1 focus:ring-purple-500/20 transition-colors"
-                />
-                {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
+          {/* Medium */}
+          <div
+            className={`rounded-lg border p-4 cursor-pointer transition-colors ${
+              difficultyFilter === 'medium' ? 'border-yellow-500/30 bg-yellow-500/5' : 'border-[#1E1E1E] hover:border-[#2A2A2A]'
+            }`}
+            onClick={() => setDifficultyFilter(difficultyFilter === 'medium' ? 'all' : 'medium')}
+          >
+            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Medium</div>
+            <div className="text-lg font-bold text-yellow-400 font-mono">
+              {stats.medium.solved}<span className="text-[#444] text-xs font-normal">/{stats.medium.total}</span>
+            </div>
+          </div>
 
-              <div className="w-px h-7 bg-white/10 hidden md:block" />
+          {/* Hard */}
+          <div
+            className={`rounded-lg border p-4 cursor-pointer transition-colors ${
+              difficultyFilter === 'hard' ? 'border-red-500/30 bg-red-500/5' : 'border-[#1E1E1E] hover:border-[#2A2A2A]'
+            }`}
+            onClick={() => setDifficultyFilter(difficultyFilter === 'hard' ? 'all' : 'hard')}
+          >
+            <div className="text-[10px] text-[#555] uppercase tracking-wider mb-1">Hard</div>
+            <div className="text-lg font-bold text-red-400 font-mono">
+              {stats.hard.solved}<span className="text-[#444] text-xs font-normal">/{stats.hard.total}</span>
+            </div>
+          </div>
+        </div>
 
-              {/* Type Filter */}
-              <div className="flex items-center gap-1">
-                {(['find', 'fix', 'recall'] as ProblemType[]).map(type => {
-                  const cfg = typeConfig[type];
-                  const Icon = cfg.icon;
-                  const isActive = typeFilter === type;
-                  return (
-                    <button
-                      key={type}
-                      onClick={() => setTypeFilter(isActive ? 'all' : type)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                        isActive
-                          ? cfg.color + ' border-current/20'
-                          : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <Icon className="w-3 h-3" />
-                      {cfg.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="w-px h-7 bg-white/10 hidden md:block" />
-
-              {/* Category Dropdown */}
-              <button
-                ref={categoryBtnRef}
-                onClick={openCategoryDropdown}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  categoryFilter !== 'all'
-                    ? getCategoryColor(categoryFilter) + ' border-current/20'
-                    : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                }`}
-              >
-                <Filter className="w-3 h-3" />
-                {categoryFilter !== 'all' ? getCategoryLabel(categoryFilter) : 'Category'}
-                <ChevronDown className="w-3 h-3" />
-              </button>
-
-              {/* Status Filter */}
-              {isLoggedIn && (
-                <>
-                  <div className="w-px h-7 bg-white/10 hidden md:block" />
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => setStatusFilter(statusFilter === 'solved' ? 'all' : 'solved')}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                        statusFilter === 'solved'
-                          ? 'bg-green-500/15 text-green-400 border-green-500/25'
-                          : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <CheckCircle2 className="w-3 h-3" />
-                      Solved
-                    </button>
-                    <button
-                      onClick={() => setStatusFilter(statusFilter === 'unsolved' ? 'all' : 'unsolved')}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                        statusFilter === 'unsolved'
-                          ? 'bg-gray-500/15 text-gray-300 border-gray-500/25'
-                          : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                      }`}
-                    >
-                      <Circle className="w-3 h-3" />
-                      Unsolved
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {/* Spacer + Actions */}
-              <div className="flex-1" />
-
-              {activeFilterCount > 0 && (
-                <button
-                  onClick={clearAllFilters}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs text-gray-500 hover:text-white hover:bg-white/5 transition-colors"
-                >
+        {/* Filter Bar */}
+        <div className="rounded-lg border border-[#1E1E1E] p-3 mb-4" style={{ overflow: 'visible' }}>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search */}
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#444]" />
+              <input
+                type="text"
+                placeholder="Search problems..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#111] border border-[#1E1E1E] rounded-md pl-9 pr-3 py-1.5 text-sm text-[#EDEDED] placeholder-[#444] focus:outline-none focus:border-[#4F8CFF] transition-colors"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#444] hover:text-[#EDEDED]">
                   <X className="w-3 h-3" />
-                  Clear ({activeFilterCount})
                 </button>
               )}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleReshuffle}
-                className="text-gray-500 hover:text-purple-400 h-8 px-2.5"
-              >
-                <Shuffle className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs text-gray-500">
-              {filteredProblems.length === allProblems.length
-                ? `${allProblems.length} problems`
-                : `${filteredProblems.length} of ${allProblems.length} problems`
-              }
-            </span>
-          </div>
-
-          {/* Problem List */}
-          <div className="glass-card rounded-xl overflow-hidden">
-            {/* Header */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-white/[0.03] border-b border-white/5 text-[11px] text-gray-500 font-medium uppercase tracking-wider">
-              <div className="col-span-1"></div>
-              <div className="col-span-1">#</div>
-              <div className="col-span-5">Title</div>
-              <div className="col-span-2">Category</div>
-              <div className="col-span-1">Mode</div>
-              <div className="col-span-2 text-right">Difficulty</div>
             </div>
 
-            {/* Problems */}
-            {filteredProblems.length > 0 ? (
-              <div className="divide-y divide-white/[0.03]">
-                {filteredProblems.map((problem, index) => {
-                  const progress = userProgress.problems[problem.id];
-                  const isSolved = progress?.solved;
-                  const displayNumber = String(index + 1).padStart(3, '0');
-                  const tc = typeConfig[problem.type];
+            <div className="w-px h-6 bg-[#1E1E1E] hidden md:block" />
 
-                  return (
-                    <div
-                      key={problem.id}
-                      onClick={() => handleProblemClick(problem)}
-                      className={`grid grid-cols-12 gap-4 px-5 py-3.5 hover:bg-white/[0.03] transition-all cursor-pointer group items-center ${
-                        isSolved ? 'bg-green-500/[0.02]' : ''
-                      }`}
-                    >
-                      {/* Status */}
-                      <div className="col-span-1">
-                        {isSolved ? (
-                          <CheckCircle2 className="w-4.5 h-4.5 text-green-400" />
-                        ) : (
-                          <Circle className="w-4.5 h-4.5 text-gray-700 group-hover:text-gray-500 transition-colors" />
-                        )}
-                      </div>
+            {/* Type Filter */}
+            <div className="flex items-center gap-1">
+              {(['find', 'fix', 'recall'] as ProblemType[]).map(type => {
+                const cfg = typeConfig[type];
+                const Icon = cfg.icon;
+                const isActive = typeFilter === type;
+                return (
+                  <button
+                    key={type}
+                    onClick={() => setTypeFilter(isActive ? 'all' : type)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
+                      isActive
+                        ? 'text-[#4F8CFF] bg-[#4F8CFF]/10'
+                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                    }`}
+                  >
+                    <Icon className="w-3 h-3" />
+                    {cfg.label}
+                  </button>
+                );
+              })}
+            </div>
 
-                      {/* Number */}
-                      <div className="col-span-1 text-gray-600 font-mono text-xs">
-                        {displayNumber}
-                      </div>
+            <div className="w-px h-6 bg-[#1E1E1E] hidden md:block" />
 
-                      {/* Title */}
-                      <div className={`col-span-5 font-medium text-sm ${
-                        isSolved ? 'text-green-400/80' : 'text-gray-300 group-hover:text-white'
-                      } transition-colors`}>
-                        {problem.title}
-                      </div>
+            {/* Category Dropdown */}
+            <button
+              ref={categoryBtnRef}
+              onClick={openCategoryDropdown}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
+                categoryFilter !== 'all'
+                  ? 'text-[#4F8CFF] bg-[#4F8CFF]/10'
+                  : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+              }`}
+            >
+              <Filter className="w-3 h-3" />
+              {categoryFilter !== 'all' ? getCategoryLabel(categoryFilter) : 'Category'}
+              <ChevronDown className="w-3 h-3" />
+            </button>
 
-                      {/* Category */}
-                      <div className="col-span-2">
-                        <Badge
-                          variant="outline"
-                          className={`text-[10px] flex items-center gap-1 w-fit px-2 py-0.5 ${getCategoryColor(problem.category)}`}
-                        >
-                          {getCategoryIcon(problem.category)}
-                          {getCategoryLabel(problem.category)}
-                        </Badge>
-                      </div>
-
-                      {/* Type */}
-                      <div className="col-span-1">
-                        <span className={`text-[10px] font-medium px-2 py-0.5 rounded border ${tc.color} inline-flex items-center gap-1`}>
-                          <tc.icon className="w-2.5 h-2.5" />
-                          {tc.label}
-                        </span>
-                      </div>
-
-                      {/* Difficulty */}
-                      <div className="col-span-2 text-right">
-                        <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
-                          {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-16 text-center">
-                <div className="text-gray-600 text-sm mb-3">No problems match your filters</div>
-                <button
-                  onClick={clearAllFilters}
-                  className="text-purple-400 text-sm hover:text-purple-300 transition-colors"
-                >
-                  Clear all filters
-                </button>
-              </div>
+            {/* Status Filter */}
+            {isLoggedIn && (
+              <>
+                <div className="w-px h-6 bg-[#1E1E1E] hidden md:block" />
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === 'solved' ? 'all' : 'solved')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
+                      statusFilter === 'solved'
+                        ? 'text-green-400 bg-green-400/10'
+                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3 h-3" />
+                    Solved
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === 'unsolved' ? 'all' : 'unsolved')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${
+                      statusFilter === 'unsolved'
+                        ? 'text-[#EDEDED] bg-[#1E1E1E]'
+                        : 'text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E]'
+                    }`}
+                  >
+                    <Circle className="w-3 h-3" />
+                    Unsolved
+                  </button>
+                </div>
+              </>
             )}
+
+            <div className="flex-1" />
+
+            {activeFilterCount > 0 && (
+              <button
+                onClick={clearAllFilters}
+                className="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-[#555] hover:text-[#EDEDED] hover:bg-[#1E1E1E] transition-colors"
+              >
+                <X className="w-3 h-3" />
+                Clear ({activeFilterCount})
+              </button>
+            )}
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReshuffle}
+              className="text-[#555] hover:text-[#4F8CFF] h-7 w-7 p-0"
+            >
+              <Shuffle className="w-3.5 h-3.5" />
+            </Button>
           </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="flex items-center justify-between mb-2 px-1">
+          <span className="text-[10px] text-[#444]">
+            {filteredProblems.length === allProblems.length
+              ? `${allProblems.length} problems`
+              : `${filteredProblems.length} of ${allProblems.length} problems`
+            }
+          </span>
+        </div>
+
+        {/* Problem List */}
+        <div className="rounded-lg border border-[#1E1E1E] overflow-hidden">
+          {/* Header */}
+          <div className="grid grid-cols-12 gap-4 px-5 py-2.5 bg-[#111] border-b border-[#1E1E1E] text-[10px] text-[#444] uppercase tracking-wider">
+            <div className="col-span-1"></div>
+            <div className="col-span-1">#</div>
+            <div className="col-span-5">Title</div>
+            <div className="col-span-2">Category</div>
+            <div className="col-span-1">Mode</div>
+            <div className="col-span-2 text-right">Difficulty</div>
+          </div>
+
+          {/* Problems */}
+          {filteredProblems.length > 0 ? (
+            <div className="divide-y divide-[#1E1E1E]">
+              {filteredProblems.map((problem, index) => {
+                const progress = userProgress.problems[problem.id];
+                const isSolved = progress?.solved;
+                const displayNumber = String(index + 1).padStart(3, '0');
+                const tc = typeConfig[problem.type];
+
+                return (
+                  <div
+                    key={problem.id}
+                    onClick={() => handleProblemClick(problem)}
+                    className={`grid grid-cols-12 gap-4 px-5 py-3 hover:bg-[#141414] transition-colors cursor-pointer group items-center`}
+                  >
+                    <div className="col-span-1">
+                      {isSolved ? (
+                        <CheckCircle2 className="w-4 h-4 text-green-400" />
+                      ) : (
+                        <Circle className="w-4 h-4 text-[#2A2A2A] group-hover:text-[#444] transition-colors" />
+                      )}
+                    </div>
+
+                    <div className="col-span-1 text-[#444] font-mono text-xs">
+                      {displayNumber}
+                    </div>
+
+                    <div className={`col-span-5 text-sm ${
+                      isSolved ? 'text-[#666]' : 'text-[#EDEDED]/80 group-hover:text-[#EDEDED]'
+                    } transition-colors`}>
+                      {problem.title}
+                    </div>
+
+                    <div className="col-span-2">
+                      <span className="text-[10px] text-[#555] border border-[#1E1E1E] rounded px-1.5 py-0.5">
+                        {getCategoryLabel(problem.category)}
+                      </span>
+                    </div>
+
+                    <div className="col-span-1">
+                      <span className="text-[10px] text-[#555] flex items-center gap-1">
+                        <tc.icon className="w-2.5 h-2.5" />
+                        {tc.label}
+                      </span>
+                    </div>
+
+                    <div className="col-span-2 text-right">
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
+                        {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-16 text-center">
+              <div className="text-[#444] text-sm mb-3">No problems match your filters</div>
+              <button
+                onClick={clearAllFilters}
+                className="text-[#4F8CFF] text-sm hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Login Prompt Modal */}
       {showLoginPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-card rounded-2xl p-8 max-w-md w-full text-center border border-purple-500/30">
-            <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-purple-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3">Login Required</h3>
-            <p className="text-gray-400 mb-6">
-              Sign in to start solving problems and track your progress. It's free!
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+          <div className="rounded-lg border border-[#1E1E1E] bg-[#141414] p-8 max-w-sm w-full text-center">
+            <Lock className="w-8 h-8 text-[#4F8CFF] mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-[#EDEDED] mb-2">Sign in required</h3>
+            <p className="text-[#555] text-sm mb-6">
+              Sign in to solve problems and track progress.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-3 justify-center">
               <Button
                 onClick={() => window.location.href = '/'}
-                className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white px-6"
+                className="bg-[#4F8CFF] hover:bg-[#3D7AED] text-white px-5 h-9 rounded-md text-sm"
               >
-                Sign In
-                <ArrowRight className="w-4 h-4 ml-2" />
+                Sign in
+                <ArrowRight className="w-3.5 h-3.5 ml-2" />
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={() => setShowLoginPrompt(false)}
-                className="border-white/20 text-white hover:bg-white/10"
+                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-9 rounded-md text-sm"
               >
                 Cancel
               </Button>
@@ -524,12 +462,12 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
         <>
           <div className="fixed inset-0" style={{ zIndex: 9998 }} onClick={() => setShowCategoryDropdown(false)} />
           <div
-            className="fixed w-48 rounded-lg border border-white/10 py-1 shadow-2xl bg-[#141420] max-h-[400px] overflow-y-auto"
+            className="fixed w-44 rounded-md border border-[#1E1E1E] py-1 bg-[#141414] max-h-[400px] overflow-y-auto"
             style={{ zIndex: 9999, top: dropdownPos.top, left: dropdownPos.left }}
           >
             <button
               onClick={() => { setCategoryFilter('all'); setShowCategoryDropdown(false); }}
-              className={`w-full text-left px-3 py-2 text-xs hover:bg-white/10 transition-colors ${categoryFilter === 'all' ? 'text-white' : 'text-gray-400'}`}
+              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#1E1E1E] transition-colors ${categoryFilter === 'all' ? 'text-[#EDEDED]' : 'text-[#555]'}`}
             >
               All Categories
             </button>
@@ -537,9 +475,8 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
               <button
                 key={cat}
                 onClick={() => { setCategoryFilter(cat); setShowCategoryDropdown(false); }}
-                className={`w-full text-left px-3 py-2 text-xs hover:bg-white/10 transition-colors flex items-center gap-2 ${categoryFilter === cat ? 'text-white' : 'text-gray-400'}`}
+                className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#1E1E1E] transition-colors ${categoryFilter === cat ? 'text-[#EDEDED]' : 'text-[#555]'}`}
               >
-                {getCategoryIcon(cat)}
                 {getCategoryLabel(cat)}
               </button>
             ))}

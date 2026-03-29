@@ -79,7 +79,7 @@ function App() {
   if (isLoading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#4F8CFF]" />
       </div>
     );
   }
@@ -135,7 +135,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#0a0a0f] grid-bg">
+      <div className="min-h-screen bg-[#0B0B0B]">
         <Navigation
           currentUser={currentUser}
           totalPoints={totalPoints}

@@ -594,7 +594,7 @@ export function ProblemSolver({
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="glass-card border-b border-purple-500/20 sticky top-0 z-50">
+      <header className="bg-[#0B0B0B] border-b border-[#1E1E1E] sticky top-0 z-50">
         <div className="max-w-full mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -602,21 +602,21 @@ export function ProblemSolver({
                 variant="ghost"
                 size="sm"
                 onClick={onBack}
-                className="text-gray-400 hover:text-white hover:bg-white/10"
+                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E]"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Problems
+                Back
               </Button>
-              
-              <div className="h-6 w-px bg-purple-500/30" />
+
+              <div className="h-6 w-px bg-[#1E1E1E]" />
               
               <div className="flex items-center gap-3">
-                <span className="text-gray-600 font-mono text-sm">#{String(problem.id).padStart(3, '0')}</span>
-                <h1 className="text-base font-medium text-white">{problem.title}</h1>
+                <span className="text-[#444] font-mono text-sm">#{String(problem.id).padStart(3, '0')}</span>
+                <h1 className="text-base font-medium text-[#EDEDED]">{problem.title}</h1>
                 <span className={`text-xs font-medium px-2 py-1 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
                   {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-[#555]">
                   {maxPoints} pts
                 </span>
               </div>
@@ -628,7 +628,7 @@ export function ProblemSolver({
                 size="icon"
                 onClick={onPrevious}
                 disabled={!hasPrevious}
-                className="text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-30"
+                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] disabled:opacity-30"
               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
@@ -637,7 +637,7 @@ export function ProblemSolver({
                 size="icon"
                 onClick={onNext}
                 disabled={!hasNext}
-                className="text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-30"
+                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] disabled:opacity-30"
               >
                 <ChevronRight className="w-5 h-5" />
               </Button>
@@ -649,40 +649,40 @@ export function ProblemSolver({
       {/* Main Content */}
       <div className="flex-1 flex">
         {/* Left Panel - Description */}
-        <div className="w-[45%] border-r border-purple-500/20 flex flex-col">
+        <div className="w-[45%] border-r border-[#1E1E1E] flex flex-col">
           {/* Tabs */}
-          <div className="flex border-b border-purple-500/20 bg-white/5">
+          <div className="flex border-b border-[#1E1E1E]">
             <button
               onClick={() => setActiveTab('description')}
-              className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all ${
-                activeTab === 'description' 
-                  ? 'text-white border-b-2 border-purple-500 bg-gradient-to-r from-purple-500/10 to-cyan-500/10' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
+                activeTab === 'description'
+                  ? 'text-[#EDEDED] border-b-2 border-[#4F8CFF]'
+                  : 'text-[#555] hover:text-[#EDEDED]'
               }`}
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-3.5 h-3.5" />
               Description
             </button>
             <button
               onClick={() => setActiveTab('hint')}
-              className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all ${
-                activeTab === 'hint' 
-                  ? 'text-white border-b-2 border-purple-500 bg-gradient-to-r from-purple-500/10 to-cyan-500/10' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
+                activeTab === 'hint'
+                  ? 'text-[#EDEDED] border-b-2 border-[#4F8CFF]'
+                  : 'text-[#555] hover:text-[#EDEDED]'
               }`}
             >
-              <Lightbulb className="w-4 h-4" />
+              <Lightbulb className="w-3.5 h-3.5" />
               Hint
             </button>
             <button
               onClick={() => setActiveTab('solution')}
-              className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all ${
-                activeTab === 'solution' 
-                  ? 'text-white border-b-2 border-purple-500 bg-gradient-to-r from-purple-500/10 to-cyan-500/10' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
+                activeTab === 'solution'
+                  ? 'text-[#EDEDED] border-b-2 border-[#4F8CFF]'
+                  : 'text-[#555] hover:text-[#EDEDED]'
               }`}
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-3.5 h-3.5" />
               Solution
             </button>
           </div>
@@ -693,19 +693,19 @@ export function ProblemSolver({
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="w-5 h-5 text-purple-400" />
+                    <Sparkles className="w-5 h-5 text-[#4F8CFF]" />
                     <h2 className="text-lg font-semibold text-white">The Scenario</h2>
                   </div>
-                  <p className="text-gray-400 leading-relaxed">{problem.description}</p>
+                  <p className="text-[#888] leading-relaxed">{problem.description}</p>
                 </div>
 
                 {problem.type === 'find' && (
-                  <div className="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
+                  <div className="p-4 bg-[#111] border border-[#1E1E1E] rounded-md">
                     <div className="flex items-start gap-3">
-                      <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5" />
+                      <AlertTriangle className="w-5 h-5 text-[#4F8CFF] mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-yellow-400 mb-1">Your Mission</p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm font-medium text-[#EDEDED] mb-1">Your Mission</p>
+                        <p className="text-sm text-[#666]">
                           Click on line numbers to mark bugs. Click again to unselect. 
                           Submit when you think you have found all bugs. Remember: some problems may have no bugs!
                         </p>
@@ -715,12 +715,12 @@ export function ProblemSolver({
                 )}
 
                 {problem.type === 'fix' && problem.expectedOutput && (
-                  <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
+                  <div className="p-4 bg-[#111] border border-[#1E1E1E] rounded-md">
                     <div className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-cyan-400 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-[#4F8CFF] mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-cyan-400 mb-1">Expected Output</p>
-                        <pre className="text-sm text-gray-400 font-mono">{problem.expectedOutput}</pre>
+                        <p className="text-sm font-medium text-[#EDEDED] mb-1">Expected Output</p>
+                        <pre className="text-sm text-[#888] font-mono">{problem.expectedOutput}</pre>
                       </div>
                     </div>
                   </div>
@@ -728,12 +728,12 @@ export function ProblemSolver({
 
                 {problem.type === 'recall' && (
                   <div className="space-y-4">
-                    <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-xl">
+                    <div className="p-4 bg-[#111] border border-[#1E1E1E] rounded-md">
                       <div className="flex items-start gap-3">
-                        <Terminal className="w-5 h-5 text-green-400 mt-0.5" />
+                        <Terminal className="w-5 h-5 text-[#4F8CFF] mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-green-400 mb-1">Blank Page Challenge</p>
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm font-medium text-[#EDEDED] mb-1">Blank Page Challenge</p>
+                          <p className="text-sm text-[#666]">
                             Write your solution from scratch in the editor. No starter code is provided beyond the function signature.
                             Click "Run Tests" to validate against {problem.testCases?.length || 0} test cases. All tests must pass to earn points.
                           </p>
@@ -763,10 +763,10 @@ export function ProblemSolver({
                                       : <XCircle className="w-4 h-4 text-red-400" />
                                   )}
                                 </div>
-                                <div className="text-gray-500 text-xs">
+                                <div className="text-[#555] text-xs">
                                   <span className="text-gray-600">Input:</span> <code>{tc.input}</code>
                                 </div>
-                                <div className="text-gray-500 text-xs">
+                                <div className="text-[#555] text-xs">
                                   <span className="text-gray-600">Expected:</span> <code>{tc.expectedOutput}</code>
                                 </div>
                                 {result && !result.passed && (
@@ -784,18 +784,18 @@ export function ProblemSolver({
                 )}
 
                 {userProgress && (
-                  <div className="pt-4 border-t border-purple-500/20">
+                  <div className="pt-4 border-t border-[#1E1E1E]">
                     <div className="flex items-center gap-2 mb-3">
-                      <CheckSquare className="w-4 h-4 text-cyan-400" />
+                      <CheckSquare className="w-4 h-4 text-[#4F8CFF]" />
                       <span className="text-sm font-medium text-white">Your Progress</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="glass-card p-4 rounded-xl">
-                        <div className="text-xs text-gray-500">Best Score</div>
+                      <div className="bg-[#111] border border-[#1E1E1E] p-4 rounded-md">
+                        <div className="text-xs text-[#555]">Best Score</div>
                         <div className="text-2xl font-bold text-green-400">{userProgress.bestScore} pts</div>
                       </div>
-                      <div className="glass-card p-4 rounded-xl">
-                        <div className="text-xs text-gray-500">Attempts</div>
+                      <div className="bg-[#111] border border-[#1E1E1E] p-4 rounded-md">
+                        <div className="text-xs text-[#555]">Attempts</div>
                         <div className="text-2xl font-bold text-white">{attempts}</div>
                       </div>
                     </div>
@@ -814,22 +814,22 @@ export function ProblemSolver({
               <div className="space-y-4">
                 {!showHint ? (
                   <div className="text-center py-16">
-                    <Lightbulb className="w-16 h-16 text-gray-700 mx-auto mb-6" />
-                    <p className="text-gray-400 mb-2">Stuck? Get a hint to point you in the right direction.</p>
-                    <p className="text-yellow-400 text-sm mb-6">Using a hint reduces max points by {hintPenalty}</p>
+                    <Lightbulb className="w-12 h-12 text-[#333] mx-auto mb-6" />
+                    <p className="text-[#666] mb-2 text-sm">Stuck? Get a hint to point you in the right direction.</p>
+                    <p className="text-[#4F8CFF] text-xs mb-6">Using a hint reduces max points by {hintPenalty}</p>
                     <Button
                       onClick={handleUseHint}
-                      className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black font-semibold"
+                      className="bg-[#4F8CFF] hover:bg-[#3D7AED] text-white"
                     >
                       <Lightbulb className="w-4 h-4 mr-2" />
                       Reveal Hint (-{hintPenalty} pts)
                     </Button>
                   </div>
                 ) : (
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                  <div className="p-4 bg-[#111] border border-[#1E1E1E] rounded-md">
                     <div className="flex items-start gap-3">
-                      <Lightbulb className="w-5 h-5 text-yellow-400 mt-0.5" />
-                      <AlertDescription className="text-yellow-400">
+                      <Lightbulb className="w-5 h-5 text-[#4F8CFF] mt-0.5" />
+                      <AlertDescription className="text-[#EDEDED]/80">
                         {problem.hint}
                       </AlertDescription>
                     </div>
@@ -842,13 +842,13 @@ export function ProblemSolver({
               <div className="space-y-4">
                 {!showSolution ? (
                   <div className="text-center py-16">
-                    <BookOpen className="w-16 h-16 text-gray-700 mx-auto mb-6" />
-                    <p className="text-gray-400 mb-2">View the complete solution with explanations.</p>
-                    <p className="text-red-400 text-sm mb-6">Viewing solution reduces max points by {solutionPenalty}</p>
+                    <BookOpen className="w-12 h-12 text-[#333] mx-auto mb-6" />
+                    <p className="text-[#666] mb-2 text-sm">View the complete solution with explanations.</p>
+                    <p className="text-red-400 text-xs mb-6">Viewing solution reduces max points by {solutionPenalty}</p>
                     <Button
                       onClick={handleShowSolution}
                       variant="outline"
-                      className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                      className="border-[#1E1E1E] text-[#888] hover:bg-[#1E1E1E] hover:text-[#EDEDED]"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
                       Show Solution (-{solutionPenalty} pts)
@@ -857,26 +857,26 @@ export function ProblemSolver({
                 ) : (
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-sm font-medium text-white mb-3">Bug Locations & Explanations</h3>
+                      <h3 className="text-sm font-medium text-[#EDEDED] mb-3">Bug Locations & Explanations</h3>
                       {problem.bugLines.length > 0 ? (
                         problem.bugLines.map(line => (
-                          <div key={line} className="glass-card p-4 rounded-xl mb-3 border-red-500/20">
+                          <div key={line} className="p-4 rounded-md mb-3 bg-[#111] border border-[#1E1E1E]">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-red-400 font-mono text-sm">Line {line}</span>
                             </div>
-                            <p className="text-gray-400 text-sm leading-relaxed">{problem.bugExplanations[line]}</p>
+                            <p className="text-[#888] text-sm leading-relaxed">{problem.bugExplanations[line]}</p>
                           </div>
                         ))
                       ) : (
-                        <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                        <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-md">
                           <p className="text-green-400">This code has no bugs! It was a test of careful reading.</p>
                         </div>
                       )}
                     </div>
                     {problem.fixedCode && (
                       <>
-                        <h3 className="text-sm font-medium text-white mt-6 mb-3">Fixed Code</h3>
-                        <div className="code-block p-4 overflow-x-auto" style={{ backgroundColor: '#282C34' }}>
+                        <h3 className="text-sm font-medium text-[#EDEDED] mt-6 mb-3">Fixed Code</h3>
+                        <div className="code-block p-4 overflow-x-auto">
                           <pre className="text-sm text-gray-300">
                             <code>{problem.fixedCode}</code>
                           </pre>
@@ -887,7 +887,7 @@ export function ProblemSolver({
                               setFixedCode(problem.fixedCode!);
                               setActiveTab('description');
                             }}
-                            className="mt-4 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white"
+                            className="mt-4 bg-[#4F8CFF] hover:bg-[#3D7AED] text-white"
                           >
                             <CheckCircle2 className="w-4 h-4 mr-2" />
                             Apply Solution to Editor
@@ -905,9 +905,9 @@ export function ProblemSolver({
         {/* Right Panel - Code Editor */}
         <div className="flex-1 flex flex-col bg-black/30">
           {/* Editor Toolbar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-purple-500/20">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-[#1E1E1E]">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Python</span>
+              <span className="text-sm text-[#555]">Python</span>
               {problem.type === 'find' && selectedLines.length > 0 && (
                 <span className="text-sm text-purple-400">
                   {selectedLines.length} line(s) selected
@@ -920,7 +920,7 @@ export function ProblemSolver({
                   onClick={handleRunCode}
                   disabled={isRunning}
                   variant="outline"
-                  className="border-green-500/30 text-green-400 hover:bg-green-500/10 text-sm h-8"
+                  className="border-[#1E1E1E] text-green-400 hover:bg-[#1E1E1E] text-sm h-8"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {isRunning ? 'Running...' : 'Run Code'}
@@ -931,7 +931,7 @@ export function ProblemSolver({
                   onClick={handleRunTests}
                   disabled={isRunning}
                   variant="outline"
-                  className="border-green-500/30 text-green-400 hover:bg-green-500/10 text-sm h-8"
+                  className="border-[#1E1E1E] text-green-400 hover:bg-[#1E1E1E] text-sm h-8"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {isRunning ? 'Running...' : 'Run Tests'}
@@ -940,7 +940,7 @@ export function ProblemSolver({
               {!showResult && (
                 <Button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white text-sm h-8"
+                  className="bg-[#4F8CFF] hover:bg-[#3D7AED] text-white text-sm h-8"
                 >
                   <Send className="w-4 h-4 mr-2" />
                   Submit
@@ -952,11 +952,11 @@ export function ProblemSolver({
           {/* Code Area */}
           <div className="flex-1 overflow-auto p-4">
             {problem.type === 'find' ? (
-              <div className="font-mono text-sm rounded-xl overflow-hidden border border-purple-500/20 p-4" style={{ backgroundColor: '#282C34' }}>
+              <div className="font-mono text-sm rounded-md overflow-hidden border border-[#1E1E1E] p-4" style={{ backgroundColor: '#111' }}>
                 {renderCodeLines()}
               </div>
             ) : (
-              <div className="h-full rounded-xl overflow-hidden border border-purple-500/20" style={{ backgroundColor: '#282C34' }}>
+              <div className="h-full rounded-md overflow-hidden border border-[#1E1E1E]" style={{ backgroundColor: '#111' }}>
                 <Editor
                   key={`editor-${problem.id}`}
                   height="100%"
@@ -984,8 +984,8 @@ export function ProblemSolver({
 
           {/* Terminal Output Panel - Always visible for fix and recall problems */}
           {(problem.type === 'fix' || problem.type === 'recall') && !showResult && (
-            <div className="border-t border-green-500/20 bg-black/90 h-[200px] flex flex-col">
-              <div className="px-4 py-2 bg-green-500/10 border-b border-green-500/20 flex items-center gap-2 shrink-0">
+            <div className="border-t border-[#1E1E1E] bg-[#0B0B0B] h-[200px] flex flex-col">
+              <div className="px-4 py-2 border-b border-[#1E1E1E] flex items-center gap-2 shrink-0">
                 <Terminal className="w-4 h-4 text-green-400" />
                 <span className="text-sm font-medium text-green-400">Terminal Output</span>
                 {isRunning && (
@@ -1000,14 +1000,14 @@ export function ProblemSolver({
               </div>
               <div className="flex-1 p-4 overflow-auto font-mono text-sm">
                 {terminalOutput.length === 0 && !terminalError && !isRunning && (
-                  <span className="text-gray-600 italic">Click "Run Code" to see output...</span>
+                  <span className="text-[#444] italic">Click "Run Code" to see output...</span>
                 )}
                 {isRunning && (
-                  <span className="text-yellow-400">Running code...</span>
+                  <span className="text-[#4F8CFF]">Running code...</span>
                 )}
                 {terminalOutput.map((line, idx) => (
-                  <div key={idx} className="text-gray-300">
-                    {line || <span className="text-gray-600">(empty line)</span>}
+                  <div key={idx} className="text-[#EDEDED]/80">
+                    {line || <span className="text-[#333]">(empty line)</span>}
                   </div>
                 ))}
                 {terminalError && (
@@ -1020,13 +1020,13 @@ export function ProblemSolver({
                   </div>
                 )}
                 {problem.expectedOutput && !terminalError && terminalOutput.length > 0 && (
-                  <div className="mt-2 pt-2 border-t border-cyan-500/20">
+                  <div className="mt-2 pt-2 border-t border-[#1E1E1E]">
                     {terminalOutput.join('\n').trim() === problem.expectedOutput.trim() ? (
-                      <span className="text-green-400">✅ Output matches expected!</span>
+                      <span className="text-green-400 text-xs">Output matches expected</span>
                     ) : (
                       <>
-                        <span className="text-yellow-400">⚠ Output differs from expected</span>
-                        <div className="text-gray-500 text-xs mt-1">
+                        <span className="text-yellow-400 text-xs">Output differs from expected</span>
+                        <div className="text-[#555] text-xs mt-1">
                           Expected: {problem.expectedOutput}
                         </div>
                       </>
@@ -1039,13 +1039,13 @@ export function ProblemSolver({
 
           {/* Results Panel */}
           {showResult && submissionResult && (
-            <div className="border-t border-purple-500/20 bg-white/5 max-h-[300px] overflow-auto">
+            <div className="border-t border-[#1E1E1E] bg-[#111] max-h-[300px] overflow-auto">
               <div className="p-4 space-y-4">
                 {/* Score */}
-                <div className={`p-4 rounded-xl ${
-                  submissionResult.passed 
-                    ? 'bg-green-500/10 border border-green-500/30' 
-                    : 'bg-red-500/10 border border-red-500/30'
+                <div className={`p-4 rounded-md ${
+                  submissionResult.passed
+                    ? 'bg-green-500/5 border border-green-500/20'
+                    : 'bg-red-500/5 border border-red-500/20'
                 }`}>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className={`text-lg font-semibold ${
@@ -1071,7 +1071,7 @@ export function ProblemSolver({
                   )}
                   
                   {(hasUsedHint || hasViewedSolution) && submissionResult.passed && (
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-[#555] mt-2">
                       {hasUsedHint && `Hint used: -${hintPenalty} pts`}
                       {hasUsedHint && hasViewedSolution && ' • '}
                       {hasViewedSolution && `Solution viewed: -${solutionPenalty} pts`}
@@ -1116,7 +1116,7 @@ export function ProblemSolver({
                     <Button
                       onClick={handleRetry}
                       variant="outline"
-                      className="border-purple-500/30 text-gray-400 hover:bg-purple-500/10 hover:text-white"
+                      className="border-[#1E1E1E] text-[#888] hover:bg-[#1E1E1E] hover:text-[#EDEDED]"
                     >
                       <RotateCcw className="w-4 h-4 mr-2" />
                       Retry
@@ -1125,7 +1125,7 @@ export function ProblemSolver({
                   {hasNext && (
                     <Button
                       onClick={onNext}
-                      className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white"
+                      className="bg-[#4F8CFF] hover:bg-[#3D7AED] text-white"
                     >
                       Next
                       <ChevronRight className="w-4 h-4 ml-2" />

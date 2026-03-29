@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Zap } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 type AuthResult = { success: boolean; error?: string };
 
@@ -77,178 +75,148 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setPassword('');
   };
 
-  // ---- LOGIN FORM ----
+  const inputClass = "bg-[#111] border-[#1E1E1E] text-[#EDEDED] placeholder:text-[#444] focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/20 rounded-md h-10";
+
   if (isLogin) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 grid-bg">
-        <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-        <Card className="w-full max-w-md glass-card relative z-10">
-          <CardHeader className="text-center space-y-6">
-            <div className="flex justify-center">
-              <img
-                src="/logo.png"
-                alt="VibeClub"
-                className="w-24 h-24 object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]"
-              />
-            </div>
-            <div>
-              <CardTitle className="text-4xl font-bold gradient-text mb-2">VibeClub</CardTitle>
-              <CardDescription className="text-gray-400 text-lg">Welcome back, Islander</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLoginSubmit} className="space-y-5">
-              {error && (
-                <Alert className="bg-red-500/10 border-red-500/30 text-red-400">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Username</label>
-                <Input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
-                  className="bg-black/30 border-purple-500/30 text-white placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">Password</label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="bg-black/30 border-purple-500/30 text-white placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-500 hover:from-purple-500 hover:via-cyan-500 hover:to-cyan-400 text-white font-semibold btn-glow transition-all duration-300"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</>
-                ) : (
-                  'Enter the Club'
-                )}
-              </Button>
-
-              <div className="text-center pt-2">
-                <button type="button" onClick={switchToRegister} className="text-sm text-purple-400 hover:text-cyan-400 transition-colors">
-                  New here? Join with your Islander email
-                </button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // ---- REGISTER FORM ----
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 grid-bg">
-      <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
-
-      <Card className="w-full max-w-md glass-card relative z-10">
-        <CardHeader className="text-center space-y-6">
-          <div className="flex justify-center">
-            <img
-              src="/logo.png"
-              alt="VibeClub"
-              className="w-24 h-24 object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]"
-            />
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0B0B0B]">
+        <div className="w-full max-w-sm">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="font-mono text-lg font-bold text-[#4F8CFF] mb-1">&lt;v/&gt;</div>
+            <h1 className="text-xl font-semibold text-[#EDEDED] mb-1">vibeclub</h1>
+            <p className="text-[#555] text-sm">Welcome back</p>
           </div>
-          <div>
-            <CardTitle className="text-2xl font-bold text-white mb-2">Join VibeClub</CardTitle>
-            <CardDescription className="text-gray-400">
-              Exclusively for TAMUCC students
-            </CardDescription>
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-cyan-400">140 Problems &bull; 3 Modes &bull; TAMUCC Only</span>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleRegisterSubmit} className="space-y-5">
+
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
             {error && (
-              <Alert className="bg-red-500/10 border-red-500/30 text-red-400">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+              <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-md px-3 py-2">
+                {error}
+              </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Islander Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="yourname@islander.tamucc.edu"
-                className="bg-black/30 border-purple-500/30 text-white placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
-                required
-              />
-              <p className="text-xs text-gray-600">@islander.tamucc.edu or @tamucc.edu</p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Username</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-[#888]">Username</label>
               <Input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Choose a username"
-                className="bg-black/30 border-purple-500/30 text-white placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
+                placeholder="Enter your username"
+                className={inputClass}
                 required
-                minLength={3}
               />
-              <p className="text-xs text-gray-600">At least 3 characters</p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">Password</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-[#888]">Password</label>
               <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Choose a password"
-                className="bg-black/30 border-purple-500/30 text-white placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
+                placeholder="Enter your password"
+                className={inputClass}
                 required
-                minLength={6}
               />
-              <p className="text-xs text-gray-600">At least 6 characters</p>
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-500 hover:from-purple-500 hover:via-cyan-500 hover:to-cyan-400 text-white font-semibold btn-glow transition-all duration-300"
+              className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-10 rounded-md"
               disabled={isLoading}
             >
               {isLoading ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Creating account...</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</>
               ) : (
-                'Join the Club'
+                'Sign in'
               )}
             </Button>
 
-            <div className="text-center pt-2">
-              <button type="button" onClick={switchToLogin} className="text-sm text-purple-400 hover:text-cyan-400 transition-colors">
-                Already have an account? Sign in
+            <div className="text-center">
+              <button type="button" onClick={switchToRegister} className="text-xs text-[#555] hover:text-[#4F8CFF] transition-colors">
+                New here? Create an account
               </button>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0B0B0B]">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="font-mono text-lg font-bold text-[#4F8CFF] mb-1">&lt;v/&gt;</div>
+          <h1 className="text-xl font-semibold text-[#EDEDED] mb-1">Join vibeclub</h1>
+          <p className="text-[#555] text-sm">TAMUCC students only</p>
+        </div>
+
+        <form onSubmit={handleRegisterSubmit} className="space-y-4">
+          {error && (
+            <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-md px-3 py-2">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#888]">Islander email</label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@islander.tamucc.edu"
+              className={inputClass}
+              required
+            />
+            <p className="text-[10px] text-[#444]">@islander.tamucc.edu or @tamucc.edu</p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#888]">Username</label>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Choose a username"
+              className={inputClass}
+              required
+              minLength={3}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-[#888]">Password</label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="At least 6 characters"
+              className={inputClass}
+              required
+              minLength={6}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-[#4F8CFF] hover:bg-[#3D7AED] text-white font-medium h-10 rounded-md"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Creating account...</>
+            ) : (
+              'Create account'
+            )}
+          </Button>
+
+          <div className="text-center">
+            <button type="button" onClick={switchToLogin} className="text-xs text-[#555] hover:text-[#4F8CFF] transition-colors">
+              Already have an account? Sign in
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

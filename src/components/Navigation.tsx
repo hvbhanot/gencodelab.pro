@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Code2, Lightbulb, Zap, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavigationProps {
@@ -10,67 +10,57 @@ interface NavigationProps {
 
 export function Navigation({ currentUser, totalPoints, onLogout }: NavigationProps) {
   const location = useLocation();
-  
+
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
-    { path: '/problems', label: 'Problems', icon: Code2 },
-    { path: '/tips', label: 'Vibe Tips', icon: Lightbulb },
-  ];
-
   return (
-    <header className="sticky top-0 z-50 glass-card border-b border-purple-500/20">
-      <div className="max-w-7xl mx-auto px-6 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/problems" className="flex items-center gap-3 group">
-            <img 
-              src="/logo.png" 
-              alt="VibeClub" 
-              className="w-10 h-10 object-contain"
-            />
-            <span className="text-xl font-bold gradient-text">VibeClub</span>
+    <header className="sticky top-0 z-50 bg-[#0B0B0B] border-b border-[#1E1E1E]">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/problems" className="flex items-center gap-2">
+          <span className="font-mono text-sm font-bold text-[#4F8CFF]">&lt;v/&gt;</span>
+          <span className="text-sm font-semibold text-[#EDEDED]">vibeclub</span>
+        </Link>
+
+        {/* Navigation */}
+        <nav className="flex items-center gap-1">
+          <Link
+            to="/problems"
+            className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+              isActive('/problems') || isActive('/')
+                ? 'text-[#EDEDED] bg-[#1E1E1E]'
+                : 'text-[#666] hover:text-[#EDEDED]'
+            }`}
+          >
+            Problems
           </Link>
+          <Link
+            to="/tips"
+            className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+              isActive('/tips')
+                ? 'text-[#EDEDED] bg-[#1E1E1E]'
+                : 'text-[#666] hover:text-[#EDEDED]'
+            }`}
+          >
+            Tips
+          </Link>
+        </nav>
 
-          {/* Navigation */}
-          <nav className="flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  isActive(item.path)
-                    ? 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-purple-500/30'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <item.icon className={`w-4 h-4 ${isActive(item.path) ? 'text-cyan-400' : ''}`} />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* User Stats & Logout */}
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm">
-                <span className="text-cyan-400 font-semibold">{totalPoints}</span>
-                <span className="text-gray-500"> pts</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-400">{currentUser}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onLogout}
-                className="text-gray-400 hover:text-white hover:bg-white/10"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+        {/* User */}
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-mono text-[#666]">
+            <span className="text-[#4F8CFF]">{totalPoints}</span> pts
+          </span>
+          <div className="w-px h-4 bg-[#1E1E1E]" />
+          <span className="text-sm text-[#666]">{currentUser}</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onLogout}
+            className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-8 w-8"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </Button>
         </div>
       </div>
     </header>

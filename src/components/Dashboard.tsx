@@ -1,17 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  LogOut, 
+import {
   CheckCircle2,
   Circle,
-  Trophy,
   Shuffle,
-  Bug,
-  Code2,
-  Shield,
-  Zap
+  LogOut,
 } from 'lucide-react';
 import { problems as allProblems } from '@/data/problems';
 import type { Problem, Difficulty, UserProgress, Category } from '@/types';
@@ -31,16 +24,6 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
-
-const getCategoryIcon = (category: Category) => {
-  switch (category) {
-    case 'security': return <Shield className="w-3 h-3" />;
-    case 'performance': return <Zap className="w-3 h-3" />;
-    case 'type': return <Code2 className="w-3 h-3" />;
-    case 'logic': return <Bug className="w-3 h-3" />;
-    default: return <Code2 className="w-3 h-3" />;
-  }
-};
 
 const getCategoryLabel = (category: Category) => {
   const labels: Record<Category, string> = {
@@ -96,97 +79,66 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
     setProblems(shuffleArray(allProblems));
   };
 
-  const getDifficultyColor = (difficulty: Difficulty) => {
+  const getDifficultyBadge = (difficulty: Difficulty) => {
     switch (difficulty) {
-      case 'easy': return 'text-[#3fb950] bg-[#238636]/20 border-[#238636]/40';
-      case 'medium': return 'text-[#d29922] bg-[#d29922]/20 border-[#d29922]/40';
-      case 'hard': return 'text-[#da3633] bg-[#da3633]/20 border-[#da3633]/40';
+      case 'easy': return 'badge-easy';
+      case 'medium': return 'badge-medium';
+      case 'hard': return 'badge-hard';
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1117]">
-      {/* Header */}
-      <header className="border-b border-[#30363d] bg-[#161b22]">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-[#58a6ff] to-[#238636]">
-                <Search className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="text-xl font-bold text-[#c9d1d9]">TraceBack</span>
-                <span className="ml-3 text-xs text-[#6e7681]">Production Debugging Simulator</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-[#8b949e]">
-                <Trophy className="w-4 h-4 text-[#58a6ff]" />
-                <span className="text-sm">{stats.total.solved} / {stats.total.total}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-[#8b949e]">{currentUser}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onLogout}
-                  className="text-[#8b949e] hover:text-[#c9d1d9] hover:bg-[#30363d]"
-                >
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#0B0B0B]">
+      <header className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm font-bold text-[#4F8CFF]">&lt;v/&gt;</span>
+            <span className="text-sm font-semibold text-[#EDEDED]">vibeclub</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-[#555]">{stats.total.solved} / {stats.total.total}</span>
+            <span className="text-sm text-[#666]">{currentUser}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onLogout}
+              className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-8 w-8"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </Button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Stats Bar */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex gap-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#238636]/20 flex items-center justify-center">
-                <span className="text-lg font-bold text-[#3fb950]">{stats.easy.solved}</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium text-[#3fb950]">Easy</div>
-                <div className="text-xs text-[#6e7681]">{stats.easy.total} problems</div>
-              </div>
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex gap-6">
+            <div>
+              <div className="text-lg font-bold text-green-400 font-mono">{stats.easy.solved}<span className="text-[#444] text-xs font-normal">/{stats.easy.total}</span></div>
+              <div className="text-[10px] text-[#555]">Easy</div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#d29922]/20 flex items-center justify-center">
-                <span className="text-lg font-bold text-[#d29922]">{stats.medium.solved}</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium text-[#d29922]">Medium</div>
-                <div className="text-xs text-[#6e7681]">{stats.medium.total} problems</div>
-              </div>
+            <div>
+              <div className="text-lg font-bold text-yellow-400 font-mono">{stats.medium.solved}<span className="text-[#444] text-xs font-normal">/{stats.medium.total}</span></div>
+              <div className="text-[10px] text-[#555]">Medium</div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#da3633]/20 flex items-center justify-center">
-                <span className="text-lg font-bold text-[#da3633]">{stats.hard.solved}</span>
-              </div>
-              <div>
-                <div className="text-sm font-medium text-[#da3633]">Hard</div>
-                <div className="text-xs text-[#6e7681]">{stats.hard.total} problems</div>
-              </div>
+            <div>
+              <div className="text-lg font-bold text-red-400 font-mono">{stats.hard.solved}<span className="text-[#444] text-xs font-normal">/{stats.hard.total}</span></div>
+              <div className="text-[10px] text-[#555]">Hard</div>
             </div>
           </div>
-
           <Button
-            variant="outline"
+            variant="ghost"
+            size="sm"
             onClick={handleReshuffle}
-            className="border-[#30363d] text-[#8b949e] hover:bg-[#30363d] hover:text-[#c9d1d9]"
+            className="text-[#555] hover:text-[#4F8CFF]"
           >
-            <Shuffle className="w-4 h-4 mr-2" />
-            Shuffle Order
+            <Shuffle className="w-3.5 h-3.5 mr-2" />
+            Shuffle
           </Button>
         </div>
 
-        {/* Problem List */}
-        <div className="border border-[#30363d] rounded-lg overflow-hidden">
-          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-[#161b22] border-b border-[#30363d] text-sm text-[#8b949e]">
+        <div className="rounded-lg border border-[#1E1E1E] overflow-hidden">
+          <div className="grid grid-cols-12 gap-4 px-5 py-2.5 bg-[#111] border-b border-[#1E1E1E] text-[10px] text-[#444] uppercase tracking-wider">
             <div className="col-span-1">Status</div>
             <div className="col-span-1">#</div>
             <div className="col-span-5">Title</div>
@@ -195,61 +147,44 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
             <div className="col-span-2 text-right">Difficulty</div>
           </div>
 
-          <div className="divide-y divide-[#30363d]">
+          <div className="divide-y divide-[#1E1E1E]">
             {problems.map(problem => {
               const progress = userProgress.problems[problem.id];
               const isSolved = progress?.solved;
-              const bestScore = progress?.bestScore || 0;
 
               return (
                 <div
                   key={problem.id}
                   onClick={() => onSelectProblem(problem)}
-                  className="grid grid-cols-12 gap-4 px-6 py-4 bg-[#0d1117] hover:bg-[#161b22] transition-colors cursor-pointer group items-center"
+                  className="grid grid-cols-12 gap-4 px-5 py-3 hover:bg-[#141414] transition-colors cursor-pointer group items-center"
                 >
                   <div className="col-span-1">
                     {isSolved ? (
-                      <CheckCircle2 className="w-5 h-5 text-[#3fb950]" />
+                      <CheckCircle2 className="w-4 h-4 text-green-400" />
                     ) : (
-                      <Circle className="w-5 h-5 text-[#30363d]" />
+                      <Circle className="w-4 h-4 text-[#2A2A2A]" />
                     )}
                   </div>
-
-                  <div className="col-span-1 text-[#6e7681] font-mono text-sm">
+                  <div className="col-span-1 text-[#444] font-mono text-xs">
                     {problem.id.toString().padStart(3, '0')}
                   </div>
-
-                  <div className={`col-span-5 font-medium ${
-                    isSolved ? 'text-[#3fb950]' : 'text-[#c9d1d9] group-hover:text-[#58a6ff]'
+                  <div className={`col-span-5 text-sm ${
+                    isSolved ? 'text-[#666]' : 'text-[#EDEDED]/80 group-hover:text-[#EDEDED]'
                   } transition-colors`}>
                     {problem.title}
-                    {isSolved && (
-                      <span className="ml-2 text-xs text-[#6e7681]">{bestScore}%</span>
-                    )}
                   </div>
-
                   <div className="col-span-2">
-                    <Badge 
-                      variant="outline" 
-                      className="border-[#30363d] text-[#8b949e] bg-transparent text-xs flex items-center gap-1 w-fit"
-                    >
-                      {getCategoryIcon(problem.category)}
+                    <span className="text-[10px] text-[#555] border border-[#1E1E1E] rounded px-1.5 py-0.5">
                       {getCategoryLabel(problem.category)}
-                    </Badge>
+                    </span>
                   </div>
-
                   <div className="col-span-1">
-                    <span className={`text-xs ${
-                      problem.type === 'find' ? 'text-[#58a6ff]'
-                        : problem.type === 'recall' ? 'text-[#3fb950]'
-                        : 'text-[#a371f7]'
-                    }`}>
+                    <span className="text-[10px] text-[#555]">
                       {problem.type === 'find' ? 'Find' : problem.type === 'recall' ? 'Recall' : 'Fix'}
                     </span>
                   </div>
-
                   <div className="col-span-2 text-right">
-                    <span className={`text-sm font-medium px-3 py-1 rounded-full border ${getDifficultyColor(problem.difficulty)}`}>
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
                       {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
                     </span>
                   </div>
