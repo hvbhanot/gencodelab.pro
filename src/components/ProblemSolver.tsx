@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertDescription } from '@/components/ui/alert';
+
 import Editor from '@monaco-editor/react';
 import type { Monaco } from '@monaco-editor/react';
 import { 
@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   Sparkles,
   Play,
-  Terminal
+  Terminal,
+  Bug
 } from 'lucide-react';
 import type { Problem, Difficulty, ProblemProgress, SubmissionResult } from '@/types';
 
@@ -814,24 +815,51 @@ export function ProblemSolver({
               <div className="space-y-4">
                 {!showHint ? (
                   <div className="text-center py-16">
-                    <Lightbulb className="w-12 h-12 text-[#333] mx-auto mb-6" />
-                    <p className="text-[#666] mb-2 text-sm">Stuck? Get a hint to point you in the right direction.</p>
-                    <p className="text-[#22C55E] text-xs mb-6">Using a hint reduces max points by {hintPenalty}</p>
+                    <div className="w-14 h-14 rounded-xl bg-[#FBBF24]/10 border border-[#FBBF24]/20 flex items-center justify-center mx-auto mb-5">
+                      <Lightbulb className="w-6 h-6 text-[#FBBF24]" />
+                    </div>
+                    <h3 className="text-base font-semibold text-[#E4E4E7] mb-2">Need a nudge?</h3>
+                    <p className="text-sm text-[#A1A1AA] mb-1 max-w-xs mx-auto">
+                      Hints give you a direction to investigate without revealing the answer.
+                    </p>
+                    <p className="text-xs text-[#FBBF24] mb-6">
+                      Using a hint costs {hintPenalty} of your {maxPoints} possible points
+                    </p>
                     <Button
                       onClick={handleUseHint}
-                      className="bg-[#22C55E] hover:bg-[#16A34A] text-white"
+                      className="bg-[#FBBF24] hover:bg-[#F59E0B] text-black font-semibold"
                     >
                       <Lightbulb className="w-4 h-4 mr-2" />
                       Reveal Hint (-{hintPenalty} pts)
                     </Button>
                   </div>
                 ) : (
-                  <div className="p-4 bg-[#111] border border-[#1C1C1F] rounded-md">
-                    <div className="flex items-start gap-3">
-                      <Lightbulb className="w-5 h-5 text-[#22C55E] mt-0.5" />
-                      <AlertDescription className="text-[#EDEDED]/80">
-                        {problem.hint}
-                      </AlertDescription>
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-[#FBBF24]" />
+                      <h3 className="text-sm font-semibold text-[#FBBF24]">Hint</h3>
+                    </div>
+
+                    <div className="p-4 bg-[#FBBF24]/5 border border-[#FBBF24]/15 rounded-lg">
+                      <p className="text-sm text-[#E4E4E7] leading-relaxed">{problem.hint}</p>
+                    </div>
+
+                    <div className="p-4 bg-[#0C0C0E] border border-[#1C1C1F] rounded-lg">
+                      <h4 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3">Questions to ask yourself</h4>
+                      <ul className="space-y-2.5">
+                        <li className="flex items-start gap-2.5 text-sm text-[#A1A1AA]">
+                          <ChevronRight className="w-3.5 h-3.5 text-[#FBBF24] mt-0.5 shrink-0" />
+                          <span>What does this code assume about its inputs?</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 text-sm text-[#A1A1AA]">
+                          <ChevronRight className="w-3.5 h-3.5 text-[#FBBF24] mt-0.5 shrink-0" />
+                          <span>What would happen with edge cases or unexpected values?</span>
+                        </li>
+                        <li className="flex items-start gap-2.5 text-sm text-[#A1A1AA]">
+                          <ChevronRight className="w-3.5 h-3.5 text-[#FBBF24] mt-0.5 shrink-0" />
+                          <span>Is there a Python-specific behavior being misused here?</span>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -842,44 +870,111 @@ export function ProblemSolver({
               <div className="space-y-4">
                 {!showSolution ? (
                   <div className="text-center py-16">
-                    <BookOpen className="w-12 h-12 text-[#333] mx-auto mb-6" />
-                    <p className="text-[#666] mb-2 text-sm">View the complete solution with explanations.</p>
-                    <p className="text-red-400 text-xs mb-6">Viewing solution reduces max points by {solutionPenalty}</p>
+                    <div className="w-14 h-14 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-5">
+                      <BookOpen className="w-6 h-6 text-[#F87171]" />
+                    </div>
+                    <h3 className="text-base font-semibold text-[#E4E4E7] mb-2">View the full lesson</h3>
+                    <p className="text-sm text-[#A1A1AA] mb-1 max-w-xs mx-auto">
+                      See what went wrong, why it matters, and the correct approach — explained step by step.
+                    </p>
+                    <p className="text-xs text-[#F87171] mb-6">
+                      Viewing costs {solutionPenalty} of your {maxPoints} possible points
+                    </p>
                     <Button
                       onClick={handleShowSolution}
                       variant="outline"
-                      className="border-[#1C1C1F] text-[#888] hover:bg-[#1C1C1F] hover:text-[#EDEDED]"
+                      className="border-red-500/20 text-[#F87171] hover:bg-red-500/10 hover:text-[#F87171]"
                     >
                       <BookOpen className="w-4 h-4 mr-2" />
                       Show Solution (-{solutionPenalty} pts)
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-medium text-[#EDEDED] mb-3">Bug Locations & Explanations</h3>
-                      {problem.bugLines.length > 0 ? (
-                        problem.bugLines.map(line => (
-                          <div key={line} className="p-4 rounded-md mb-3 bg-[#111] border border-[#1C1C1F]">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-red-400 font-mono text-sm">Line {line}</span>
-                            </div>
-                            <p className="text-[#888] text-sm leading-relaxed">{problem.bugExplanations[line]}</p>
+                  <div className="space-y-6">
+                    {/* Section 1: What went wrong */}
+                    {problem.bugLines.length > 0 ? (
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 rounded-md bg-[#F87171]/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#F87171]">1</span>
                           </div>
-                        ))
-                      ) : (
-                        <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-md">
-                          <p className="text-green-400">This code has no bugs! It was a test of careful reading.</p>
+                          <h3 className="text-sm font-semibold text-[#E4E4E7]">What went wrong</h3>
                         </div>
-                      )}
+                        {problem.bugLines.map(line => (
+                          <div key={line} className="mb-4 rounded-lg border border-[#1C1C1F] overflow-hidden">
+                            <div className="px-4 py-2 bg-[#F87171]/5 border-b border-[#1C1C1F] flex items-center gap-2">
+                              <Bug className="w-3.5 h-3.5 text-[#F87171]" />
+                              <span className="text-xs font-semibold text-[#F87171] font-mono">Line {line}</span>
+                            </div>
+                            <div className="p-4">
+                              <p className="text-sm text-[#A1A1AA] leading-relaxed">{problem.bugExplanations[line]}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 rounded-md bg-[#22C55E]/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#22C55E]">1</span>
+                          </div>
+                          <h3 className="text-sm font-semibold text-[#E4E4E7]">No bugs here</h3>
+                        </div>
+                        <div className="p-4 bg-[#22C55E]/5 border border-[#22C55E]/15 rounded-lg">
+                          <p className="text-sm text-[#A1A1AA] leading-relaxed">
+                            This code has no bugs — it was a test of careful reading. In real code reviews,
+                            not every file has issues. Knowing when code is correct is just as important as
+                            finding what's wrong.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Section 2: Why it matters */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 rounded-md bg-[#FBBF24]/10 flex items-center justify-center">
+                          <span className="text-xs font-bold text-[#FBBF24]">2</span>
+                        </div>
+                        <h3 className="text-sm font-semibold text-[#E4E4E7]">Why this matters</h3>
+                      </div>
+                      <div className="p-4 bg-[#0C0C0E] border border-[#1C1C1F] rounded-lg">
+                        <p className="text-sm text-[#A1A1AA] leading-relaxed">
+                          {problem.category === 'security' && 'Security bugs like this can expose user data, enable injection attacks, or bypass authentication. In production, these are the bugs that make headlines.'}
+                          {problem.category === 'type' && 'Type errors are the most common class of Python bugs. They silently pass in development but crash in production when real data hits unexpected code paths.'}
+                          {problem.category === 'logic' && 'Logic bugs are insidious because the code runs without errors — it just produces wrong results. These are the hardest to catch in code review and the most expensive to fix in production.'}
+                          {problem.category === 'scope' && 'Scope bugs come from misunderstanding how Python resolves variable names. They cause data to leak between function calls or disappear unexpectedly.'}
+                          {problem.category === 'pitfall' && 'Python pitfalls are language-specific traps that catch even experienced developers. Understanding these makes you fluent in Python, not just familiar with it.'}
+                          {problem.category === 'performance' && 'Performance bugs don\'t crash your app — they make it slow. In production with thousands of users, an O(n²) loop or unnecessary allocation can bring down your entire service.'}
+                          {problem.category === 'concurrency' && 'Concurrency bugs are among the hardest to debug because they\'re non-deterministic. They work fine in testing and fail randomly in production under load.'}
+                          {problem.category === 'algorithm' && 'Algorithm bugs produce wrong results for specific inputs. They often pass basic tests but fail on edge cases, making them dangerous in production.'}
+                          {problem.category === 'syntax' && 'Syntax traps in Python look correct at a glance but behave differently than expected. Knowing these separates Python experts from beginners.'}
+                          {problem.category === 'edge-case' && 'Edge case bugs hide in the boundaries — empty inputs, zero values, None, single elements. Production data is messy, and these cases always show up.'}
+                          {problem.category === 'oop' && 'OOP bugs come from misunderstanding inheritance, method resolution, or class vs instance attributes. They create subtle, hard-to-trace behavior.'}
+                          {problem.category === 'advanced' && 'Advanced Python features like decorators, generators, and metaclasses are powerful but error-prone. Misusing them creates bugs that are very hard to diagnose.'}
+                        </p>
+                      </div>
                     </div>
+
+                    {/* Section 3: The correct code */}
                     {problem.fixedCode && (
-                      <>
-                        <h3 className="text-sm font-medium text-[#EDEDED] mt-6 mb-3">Fixed Code</h3>
-                        <div className="code-block p-4 overflow-x-auto">
-                          <pre className="text-sm text-gray-300">
-                            <code>{problem.fixedCode}</code>
-                          </pre>
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="w-6 h-6 rounded-md bg-[#22C55E]/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-[#22C55E]">3</span>
+                          </div>
+                          <h3 className="text-sm font-semibold text-[#E4E4E7]">The correct approach</h3>
+                        </div>
+                        <div className="rounded-lg border border-[#1C1C1F] overflow-hidden">
+                          <div className="px-4 py-2 bg-[#111113] border-b border-[#1C1C1F] flex items-center gap-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#22C55E]" />
+                            <span className="text-xs text-[#52525B] font-mono">fixed_code.py</span>
+                          </div>
+                          <div className="p-4 bg-[#0C0C0E] overflow-x-auto">
+                            <pre className="text-[13px] text-[#D4D4D8] font-mono leading-6">
+                              <code>{problem.fixedCode}</code>
+                            </pre>
+                          </div>
                         </div>
                         {(problem.type === 'fix' || problem.type === 'recall') && (
                           <Button
@@ -887,14 +982,31 @@ export function ProblemSolver({
                               setFixedCode(problem.fixedCode!);
                               setActiveTab('description');
                             }}
-                            className="mt-4 bg-[#22C55E] hover:bg-[#16A34A] text-white"
+                            className="mt-4 bg-[#22C55E] hover:bg-[#16A34A] text-black font-semibold"
                           >
                             <CheckCircle2 className="w-4 h-4 mr-2" />
-                            Apply Solution to Editor
+                            Apply to Editor
                           </Button>
                         )}
-                      </>
+                      </div>
                     )}
+
+                    {/* Section 4: Key takeaway */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-6 h-6 rounded-md bg-[#A78BFA]/10 flex items-center justify-center">
+                          <span className="text-xs font-bold text-[#A78BFA]">4</span>
+                        </div>
+                        <h3 className="text-sm font-semibold text-[#E4E4E7]">Key takeaway</h3>
+                      </div>
+                      <div className="p-4 bg-[#A78BFA]/5 border border-[#A78BFA]/15 rounded-lg">
+                        <p className="text-sm text-[#A1A1AA] leading-relaxed">
+                          {problem.difficulty === 'easy' && 'This is a foundational concept. If you got it wrong, don\'t worry — now you know the pattern. You\'ll recognize it instantly next time.'}
+                          {problem.difficulty === 'medium' && 'This requires deeper Python knowledge. Understanding this pattern will help you write more robust code and catch similar issues in code reviews.'}
+                          {problem.difficulty === 'hard' && 'This is an advanced concept that trips up even senior developers. Mastering it puts you ahead of most Python programmers.'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

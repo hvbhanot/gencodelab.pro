@@ -50,17 +50,17 @@ export function TipsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B]">
+    <div className="min-h-screen bg-[#09090B]">
       {/* Hero */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0" />
         <div className="relative max-w-5xl mx-auto px-6 py-12 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 mb-6">
-            <BookOpen className="w-4 h-4 text-[#4F8CFF]" />
-            <span className="text-sm text-[#4F8CFF]">The Complete Guide</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20 mb-6">
+            <BookOpen className="w-4 h-4 text-[#22C55E]" />
+            <span className="text-sm text-[#22C55E]">The Complete Guide</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-[#4F8CFF]">
+            <span className="text-[#22C55E]">
               Vibe Coding Documentation
             </span>
           </h1>
@@ -88,7 +88,7 @@ export function TipsPage() {
                 onClick={() => scrollToSection(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left ${
                   activeSection === item.id
-                    ? 'bg-[#4F8CFF]/10 text-[#4F8CFF] border-l-2 border-[#4F8CFF]'
+                    ? 'bg-[#22C55E]/10 text-[#22C55E] border-l-2 border-[#22C55E]'
                     : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
                 }`}
               >
@@ -114,12 +114,12 @@ export function TipsPage() {
               </DocParagraph>
               <Callout type="info" title="What you will learn">
                 <ul className="space-y-2">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> The philosophy behind vibe coding and why it works</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> How to read code effectively and build strong mental models</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> A step-by-step workflow you can follow for any coding task</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> How to write effective AI prompts for coding assistance</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Debugging techniques that actually work</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Security-first thinking for every line you write</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> The philosophy behind vibe coding and why it works</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> How to read code effectively and build strong mental models</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> A step-by-step workflow you can follow for any coding task</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> How to write effective AI prompts for coding assistance</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Debugging techniques that actually work</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Security-first thinking for every line you write</li>
                 </ul>
               </Callout>
               <DocParagraph>
@@ -148,7 +148,7 @@ export function TipsPage() {
               <StepBlock step={2} title="Understanding beats memorization">
                 You do not need to memorize every method in every library. Instead, understand the
                 underlying concepts — data flow, state management, error handling, separation of concerns.
-                When you understand the <em className="text-[#4F8CFF]">why</em>, the <em className="text-[#4F8CFF]">how</em> follows naturally.
+                When you understand the <em className="text-[#22C55E]">why</em>, the <em className="text-[#22C55E]">how</em> follows naturally.
               </StepBlock>
 
               <StepBlock step={3} title="Flow state is the goal">
@@ -217,11 +217,11 @@ def process_order(order):
               <StepBlock step={4} title="Ask critical questions">
                 As you read, actively question the code:
                 <ul className="mt-3 space-y-1.5 text-gray-400">
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> What happens if this input is None or empty?</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Is there an edge case that is not handled?</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Could this fail silently instead of raising an error?</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Is there a performance concern with this approach?</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#4F8CFF] mt-0.5 flex-shrink-0" /> Does this trust user input when it should not?</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> What happens if this input is None or empty?</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Is there an edge case that is not handled?</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Could this fail silently instead of raising an error?</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Is there a performance concern with this approach?</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" /> Does this trust user input when it should not?</li>
                 </ul>
               </StepBlock>
 
@@ -273,11 +273,11 @@ for i in range(5):
               <StepBlock step={3} title="Map concepts to analogies">
                 Connect abstract concepts to things you already understand:
                 <ul className="mt-3 space-y-2 text-gray-400">
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Stack</strong> — A stack of plates. Last one placed is first one removed.</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Queue</strong> — A line at a store. First in, first out.</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Hash map</strong> — A phone book. Look up a name, get a number instantly.</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Recursion</strong> — Russian nesting dolls. Each doll contains a smaller version of itself.</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">API</strong> — A waiter at a restaurant. Takes your order, brings back what you asked for.</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Stack</strong> — A stack of plates. Last one placed is first one removed.</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Queue</strong> — A line at a store. First in, first out.</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Hash map</strong> — A phone book. Look up a name, get a number instantly.</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Recursion</strong> — Russian nesting dolls. Each doll contains a smaller version of itself.</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">API</strong> — A waiter at a restaurant. Takes your order, brings back what you asked for.</li>
                 </ul>
               </StepBlock>
 
@@ -303,8 +303,8 @@ for i in range(5):
                 Write it down in plain English. What is the input? What is the expected output?
                 What are the edge cases?
                 <Callout type="example" title="Example">
-                  <strong className="text-[#EDEDED]">Task:</strong> "Fix the login bug"<br/>
-                  <strong className="text-[#EDEDED]">Clarified:</strong> "Users with uppercase letters in their email
+                  <strong className="text-[#E4E4E7]">Task:</strong> "Fix the login bug"<br/>
+                  <strong className="text-[#E4E4E7]">Clarified:</strong> "Users with uppercase letters in their email
                   cannot log in because the comparison is case-sensitive. The fix should normalize
                   email to lowercase before comparing."
                 </Callout>
@@ -562,9 +562,9 @@ if not API_KEY:
                 designed to maximize your growth as a developer.
               </DocParagraph>
 
-              <div className="bg-[#141414] border border-[#1E1E1E] rounded-md overflow-hidden">
-                <div className="p-4 bg-green-500/10 border-b border-[#1E1E1E]">
-                  <h3 className="text-lg font-semibold text-[#EDEDED] flex items-center gap-2">
+              <div className="bg-[#111113] border border-[#1C1C1F] rounded-md overflow-hidden">
+                <div className="p-4 bg-green-500/10 border-b border-[#1C1C1F]">
+                  <h3 className="text-lg font-semibold text-[#E4E4E7] flex items-center gap-2">
                     <Zap className="w-5 h-5 text-green-400" />
                     The 30-Minute Daily Routine
                   </h3>
@@ -588,11 +588,11 @@ if not API_KEY:
               <StepBlock step={1} title="Read code from projects you admire">
                 Some great codebases to read:
                 <ul className="mt-3 space-y-1.5 text-gray-400">
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Flask</strong> — Clean, readable Python web framework</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Redis</strong> — Elegant C code with excellent comments</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">React</strong> — Modern JavaScript patterns at scale</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">FastAPI</strong> — Modern Python with excellent type hints</li>
-                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#EDEDED]">Go standard library</strong> — Idiomatic, well-documented Go</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Flask</strong> — Clean, readable Python web framework</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Redis</strong> — Elegant C code with excellent comments</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">React</strong> — Modern JavaScript patterns at scale</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">FastAPI</strong> — Modern Python with excellent type hints</li>
+                  <li className="flex items-start gap-2"><ChevronRight className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" /> <strong className="text-[#E4E4E7]">Go standard library</strong> — Idiomatic, well-documented Go</li>
                 </ul>
               </StepBlock>
 
@@ -663,16 +663,16 @@ if not API_KEY:
 
           {/* CTA */}
           <div className="mt-16 text-center">
-            <div className="bg-[#141414] border border-[#1E1E1E] rounded-lg p-8">
-              <Sparkles className="w-10 h-10 text-[#4F8CFF] mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-[#EDEDED] mb-3">Ready to Practice?</h3>
+            <div className="bg-[#111113] border border-[#1C1C1F] rounded-lg p-8">
+              <Sparkles className="w-10 h-10 text-[#22C55E] mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-[#E4E4E7] mb-3">Ready to Practice?</h3>
               <p className="text-gray-400 mb-6 max-w-lg mx-auto">
                 Theory without practice is just trivia. Start solving real debugging challenges
                 and put everything you have learned into action.
               </p>
               <a
                 href="/problems"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#4F8CFF] hover:bg-[#3D7AED] text-[#EDEDED] font-semibold rounded-md transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#22C55E] hover:bg-[#16A34A] text-[#E4E4E7] font-semibold rounded-md transition-all"
               >
                 Start Debugging
                 <ArrowRight className="w-5 h-5" />
@@ -690,15 +690,15 @@ if not API_KEY:
 
 function ChapterHeader({ number, title, subtitle, color }: { number: number; title: string; subtitle: string; color: string }) {
   const borderColor: Record<string, string> = {
-    purple: 'border-[#4F8CFF]/20',
-    cyan: 'border-[#4F8CFF]/20',
-    green: 'border-[#1E1E1E]',
-    yellow: 'border-[#1E1E1E]',
-    red: 'border-[#1E1E1E]',
+    purple: 'border-[#22C55E]/20',
+    cyan: 'border-[#22C55E]/20',
+    green: 'border-[#1C1C1F]',
+    yellow: 'border-[#1C1C1F]',
+    red: 'border-[#1C1C1F]',
   };
   const numColor: Record<string, string> = {
-    purple: 'text-[#4F8CFF]',
-    cyan: 'text-[#4F8CFF]',
+    purple: 'text-[#22C55E]',
+    cyan: 'text-[#22C55E]',
     green: 'text-green-500',
     yellow: 'text-yellow-500',
     red: 'text-red-500',
@@ -706,7 +706,7 @@ function ChapterHeader({ number, title, subtitle, color }: { number: number; tit
   return (
     <div className={`border-b ${borderColor[color] || borderColor.purple} pb-4`}>
       <span className={`font-mono text-sm ${numColor[color] || numColor.purple}`}>Chapter {String(number).padStart(2, '0')}</span>
-      <h2 className="text-2xl font-bold text-[#EDEDED] mt-1">{title}</h2>
+      <h2 className="text-2xl font-bold text-[#E4E4E7] mt-1">{title}</h2>
       <p className="text-gray-500 text-sm mt-1">{subtitle}</p>
     </div>
   );
@@ -719,10 +719,10 @@ function DocParagraph({ children }: { children: React.ReactNode }) {
 function StepBlock({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
   return (
     <div className="relative pl-10">
-      <div className="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#4F8CFF]/10 border border-[#4F8CFF]/20 flex items-center justify-center">
-        <span className="text-xs font-bold text-[#4F8CFF]">{step}</span>
+      <div className="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#22C55E]/10 border border-[#22C55E]/20 flex items-center justify-center">
+        <span className="text-xs font-bold text-[#22C55E]">{step}</span>
       </div>
-      <h3 className="text-base font-semibold text-[#EDEDED] mb-2">{title}</h3>
+      <h3 className="text-base font-semibold text-[#E4E4E7] mb-2">{title}</h3>
       <div className="text-gray-400 text-[15px] leading-relaxed space-y-3">{children}</div>
     </div>
   );
@@ -730,8 +730,8 @@ function StepBlock({ step, title, children }: { step: number; title: string; chi
 
 function CodeExample({ children }: { children: string }) {
   return (
-    <div className="mt-3 rounded-lg overflow-hidden border border-[#1E1E1E]" style={{ backgroundColor: '#282C34' }}>
-      <div className="px-3 py-1.5 bg-white/5 border-b border-[#1E1E1E] flex items-center gap-2">
+    <div className="mt-3 rounded-lg overflow-hidden border border-[#1C1C1F]" style={{ backgroundColor: '#0C0C0E' }}>
+      <div className="px-3 py-1.5 bg-white/5 border-b border-[#1C1C1F] flex items-center gap-2">
         <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
@@ -744,10 +744,10 @@ function CodeExample({ children }: { children: string }) {
 
 function Callout({ type, title, children }: { type: 'info' | 'tip' | 'warning' | 'quote' | 'example'; title: string; children: React.ReactNode }) {
   const styles: Record<string, { border: string; bg: string; icon: React.ReactNode; titleColor: string }> = {
-    info: { border: 'border-[#4F8CFF]/20', bg: 'bg-[#4F8CFF]/5', icon: <Lightbulb className="w-4 h-4 text-[#4F8CFF]" />, titleColor: 'text-[#4F8CFF]' },
+    info: { border: 'border-[#22C55E]/20', bg: 'bg-[#22C55E]/5', icon: <Lightbulb className="w-4 h-4 text-[#22C55E]" />, titleColor: 'text-[#22C55E]' },
     tip: { border: 'border-green-500/30', bg: 'bg-green-500/5', icon: <CheckCircle2 className="w-4 h-4 text-green-400" />, titleColor: 'text-green-400' },
     warning: { border: 'border-yellow-500/30', bg: 'bg-yellow-500/5', icon: <AlertTriangle className="w-4 h-4 text-yellow-400" />, titleColor: 'text-yellow-400' },
-    quote: { border: 'border-[#4F8CFF]/20', bg: 'bg-[#4F8CFF]/5', icon: <Sparkles className="w-4 h-4 text-[#4F8CFF]" />, titleColor: 'text-[#4F8CFF]' },
+    quote: { border: 'border-[#22C55E]/20', bg: 'bg-[#22C55E]/5', icon: <Sparkles className="w-4 h-4 text-[#22C55E]" />, titleColor: 'text-[#22C55E]' },
     example: { border: 'border-gray-500/30', bg: 'bg-gray-500/5', icon: <Code2 className="w-4 h-4 text-gray-400" />, titleColor: 'text-gray-400' },
   };
   const s = styles[type];
@@ -763,14 +763,14 @@ function Callout({ type, title, children }: { type: 'info' | 'tip' | 'warning' |
 }
 
 function TimeBlock({ time, title, color, children }: { time: string; title: string; color: string; children: React.ReactNode }) {
-  const textColor: Record<string, string> = { cyan: 'text-[#4F8CFF]', purple: 'text-[#4F8CFF]', green: 'text-green-400' };
+  const textColor: Record<string, string> = { cyan: 'text-[#22C55E]', purple: 'text-[#22C55E]', green: 'text-green-400' };
   return (
     <div className="flex gap-4">
       <div className="flex-shrink-0 w-16 text-right">
         <span className={`font-mono text-sm font-bold ${textColor[color] || 'text-gray-400'}`}>{time}</span>
       </div>
-      <div className="flex-1 pb-4 border-b border-[#1E1E1E] last:border-0 last:pb-0">
-        <h4 className="text-[#EDEDED] font-medium text-sm mb-1">{title}</h4>
+      <div className="flex-1 pb-4 border-b border-[#1C1C1F] last:border-0 last:pb-0">
+        <h4 className="text-[#E4E4E7] font-medium text-sm mb-1">{title}</h4>
         <p className="text-gray-500 text-sm leading-relaxed">{children}</p>
       </div>
     </div>
@@ -779,13 +779,13 @@ function TimeBlock({ time, title, color, children }: { time: string; title: stri
 
 function MistakeBlock({ title, number, children }: { title: string; number: number; children: React.ReactNode }) {
   return (
-    <div className="bg-[#141414] border border-[#1E1E1E] rounded-md p-5">
+    <div className="bg-[#111113] border border-[#1C1C1F] rounded-md p-5">
       <div className="flex items-start gap-4">
         <div className="w-8 h-8 rounded-lg bg-yellow-500/15 flex items-center justify-center flex-shrink-0">
           <span className="text-sm font-bold text-yellow-400">{number}</span>
         </div>
         <div>
-          <h3 className="text-[#EDEDED] font-semibold mb-2">{title}</h3>
+          <h3 className="text-[#E4E4E7] font-semibold mb-2">{title}</h3>
           <p className="text-gray-400 text-sm leading-relaxed">{children}</p>
         </div>
       </div>
