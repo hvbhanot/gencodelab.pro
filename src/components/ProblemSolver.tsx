@@ -1018,12 +1018,23 @@ export function ProblemSolver({
         <div className="flex-1 flex flex-col bg-black/30">
           {/* Editor Toolbar */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-[#1C1C1F]">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <span className="text-sm text-[#71717A]">Python</span>
               {problem.type === 'find' && selectedLines.length > 0 && (
-                <span className="text-sm text-purple-400">
+                <span className="text-sm text-[#A1A1AA]">
                   {selectedLines.length} line(s) selected
                 </span>
+              )}
+              {attempts > 0 && (
+                <span className="text-xs text-[#52525B] font-mono">
+                  attempt #{attempts + (showResult ? 0 : 1)}
+                </span>
+              )}
+              {hasUsedHint && !showResult && (
+                <span className="text-xs text-[#FBBF24]/60">hint used</span>
+              )}
+              {hasViewedSolution && !showResult && (
+                <span className="text-xs text-[#F87171]/60">solution viewed</span>
               )}
             </div>
             <div className="flex gap-2">
@@ -1154,7 +1165,7 @@ export function ProblemSolver({
             <div className="border-t border-[#1C1C1F] bg-[#0C0C0E] max-h-[300px] overflow-auto">
               <div className="p-4 space-y-4">
                 {/* Score */}
-                <div className={`p-4 rounded-md ${
+                <div className={`p-4 rounded-lg ${
                   submissionResult.passed
                     ? 'bg-green-500/5 border border-green-500/20'
                     : 'bg-red-500/5 border border-red-500/20'
@@ -1164,29 +1175,53 @@ export function ProblemSolver({
                       submissionResult.passed ? 'text-green-400' : 'text-red-400'
                     }`}>
                       {submissionResult.passed ? (
-                        <><CheckCircle2 className="w-5 h-5 inline mr-2" />Solved! +{submissionResult.score} pts</>
+                        <><CheckCircle2 className="w-5 h-5 inline mr-2" />Solved!</>
                       ) : (
                         <><XCircle className="w-5 h-5 inline mr-2" />Not Quite Right</>
                       )}
                     </h3>
-                    <span className={`text-2xl font-bold ${
+                    <span className={`text-2xl font-bold font-mono ${
                       submissionResult.passed ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {submissionResult.score} pts
+                      {submissionResult.score}/{maxPoints}
                     </span>
                   </div>
-                  
+
+                  {/* Score breakdown */}
+                  <div className="mt-3 space-y-1.5 text-sm">
+                    <div className="flex items-center justify-between text-[#A1A1AA]">
+                      <span>Attempts</span>
+                      <span className="font-mono">{attempts}</span>
+                    </div>
+                    {submissionResult.passed && (
+                      <div className="flex items-center justify-between text-[#A1A1AA]">
+                        <span>Base score</span>
+                        <span className="font-mono text-[#E4E4E7]">{maxPoints} pts</span>
+                      </div>
+                    )}
+                    {hasUsedHint && (
+                      <div className="flex items-center justify-between text-[#FBBF24]">
+                        <span>Hint penalty</span>
+                        <span className="font-mono">-{hintPenalty} pts</span>
+                      </div>
+                    )}
+                    {hasViewedSolution && (
+                      <div className="flex items-center justify-between text-[#F87171]">
+                        <span>Solution viewed</span>
+                        <span className="font-mono">-{solutionPenalty} pts</span>
+                      </div>
+                    )}
+                    {submissionResult.passed && (hasUsedHint || hasViewedSolution) && (
+                      <div className="flex items-center justify-between pt-1.5 border-t border-[#1C1C1F] text-[#22C55E] font-medium">
+                        <span>Final score</span>
+                        <span className="font-mono">{submissionResult.score} pts</span>
+                      </div>
+                    )}
+                  </div>
+
                   {!submissionResult.passed && (
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-[#71717A] mt-3">
                       You must find ALL bugs correctly to earn points. No partial credit.
-                    </p>
-                  )}
-                  
-                  {(hasUsedHint || hasViewedSolution) && submissionResult.passed && (
-                    <p className="text-sm text-[#71717A] mt-2">
-                      {hasUsedHint && `Hint used: -${hintPenalty} pts`}
-                      {hasUsedHint && hasViewedSolution && ' • '}
-                      {hasViewedSolution && `Solution viewed: -${solutionPenalty} pts`}
                     </p>
                   )}
                 </div>
