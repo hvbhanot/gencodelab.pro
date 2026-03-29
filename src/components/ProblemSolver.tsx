@@ -1104,11 +1104,11 @@ export function ProblemSolver({
           {/* Code Area */}
           <div className="flex-1 overflow-auto p-4">
             {problem.type === 'find' ? (
-              <div className="font-mono text-sm rounded-md overflow-hidden border border-[#1C1C1F] p-4" style={{ backgroundColor: '#111' }}>
+              <div className="font-mono text-sm rounded-md overflow-hidden border border-[#1C1C1F] p-4" style={{ backgroundColor: '#0C0C0E' }}>
                 {renderCodeLines()}
               </div>
             ) : (
-              <div className="h-full rounded-md overflow-hidden border border-[#1C1C1F]" style={{ backgroundColor: '#111' }}>
+              <div className="h-full rounded-md overflow-hidden border border-[#1C1C1F]" style={{ backgroundColor: '#0C0C0E' }}>
                 <Editor
                   key={`editor-${problem.id}`}
                   height="100%"

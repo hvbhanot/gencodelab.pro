@@ -98,7 +98,7 @@ export function LeaderboardPage({ currentUser }: LeaderboardPageProps) {
                     <span className={`text-sm font-medium ${isMe ? 'text-[#22C55E]' : 'text-[#E4E4E7]'}`}>
                       {entry.username}
                     </span>
-                    {isMe && <span className="ml-2 text-[10px] text-[#22C55E]/60 uppercase">you</span>}
+                    {isMe && <span className="ml-2 text-xs text-[#22C55E]/60 uppercase">you</span>}
                   </div>
                   <div className="col-span-3 text-right">
                     <span className="text-sm text-[#71717A] font-mono">{entry.solvedCount}</span>

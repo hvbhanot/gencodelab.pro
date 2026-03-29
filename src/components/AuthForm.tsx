@@ -83,7 +83,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setConfirmPassword('');
   };
 
-  const inputClass = "bg-[#111] border-[#222] text-[#E4E4E7] placeholder:text-[#71717A] focus:border-[#22C55E] focus:ring-1 focus:ring-[#22C55E]/20 rounded-md h-11 text-sm";
+  const inputClass = "bg-[#0C0C0E] border-[#222] text-[#E4E4E7] placeholder:text-[#71717A] focus:border-[#22C55E] focus:ring-1 focus:ring-[#22C55E]/20 rounded-md h-11 text-sm";
 
   if (isLogin) {
     return (
@@ -103,7 +103,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#CCC]">Username</label>
+              <label className="text-sm font-medium text-[#D4D4D8]">Username</label>
               <Input
                 type="text"
                 value={username}
@@ -115,7 +115,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[#CCC]">Password</label>
+              <label className="text-sm font-medium text-[#D4D4D8]">Password</label>
               <Input
                 type="password"
                 value={password}
@@ -173,7 +173,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#CCC]">Islander email</label>
+            <label className="text-sm font-medium text-[#D4D4D8]">Islander email</label>
             <Input
               type="email"
               value={email}
@@ -186,7 +186,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#CCC]">Username</label>
+            <label className="text-sm font-medium text-[#D4D4D8]">Username</label>
             <Input
               type="text"
               value={username}
@@ -199,7 +199,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#CCC]">Password</label>
+            <label className="text-sm font-medium text-[#D4D4D8]">Password</label>
             <Input
               type="password"
               value={password}
@@ -212,7 +212,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#CCC]">Confirm password</label>
+            <label className="text-sm font-medium text-[#D4D4D8]">Confirm password</label>
             <Input
               type="password"
               value={confirmPassword}

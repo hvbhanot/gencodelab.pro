@@ -372,7 +372,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
                   <div
                     key={problem.id}
                     onClick={() => handleProblemClick(problem)}
-                    className={`grid grid-cols-12 gap-4 px-5 py-3.5 hover:bg-[#141414] transition-colors cursor-pointer group items-center`}
+                    className={`grid grid-cols-12 gap-4 px-5 py-3.5 hover:bg-[#111113] transition-colors cursor-pointer group items-center`}
                   >
                     <div className="col-span-1">
                       {isSolved ? (
@@ -431,7 +431,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
       {/* Login Prompt Modal */}
       {showLoginPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-          <div className="rounded-lg border border-[#1C1C1F] bg-[#141414] p-8 max-w-sm w-full text-center">
+          <div className="rounded-lg border border-[#1C1C1F] bg-[#111113] p-8 max-w-sm w-full text-center">
             <Lock className="w-8 h-8 text-[#22C55E] mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-[#E4E4E7] mb-2">Sign in required</h3>
             <p className="text-[#71717A] text-sm mb-6">
@@ -440,7 +440,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
             <div className="flex gap-3 justify-center">
               <Button
                 onClick={() => window.location.href = '/'}
-                className="bg-[#22C55E] hover:bg-[#3D7AED] text-white px-5 h-9 rounded-md text-sm"
+                className="bg-[#22C55E] hover:bg-[#16A34A] text-white px-5 h-9 rounded-md text-sm"
               >
                 Sign in
                 <ArrowRight className="w-3.5 h-3.5 ml-2" />
@@ -462,7 +462,7 @@ export function ProblemsPage({ userProgress, onSelectProblem }: ProblemsPageProp
         <>
           <div className="fixed inset-0" style={{ zIndex: 9998 }} onClick={() => setShowCategoryDropdown(false)} />
           <div
-            className="fixed w-44 rounded-md border border-[#1C1C1F] py-1 bg-[#141414] max-h-[400px] overflow-y-auto"
+            className="fixed w-44 rounded-md border border-[#1C1C1F] py-1 bg-[#111113] max-h-[400px] overflow-y-auto"
             style={{ zIndex: 9999, top: dropdownPos.top, left: dropdownPos.left }}
           >
             <button

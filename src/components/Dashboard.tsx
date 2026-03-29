@@ -88,21 +88,21 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B]">
-      <header className="border-b border-[#1E1E1E]">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-sm font-bold text-[#4F8CFF]">&lt;v/&gt;</span>
-            <span className="text-sm font-semibold text-[#EDEDED]">vibeclub</span>
+    <div className="min-h-screen bg-[#09090B]">
+      <header className="border-b border-[#1C1C1F]">
+        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="font-mono text-sm font-bold text-[#22C55E]">&lt;v/&gt;</span>
+            <span className="text-sm font-semibold text-[#E4E4E7]">vibeclub</span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-[#555]">{stats.total.solved} / {stats.total.total}</span>
-            <span className="text-sm text-[#666]">{currentUser}</span>
+            <span className="text-sm text-[#71717A]">{stats.total.solved} / {stats.total.total}</span>
+            <span className="text-sm text-[#A1A1AA]">{currentUser}</span>
             <Button
               variant="ghost"
               size="icon"
               onClick={onLogout}
-              className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1E1E1E] h-8 w-8"
+              className="text-[#71717A] hover:text-[#E4E4E7] hover:bg-white/5 h-8 w-8"
             >
               <LogOut className="w-3.5 h-3.5" />
             </Button>
@@ -110,35 +110,35 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-6">
             <div>
-              <div className="text-lg font-bold text-green-400 font-mono">{stats.easy.solved}<span className="text-[#444] text-xs font-normal">/{stats.easy.total}</span></div>
-              <div className="text-[10px] text-[#555]">Easy</div>
+              <div className="text-lg font-bold text-green-400 font-mono">{stats.easy.solved}<span className="text-[#71717A] text-sm font-normal">/{stats.easy.total}</span></div>
+              <div className="text-xs text-[#A1A1AA]">Easy</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-yellow-400 font-mono">{stats.medium.solved}<span className="text-[#444] text-xs font-normal">/{stats.medium.total}</span></div>
-              <div className="text-[10px] text-[#555]">Medium</div>
+              <div className="text-lg font-bold text-yellow-400 font-mono">{stats.medium.solved}<span className="text-[#71717A] text-sm font-normal">/{stats.medium.total}</span></div>
+              <div className="text-xs text-[#A1A1AA]">Medium</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-red-400 font-mono">{stats.hard.solved}<span className="text-[#444] text-xs font-normal">/{stats.hard.total}</span></div>
-              <div className="text-[10px] text-[#555]">Hard</div>
+              <div className="text-lg font-bold text-red-400 font-mono">{stats.hard.solved}<span className="text-[#71717A] text-sm font-normal">/{stats.hard.total}</span></div>
+              <div className="text-xs text-[#A1A1AA]">Hard</div>
             </div>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReshuffle}
-            className="text-[#555] hover:text-[#4F8CFF]"
+            className="text-[#71717A] hover:text-[#22C55E]"
           >
             <Shuffle className="w-3.5 h-3.5 mr-2" />
             Shuffle
           </Button>
         </div>
 
-        <div className="rounded-lg border border-[#1E1E1E] overflow-hidden">
-          <div className="grid grid-cols-12 gap-4 px-5 py-2.5 bg-[#111] border-b border-[#1E1E1E] text-[10px] text-[#444] uppercase tracking-wider">
+        <div className="rounded-xl border border-[#1C1C1F] overflow-hidden">
+          <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-[#0C0C0E] border-b border-[#1C1C1F] text-xs text-[#71717A] uppercase tracking-wider">
             <div className="col-span-1">Status</div>
             <div className="col-span-1">#</div>
             <div className="col-span-5">Title</div>
@@ -147,7 +147,7 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
             <div className="col-span-2 text-right">Difficulty</div>
           </div>
 
-          <div className="divide-y divide-[#1E1E1E]">
+          <div className="divide-y divide-[#1C1C1F]">
             {problems.map(problem => {
               const progress = userProgress.problems[problem.id];
               const isSolved = progress?.solved;
@@ -156,35 +156,35 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
                 <div
                   key={problem.id}
                   onClick={() => onSelectProblem(problem)}
-                  className="grid grid-cols-12 gap-4 px-5 py-3 hover:bg-[#141414] transition-colors cursor-pointer group items-center"
+                  className="grid grid-cols-12 gap-4 px-5 py-3.5 hover:bg-[#111113] transition-colors cursor-pointer group items-center"
                 >
                   <div className="col-span-1">
                     {isSolved ? (
                       <CheckCircle2 className="w-4 h-4 text-green-400" />
                     ) : (
-                      <Circle className="w-4 h-4 text-[#2A2A2A]" />
+                      <Circle className="w-4 h-4 text-[#3F3F46]" />
                     )}
                   </div>
-                  <div className="col-span-1 text-[#444] font-mono text-xs">
+                  <div className="col-span-1 text-[#71717A] font-mono text-xs">
                     {problem.id.toString().padStart(3, '0')}
                   </div>
                   <div className={`col-span-5 text-sm ${
-                    isSolved ? 'text-[#666]' : 'text-[#EDEDED]/80 group-hover:text-[#EDEDED]'
+                    isSolved ? 'text-[#A1A1AA]' : 'text-[#E4E4E7] group-hover:text-white'
                   } transition-colors`}>
                     {problem.title}
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[10px] text-[#555] border border-[#1E1E1E] rounded px-1.5 py-0.5">
+                    <span className="text-xs text-[#A1A1AA] border border-[#27272A] rounded-md px-2 py-1">
                       {getCategoryLabel(problem.category)}
                     </span>
                   </div>
                   <div className="col-span-1">
-                    <span className="text-[10px] text-[#555]">
+                    <span className="text-xs text-[#A1A1AA]">
                       {problem.type === 'find' ? 'Find' : problem.type === 'recall' ? 'Recall' : 'Fix'}
                     </span>
                   </div>
                   <div className="col-span-2 text-right">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
+                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
                       {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
                     </span>
                   </div>

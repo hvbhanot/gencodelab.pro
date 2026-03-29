@@ -735,7 +735,7 @@ function CodeExample({ children }: { children: string }) {
         <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
         <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-        <span className="text-[10px] text-gray-600 ml-2 font-mono">python</span>
+        <span className="text-xs text-gray-600 ml-2 font-mono">python</span>
       </div>
       <pre className="p-4 text-sm font-mono text-gray-300 overflow-x-auto leading-relaxed"><code>{children}</code></pre>
     </div>
