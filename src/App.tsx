@@ -78,7 +78,7 @@ function App() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
+      <div className="min-h-screen flex items-center justify-center bg-[#09090B]">
         <Loader2 className="w-8 h-8 animate-spin text-[#22C55E]" />
       </div>
     );

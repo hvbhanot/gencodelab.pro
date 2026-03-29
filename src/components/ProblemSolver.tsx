@@ -603,7 +603,7 @@ export function ProblemSolver({
                 variant="ghost"
                 size="sm"
                 onClick={onBack}
-                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1C1C1F]"
+                className="text-[#71717A] hover:text-[#E4E4E7] hover:bg-[#1C1C1F]"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
@@ -612,12 +612,12 @@ export function ProblemSolver({
               <div className="h-6 w-px bg-[#1C1C1F]" />
               
               <div className="flex items-center gap-3">
-                <span className="text-[#444] font-mono text-sm">#{String(problem.id).padStart(3, '0')}</span>
-                <h1 className="text-base font-medium text-[#EDEDED]">{problem.title}</h1>
+                <span className="text-[#52525B] font-mono text-sm">#{String(problem.id).padStart(3, '0')}</span>
+                <h1 className="text-base font-medium text-[#E4E4E7]">{problem.title}</h1>
                 <span className={`text-xs font-medium px-2 py-1 rounded-full border ${getDifficultyBadge(problem.difficulty)}`}>
                   {problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1)}
                 </span>
-                <span className="text-xs text-[#555]">
+                <span className="text-xs text-[#71717A]">
                   {maxPoints} pts
                 </span>
               </div>
@@ -629,7 +629,7 @@ export function ProblemSolver({
                 size="icon"
                 onClick={onPrevious}
                 disabled={!hasPrevious}
-                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1C1C1F] disabled:opacity-30"
+                className="text-[#71717A] hover:text-[#E4E4E7] hover:bg-[#1C1C1F] disabled:opacity-30"
               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
@@ -638,7 +638,7 @@ export function ProblemSolver({
                 size="icon"
                 onClick={onNext}
                 disabled={!hasNext}
-                className="text-[#666] hover:text-[#EDEDED] hover:bg-[#1C1C1F] disabled:opacity-30"
+                className="text-[#71717A] hover:text-[#E4E4E7] hover:bg-[#1C1C1F] disabled:opacity-30"
               >
                 <ChevronRight className="w-5 h-5" />
               </Button>
@@ -657,8 +657,8 @@ export function ProblemSolver({
               onClick={() => setActiveTab('description')}
               className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
                 activeTab === 'description'
-                  ? 'text-[#EDEDED] border-b-2 border-[#22C55E]'
-                  : 'text-[#555] hover:text-[#EDEDED]'
+                  ? 'text-[#E4E4E7] border-b-2 border-[#22C55E]'
+                  : 'text-[#71717A] hover:text-[#E4E4E7]'
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -668,8 +668,8 @@ export function ProblemSolver({
               onClick={() => setActiveTab('hint')}
               className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
                 activeTab === 'hint'
-                  ? 'text-[#EDEDED] border-b-2 border-[#22C55E]'
-                  : 'text-[#555] hover:text-[#EDEDED]'
+                  ? 'text-[#E4E4E7] border-b-2 border-[#22C55E]'
+                  : 'text-[#71717A] hover:text-[#E4E4E7]'
               }`}
             >
               <Lightbulb className="w-3.5 h-3.5" />
@@ -679,8 +679,8 @@ export function ProblemSolver({
               onClick={() => setActiveTab('solution')}
               className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors ${
                 activeTab === 'solution'
-                  ? 'text-[#EDEDED] border-b-2 border-[#22C55E]'
-                  : 'text-[#555] hover:text-[#EDEDED]'
+                  ? 'text-[#E4E4E7] border-b-2 border-[#22C55E]'
+                  : 'text-[#71717A] hover:text-[#E4E4E7]'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -697,16 +697,16 @@ export function ProblemSolver({
                     <Sparkles className="w-5 h-5 text-[#22C55E]" />
                     <h2 className="text-lg font-semibold text-white">The Scenario</h2>
                   </div>
-                  <p className="text-[#888] leading-relaxed">{problem.description}</p>
+                  <p className="text-[#A1A1AA] leading-relaxed">{problem.description}</p>
                 </div>
 
                 {problem.type === 'find' && (
-                  <div className="p-4 bg-[#111] border border-[#1C1C1F] rounded-md">
+                  <div className="p-4 bg-[#0C0C0E] border border-[#1C1C1F] rounded-md">
                     <div className="flex items-start gap-3">
                       <AlertTriangle className="w-5 h-5 text-[#22C55E] mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-[#EDEDED] mb-1">Your Mission</p>
-                        <p className="text-sm text-[#666]">
+                        <p className="text-sm font-medium text-[#E4E4E7] mb-1">Your Mission</p>
+                        <p className="text-sm text-[#71717A]">
                           Click on line numbers to mark bugs. Click again to unselect. 
                           Submit when you think you have found all bugs. Remember: some problems may have no bugs!
                         </p>
@@ -716,12 +716,12 @@ export function ProblemSolver({
                 )}
 
                 {problem.type === 'fix' && problem.expectedOutput && (
-                  <div className="p-4 bg-[#111] border border-[#1C1C1F] rounded-md">
+                  <div className="p-4 bg-[#0C0C0E] border border-[#1C1C1F] rounded-md">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="w-5 h-5 text-[#22C55E] mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-[#EDEDED] mb-1">Expected Output</p>
-                        <pre className="text-sm text-[#888] font-mono">{problem.expectedOutput}</pre>
+                        <p className="text-sm font-medium text-[#E4E4E7] mb-1">Expected Output</p>
+                        <pre className="text-sm text-[#A1A1AA] font-mono">{problem.expectedOutput}</pre>
                       </div>
                     </div>
                   </div>
@@ -729,12 +729,12 @@ export function ProblemSolver({
 
                 {problem.type === 'recall' && (
                   <div className="space-y-4">
-                    <div className="p-4 bg-[#111] border border-[#1C1C1F] rounded-md">
+                    <div className="p-4 bg-[#0C0C0E] border border-[#1C1C1F] rounded-md">
                       <div className="flex items-start gap-3">
                         <Terminal className="w-5 h-5 text-[#22C55E] mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-[#EDEDED] mb-1">Blank Page Challenge</p>
-                          <p className="text-sm text-[#666]">
+                          <p className="text-sm font-medium text-[#E4E4E7] mb-1">Blank Page Challenge</p>
+                          <p className="text-sm text-[#71717A]">
                             Write your solution from scratch in the editor. No starter code is provided beyond the function signature.
                             Click "Run Tests" to validate against {problem.testCases?.length || 0} test cases. All tests must pass to earn points.
                           </p>
@@ -764,10 +764,10 @@ export function ProblemSolver({
                                       : <XCircle className="w-4 h-4 text-red-400" />
                                   )}
                                 </div>
-                                <div className="text-[#555] text-xs">
+                                <div className="text-[#71717A] text-xs">
                                   <span className="text-gray-600">Input:</span> <code>{tc.input}</code>
                                 </div>
-                                <div className="text-[#555] text-xs">
+                                <div className="text-[#71717A] text-xs">
                                   <span className="text-gray-600">Expected:</span> <code>{tc.expectedOutput}</code>
                                 </div>
                                 {result && !result.passed && (
@@ -791,12 +791,12 @@ export function ProblemSolver({
                       <span className="text-sm font-medium text-white">Your Progress</span>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-[#111] border border-[#1C1C1F] p-4 rounded-md">
-                        <div className="text-xs text-[#555]">Best Score</div>
+                      <div className="bg-[#0C0C0E] border border-[#1C1C1F] p-4 rounded-md">
+                        <div className="text-xs text-[#71717A]">Best Score</div>
                         <div className="text-2xl font-bold text-green-400">{userProgress.bestScore} pts</div>
                       </div>
-                      <div className="bg-[#111] border border-[#1C1C1F] p-4 rounded-md">
-                        <div className="text-xs text-[#555]">Attempts</div>
+                      <div className="bg-[#0C0C0E] border border-[#1C1C1F] p-4 rounded-md">
+                        <div className="text-xs text-[#71717A]">Attempts</div>
                         <div className="text-2xl font-bold text-white">{attempts}</div>
                       </div>
                     </div>
@@ -1019,7 +1019,7 @@ export function ProblemSolver({
           {/* Editor Toolbar */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-[#1C1C1F]">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-[#555]">Python</span>
+              <span className="text-sm text-[#71717A]">Python</span>
               {problem.type === 'find' && selectedLines.length > 0 && (
                 <span className="text-sm text-purple-400">
                   {selectedLines.length} line(s) selected
@@ -1112,14 +1112,14 @@ export function ProblemSolver({
               </div>
               <div className="flex-1 p-4 overflow-auto font-mono text-sm">
                 {terminalOutput.length === 0 && !terminalError && !isRunning && (
-                  <span className="text-[#444] italic">Click "Run Code" to see output...</span>
+                  <span className="text-[#52525B] italic">Click "Run Code" to see output...</span>
                 )}
                 {isRunning && (
                   <span className="text-[#22C55E]">Running code...</span>
                 )}
                 {terminalOutput.map((line, idx) => (
-                  <div key={idx} className="text-[#EDEDED]/80">
-                    {line || <span className="text-[#333]">(empty line)</span>}
+                  <div key={idx} className="text-[#E4E4E7]/80">
+                    {line || <span className="text-[#3F3F46]">(empty line)</span>}
                   </div>
                 ))}
                 {terminalError && (
@@ -1138,7 +1138,7 @@ export function ProblemSolver({
                     ) : (
                       <>
                         <span className="text-yellow-400 text-xs">Output differs from expected</span>
-                        <div className="text-[#555] text-xs mt-1">
+                        <div className="text-[#71717A] text-xs mt-1">
                           Expected: {problem.expectedOutput}
                         </div>
                       </>
@@ -1151,7 +1151,7 @@ export function ProblemSolver({
 
           {/* Results Panel */}
           {showResult && submissionResult && (
-            <div className="border-t border-[#1C1C1F] bg-[#111] max-h-[300px] overflow-auto">
+            <div className="border-t border-[#1C1C1F] bg-[#0C0C0E] max-h-[300px] overflow-auto">
               <div className="p-4 space-y-4">
                 {/* Score */}
                 <div className={`p-4 rounded-md ${
@@ -1183,7 +1183,7 @@ export function ProblemSolver({
                   )}
                   
                   {(hasUsedHint || hasViewedSolution) && submissionResult.passed && (
-                    <p className="text-sm text-[#555] mt-2">
+                    <p className="text-sm text-[#71717A] mt-2">
                       {hasUsedHint && `Hint used: -${hintPenalty} pts`}
                       {hasUsedHint && hasViewedSolution && ' • '}
                       {hasViewedSolution && `Solution viewed: -${solutionPenalty} pts`}
@@ -1228,7 +1228,7 @@ export function ProblemSolver({
                     <Button
                       onClick={handleRetry}
                       variant="outline"
-                      className="border-[#1C1C1F] text-[#888] hover:bg-[#1C1C1F] hover:text-[#EDEDED]"
+                      className="border-[#1C1C1F] text-[#A1A1AA] hover:bg-[#1C1C1F] hover:text-[#E4E4E7]"
                     >
                       <RotateCcw className="w-4 h-4 mr-2" />
                       Retry

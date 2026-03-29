@@ -83,7 +83,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setConfirmPassword('');
   };
 
-  const inputClass = "bg-[#111] border-[#222] text-[#EDEDED] placeholder:text-[#555] focus:border-[#22C55E] focus:ring-1 focus:ring-[#22C55E]/20 rounded-md h-11 text-sm";
+  const inputClass = "bg-[#111] border-[#222] text-[#E4E4E7] placeholder:text-[#71717A] focus:border-[#22C55E] focus:ring-1 focus:ring-[#22C55E]/20 rounded-md h-11 text-sm";
 
   if (isLogin) {
     return (
@@ -91,8 +91,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
         <div className="w-full max-w-sm">
           <div className="text-center mb-10">
             <div className="font-mono text-2xl font-bold text-[#22C55E] mb-2">&lt;v/&gt;</div>
-            <h1 className="text-2xl font-semibold text-[#EDEDED] mb-1">vibeclub</h1>
-            <p className="text-[#888] text-sm">Welcome back</p>
+            <h1 className="text-2xl font-semibold text-[#E4E4E7] mb-1">vibeclub</h1>
+            <p className="text-[#A1A1AA] text-sm">Welcome back</p>
           </div>
 
           <form onSubmit={handleLoginSubmit} className="space-y-5">
@@ -139,7 +139,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             </Button>
 
             <div className="text-center pt-2">
-              <button type="button" onClick={switchToRegister} className="text-sm text-[#888] hover:text-[#22C55E] transition-colors">
+              <button type="button" onClick={switchToRegister} className="text-sm text-[#A1A1AA] hover:text-[#22C55E] transition-colors">
                 New here? Create an account
               </button>
             </div>
@@ -154,8 +154,8 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
           <div className="font-mono text-2xl font-bold text-[#22C55E] mb-2">&lt;v/&gt;</div>
-          <h1 className="text-2xl font-semibold text-[#EDEDED] mb-1">Join vibeclub</h1>
-          <p className="text-[#888] text-sm">TAMUCC students only</p>
+          <h1 className="text-2xl font-semibold text-[#E4E4E7] mb-1">Join vibeclub</h1>
+          <p className="text-[#A1A1AA] text-sm">TAMUCC students only</p>
         </div>
 
         <form onSubmit={handleRegisterSubmit} className="space-y-5">
@@ -175,7 +175,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
               className={inputClass}
               required
             />
-            <p className="text-xs text-[#666]">@islander.tamucc.edu or @tamucc.edu</p>
+            <p className="text-xs text-[#71717A]">@islander.tamucc.edu or @tamucc.edu</p>
           </div>
 
           <div className="space-y-2">
@@ -230,7 +230,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
           </Button>
 
           <div className="text-center pt-2">
-            <button type="button" onClick={switchToLogin} className="text-sm text-[#888] hover:text-[#22C55E] transition-colors">
+            <button type="button" onClick={switchToLogin} className="text-sm text-[#A1A1AA] hover:text-[#22C55E] transition-colors">
               Already have an account? Sign in
             </button>
           </div>

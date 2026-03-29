@@ -104,7 +104,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
           <div className="pt-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#22C55E]/20 bg-[#22C55E]/5 mb-8">
               <div className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-              <span className="text-xs font-medium text-[#22C55E]">Built for TAMUCC Islanders</span>
+              <span className="text-xs font-medium text-[#22C55E]">{totalProblems} challenges &middot; 3 modes &middot; free</span>
             </div>
 
             <h1 className="text-[2.75rem] sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.08] tracking-tight mb-6">
@@ -368,7 +368,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
             <div className="font-mono text-3xl font-bold text-[#22C55E] mb-4">&lt;v/&gt;</div>
             <h2 className="text-3xl font-bold tracking-tight mb-3">Start building your intuition</h2>
             <p className="text-[#A1A1AA] mb-8 max-w-md mx-auto">
-              {totalProblems} problems. 3 modes. No setup. Free for TAMUCC students.
+              {totalProblems} problems. 3 modes. No setup required. Completely free.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Button onClick={handleRegisterClick} className="bg-[#22C55E] hover:bg-[#16A34A] text-black font-semibold text-sm px-6 h-11 rounded-lg">
