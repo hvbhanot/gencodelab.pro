@@ -125,52 +125,41 @@ def close_db(exception):
 
 def init_db():
     """Initialize the database with required tables."""
+    tables_sql = [
+        """CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );""",
+        """CREATE TABLE IF NOT EXISTS progress (
+            username TEXT NOT NULL,
+            problem_id INTEGER NOT NULL,
+            best_score INTEGER NOT NULL DEFAULT 0,
+            attempts INTEGER NOT NULL DEFAULT 0,
+            last_attempt TEXT NOT NULL,
+            solved INTEGER NOT NULL DEFAULT 0,
+            solution_viewed INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (username, problem_id)
+        );""",
+        """CREATE TABLE IF NOT EXISTS streaks (
+            username TEXT PRIMARY KEY,
+            current_streak INTEGER NOT NULL DEFAULT 0,
+            longest_streak INTEGER NOT NULL DEFAULT 0,
+            last_solve_date TEXT NOT NULL DEFAULT ''
+        );""",
+    ]
     if USE_POSTGRES:
         conn = psycopg2_module.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY,
-                email TEXT NOT NULL UNIQUE,
-                password_hash TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            );
-        """)
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS progress (
-                username TEXT NOT NULL,
-                problem_id INTEGER NOT NULL,
-                best_score INTEGER NOT NULL DEFAULT 0,
-                attempts INTEGER NOT NULL DEFAULT 0,
-                last_attempt TEXT NOT NULL,
-                solved INTEGER NOT NULL DEFAULT 0,
-                solution_viewed INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (username, problem_id)
-            );
-        """)
+        for sql in tables_sql:
+            cursor.execute(sql)
         conn.commit()
         cursor.close()
         conn.close()
     else:
         conn = sqlite3.connect(DB_PATH, timeout=10)
-        conn.executescript("""
-            CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY,
-                email TEXT NOT NULL UNIQUE,
-                password_hash TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS progress (
-                username TEXT NOT NULL,
-                problem_id INTEGER NOT NULL,
-                best_score INTEGER NOT NULL DEFAULT 0,
-                attempts INTEGER NOT NULL DEFAULT 0,
-                last_attempt TEXT NOT NULL,
-                solved INTEGER NOT NULL DEFAULT 0,
-                solution_viewed INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (username, problem_id)
-            );
-        """)
+        conn.executescript("\n".join(tables_sql))
         conn.commit()
         conn.close()
 
@@ -390,6 +379,10 @@ def update_progress(username, problem_id):
         if USE_POSTGRES:
             cursor.close()
 
+    # Update streak if problem was solved
+    if solved:
+        _update_streak(db, username)
+
     db.commit()
 
     row = db_fetchone(db,
@@ -405,6 +398,115 @@ def update_progress(username, problem_id):
         "solved": bool(get_row_value(row, "solved")),
         "solutionViewed": bool(get_row_value(row, "solution_viewed")),
     })
+
+
+# ---------------------------------------------------------------------------
+# Sandboxed code execution helpers
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Leaderboard API
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/leaderboard", methods=["GET"])
+def get_leaderboard():
+    db = get_db()
+    rows = db_fetchall(db,
+        """SELECT username, SUM(best_score) as total_score,
+                  COUNT(CASE WHEN solved = 1 THEN 1 END) as solved_count
+           FROM progress GROUP BY username ORDER BY total_score DESC LIMIT 50""")
+
+    leaderboard = []
+    for i, r in enumerate(rows):
+        leaderboard.append({
+            "rank": i + 1,
+            "username": get_row_value(r, "username") if not USE_POSTGRES else r[0],
+            "totalScore": (get_row_value(r, "total_score") if not USE_POSTGRES else r[1]) or 0,
+            "solvedCount": (get_row_value(r, "solved_count") if not USE_POSTGRES else r[2]) or 0,
+        })
+
+    return jsonify({"leaderboard": leaderboard})
+
+
+# ---------------------------------------------------------------------------
+# Streaks API
+# ---------------------------------------------------------------------------
+
+
+def _update_streak(db, username):
+    """Update a user's streak after solving a problem."""
+    today = time.strftime("%Y-%m-%d", time.gmtime())
+    row = db_fetchone(db, "SELECT * FROM streaks WHERE username = ?", (username,))
+
+    if not row:
+        cursor = db_execute(db,
+            "INSERT INTO streaks (username, current_streak, longest_streak, last_solve_date) VALUES (?, 1, 1, ?)",
+            (username, today))
+        if USE_POSTGRES:
+            cursor.close()
+        return
+
+    last_date = get_row_value(row, "last_solve_date") if not USE_POSTGRES else row[3]
+    current = (get_row_value(row, "current_streak") if not USE_POSTGRES else row[1]) or 0
+    longest = (get_row_value(row, "longest_streak") if not USE_POSTGRES else row[2]) or 0
+
+    if last_date == today:
+        return  # Already counted today
+
+    # Check if yesterday
+    import datetime
+    try:
+        last = datetime.date.fromisoformat(last_date)
+        diff = (datetime.date.fromisoformat(today) - last).days
+    except (ValueError, TypeError):
+        diff = 999
+
+    if diff == 1:
+        current += 1
+    elif diff > 1:
+        current = 1
+
+    longest = max(longest, current)
+
+    cursor = db_execute(db,
+        "UPDATE streaks SET current_streak = ?, longest_streak = ?, last_solve_date = ? WHERE username = ?",
+        (current, longest, today, username))
+    if USE_POSTGRES:
+        cursor.close()
+
+
+@app.route("/api/streaks/<username>", methods=["GET"])
+def get_streaks(username):
+    username = username.lower()
+    db = get_db()
+    row = db_fetchone(db, "SELECT * FROM streaks WHERE username = ?", (username,))
+
+    if not row:
+        return jsonify({"currentStreak": 0, "longestStreak": 0, "lastSolveDate": ""})
+
+    return jsonify({
+        "currentStreak": (get_row_value(row, "current_streak") if not USE_POSTGRES else row[1]) or 0,
+        "longestStreak": (get_row_value(row, "longest_streak") if not USE_POSTGRES else row[2]) or 0,
+        "lastSolveDate": (get_row_value(row, "last_solve_date") if not USE_POSTGRES else row[3]) or "",
+    })
+
+
+# ---------------------------------------------------------------------------
+# Daily Challenge API
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/daily", methods=["GET"])
+def get_daily_challenge():
+    """Return a deterministic daily problem based on the date."""
+    today = time.strftime("%Y-%m-%d", time.gmtime())
+    # Use date as seed for deterministic selection
+    import hashlib as hl
+    seed = int(hl.md5(today.encode()).hexdigest(), 16)
+    # We don't know total problems here, return the seed-based ID
+    # Frontend will use: problems[seed % problems.length]
+    return jsonify({"date": today, "seed": seed})
 
 
 # ---------------------------------------------------------------------------

@@ -73,6 +73,25 @@ export async function getUserProgress(username: string): Promise<UserProgress> {
   }
 }
 
+export async function getStreaks(username: string): Promise<{ currentStreak: number; longestStreak: number; lastSolveDate: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/streaks/${username}`);
+    const data = await res.json();
+    return data;
+  } catch {
+    return { currentStreak: 0, longestStreak: 0, lastSolveDate: '' };
+  }
+}
+
+export async function getDailyChallenge(): Promise<{ date: string; seed: number }> {
+  try {
+    const res = await fetch(`${API_BASE}/daily`);
+    return await res.json();
+  } catch {
+    return { date: '', seed: 0 };
+  }
+}
+
 export async function saveUserProgress(
   username: string,
   problemId: number,

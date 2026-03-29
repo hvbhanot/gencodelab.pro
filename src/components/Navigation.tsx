@@ -1,14 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut } from 'lucide-react';
+import { LogOut, Flame, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavigationProps {
   currentUser: string;
   totalPoints: number;
+  currentStreak: number;
+  dailyProblemId: number | null;
   onLogout: () => void;
+  onSelectDaily: () => void;
 }
 
-export function Navigation({ currentUser, totalPoints, onLogout }: NavigationProps) {
+export function Navigation({ currentUser, totalPoints, currentStreak, dailyProblemId, onLogout, onSelectDaily }: NavigationProps) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -40,6 +43,16 @@ export function Navigation({ currentUser, totalPoints, onLogout }: NavigationPro
             Problems
           </Link>
           <Link
+            to="/leaderboard"
+            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+              isActive('/leaderboard')
+                ? 'text-[#E4E4E7] bg-[#1C1C1F]'
+                : 'text-[#A1A1AA] hover:text-[#E4E4E7] hover:bg-white/5'
+            }`}
+          >
+            Leaderboard
+          </Link>
+          <Link
             to="/tips"
             className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
               isActive('/tips')
@@ -49,10 +62,25 @@ export function Navigation({ currentUser, totalPoints, onLogout }: NavigationPro
           >
             Tips
           </Link>
+          {dailyProblemId && (
+            <button
+              onClick={onSelectDaily}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-[#FBBF24] hover:bg-[#FBBF24]/10 transition-colors"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              Daily
+            </button>
+          )}
         </nav>
 
         {/* User */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {currentStreak > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F97316]/8 border border-[#F97316]/15">
+              <Flame className="w-3.5 h-3.5 text-[#F97316]" />
+              <span className="text-xs font-mono font-semibold text-[#F97316]">{currentStreak}</span>
+            </div>
+          )}
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#22C55E]/8 border border-[#22C55E]/15">
             <span className="text-xs font-mono font-semibold text-[#22C55E]">{totalPoints}</span>
             <span className="text-xs text-[#52525B]">pts</span>

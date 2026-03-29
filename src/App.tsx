@@ -3,9 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { LandingPage } from '@/components/LandingPage';
 import { ProblemsPage } from '@/components/ProblemsPage';
+import { LeaderboardPage } from '@/components/LeaderboardPage';
 import { TipsPage } from '@/components/TipsPage';
 import { ProblemSolver } from '@/components/ProblemSolver';
-import { useAuth, getUserProgress, saveUserProgress } from '@/hooks/useAuth';
+import { useAuth, getUserProgress, saveUserProgress, getStreaks, getDailyChallenge } from '@/hooks/useAuth';
 import type { Problem, UserProgress } from '@/types';
 import { problems } from '@/data/problems';
 import { Loader2 } from 'lucide-react';
@@ -15,17 +16,29 @@ function App() {
   const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
   const [userProgress, setUserProgress] = useState<UserProgress>({ username: '', problems: {} });
   const [isLoading, setIsLoading] = useState(true);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [dailyProblemId, setDailyProblemId] = useState<number | null>(null);
 
   useEffect(() => {
     if (currentUser) {
-      const loadProgress = async () => {
-        const progress = await getUserProgress(currentUser);
+      const loadData = async () => {
+        const [progress, streaks, daily] = await Promise.all([
+          getUserProgress(currentUser),
+          getStreaks(currentUser),
+          getDailyChallenge(),
+        ]);
         setUserProgress(progress);
+        setCurrentStreak(streaks.currentStreak);
+        if (daily.seed) {
+          setDailyProblemId(problems[daily.seed % problems.length].id);
+        }
         setIsLoading(false);
       };
-      loadProgress();
+      loadData();
     } else {
       setUserProgress({ username: '', problems: {} });
+      setCurrentStreak(0);
+      setDailyProblemId(null);
       setIsLoading(false);
     }
   }, [currentUser]);
@@ -55,6 +68,11 @@ function App() {
         ...prev,
         problems: { ...prev.problems, [problemId]: updated },
       }));
+      // Refresh streak after solving
+      if (solved) {
+        const streaks = await getStreaks(currentUser);
+        setCurrentStreak(streaks.currentStreak);
+      }
     }
   }, [currentUser]);
 
@@ -75,6 +93,12 @@ function App() {
       setSelectedProblem(prevProblem);
     }
   }, [selectedProblem]);
+
+  const handleSelectDaily = useCallback(() => {
+    if (!dailyProblemId) return;
+    const problem = problems.find(p => p.id === dailyProblemId);
+    if (problem) setSelectedProblem(problem);
+  }, [dailyProblemId]);
 
   if (isLoading || authLoading) {
     return (
@@ -139,7 +163,10 @@ function App() {
         <Navigation
           currentUser={currentUser}
           totalPoints={totalPoints}
+          currentStreak={currentStreak}
+          dailyProblemId={dailyProblemId}
           onLogout={logout}
+          onSelectDaily={handleSelectDaily}
         />
         <Routes>
           <Route
@@ -158,6 +185,12 @@ function App() {
                 userProgress={userProgress}
                 onSelectProblem={handleSelectProblem}
               />
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <LeaderboardPage currentUser={currentUser} />
             }
           />
           <Route path="/tips" element={<TipsPage />} />

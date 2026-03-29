@@ -439,6 +439,35 @@ export function ProblemSolver({
     setActiveTab('solution');
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (showResult) return;
+
+      // Ctrl+Enter — run code (fix) or run tests (recall)
+      if (e.ctrlKey && !e.shiftKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (problem.type === 'fix' && !isRunning) handleRunCode();
+        if (problem.type === 'recall' && !isRunning) handleRunTests();
+      }
+
+      // Ctrl+Shift+Enter — submit
+      if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+        e.preventDefault();
+        handleSubmit();
+      }
+
+      // Ctrl+H — toggle hint
+      if (e.ctrlKey && e.key === 'h') {
+        e.preventDefault();
+        if (!showHint) handleUseHint();
+        else setActiveTab(activeTab === 'hint' ? 'description' : 'hint');
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [showResult, problem.type, isRunning, showHint, activeTab]);
+
   // Simple Python syntax highlighter for find-mode code display
   const highlightPython = (line: string) => {
     const tokens: { text: string; className: string }[] = [];
