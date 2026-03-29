@@ -6,7 +6,7 @@ import { ProblemsPage } from '@/components/ProblemsPage';
 
 import { TipsPage } from '@/components/TipsPage';
 import { ProblemSolver } from '@/components/ProblemSolver';
-import { useAuth, getUserProgress, saveUserProgress, getStreaks, getDailyChallenge } from '@/hooks/useAuth';
+import { useAuth, getUserProgress, saveUserProgress, getStreaks, getDailyChallenge, getBookmarks, toggleBookmark } from '@/hooks/useAuth';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 import type { Problem, UserProgress } from '@/types';
@@ -21,19 +21,22 @@ function App() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [dailyProblemId, setDailyProblemId] = useState<number | null>(null);
   const [leaderboard, setLeaderboard] = useState<{ rank: number; username: string; totalScore: number; solvedCount: number }[]>([]);
+  const [bookmarks, setBookmarks] = useState<number[]>([]);
 
   useEffect(() => {
     if (currentUser) {
       const loadData = async () => {
-        const [progress, streaks, daily, lb] = await Promise.all([
+        const [progress, streaks, daily, lb, bm] = await Promise.all([
           getUserProgress(currentUser),
           getStreaks(currentUser),
           getDailyChallenge(),
           fetch(`${API_BASE}/leaderboard`).then(r => r.json()).catch(() => ({ leaderboard: [] })),
+          getBookmarks(currentUser),
         ]);
         setUserProgress(progress);
         setCurrentStreak(streaks.currentStreak);
         setLeaderboard(lb.leaderboard || []);
+        setBookmarks(bm);
         if (daily.seed) {
           setDailyProblemId(problems[daily.seed % problems.length].id);
         }
@@ -99,7 +102,11 @@ function App() {
     }
   }, [selectedProblem]);
 
-  // dailyProblemId and leaderboard are passed to ProblemsPage sidebar
+  const handleToggleBookmark = useCallback(async (problemId: number) => {
+    if (!currentUser) return;
+    const isNowBookmarked = await toggleBookmark(currentUser, problemId);
+    setBookmarks(prev => isNowBookmarked ? [...prev, problemId] : prev.filter(id => id !== problemId));
+  }, [currentUser]);
 
   if (isLoading || authLoading) {
     return (
@@ -178,6 +185,8 @@ function App() {
                 currentStreak={currentStreak}
                 dailyProblem={dailyProblemId ? problems.find(p => p.id === dailyProblemId) || null : null}
                 leaderboard={leaderboard}
+                bookmarks={bookmarks}
+                onToggleBookmark={handleToggleBookmark}
               />
             }
           />
@@ -191,6 +200,8 @@ function App() {
                 currentStreak={currentStreak}
                 dailyProblem={dailyProblemId ? problems.find(p => p.id === dailyProblemId) || null : null}
                 leaderboard={leaderboard}
+                bookmarks={bookmarks}
+                onToggleBookmark={handleToggleBookmark}
               />
             }
           />

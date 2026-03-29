@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { resetPassword } from '@/hooks/useAuth';
 
 type AuthResult = { success: boolean; error?: string };
 
@@ -13,233 +14,145 @@ interface AuthFormProps {
 }
 
 const ALLOWED_DOMAINS = ['islander.tamucc.edu', 'tamucc.edu'];
-
 function isAllowedEmail(email: string): boolean {
   return ALLOWED_DOMAINS.some(d => email.endsWith(`@${d}`));
 }
 
+type Mode = 'login' | 'register' | 'reset';
+
 export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess }: AuthFormProps) {
-  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const clear = () => { setError(''); setSuccess(''); setUsername(''); setPassword(''); setConfirmPassword(''); setEmail(''); };
+
+  const inputClass = "bg-[#0D0F14] border-white/[0.08] text-white/90 placeholder:text-white/30 focus:border-[#4ADE80]/40 focus:ring-1 focus:ring-[#4ADE80]/20 rounded-lg h-11 text-sm";
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
     const result = await onLogin(username, password);
-    if (!result.success) {
-      setError(result.error || 'An error occurred');
-    } else if (onSuccess) {
-      onSuccess();
-    }
+    if (!result.success) setError(result.error || 'An error occurred');
+    else if (onSuccess) onSuccess();
     setIsLoading(false);
   };
 
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    const trimmedEmail = email.trim().toLowerCase();
-    if (!isAllowedEmail(trimmedEmail)) {
-      setError('Please use your @islander.tamucc.edu or @tamucc.edu email');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
+    if (!isAllowedEmail(email.trim().toLowerCase())) { setError('Please use your Islander email'); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match'); return; }
     setIsLoading(true);
-    const result = await onRegister(username, password, trimmedEmail);
-    if (!result.success) {
-      setError(result.error || 'An error occurred');
-    } else if (onSuccess) {
-      onSuccess();
-    }
+    const result = await onRegister(username, password, email.trim().toLowerCase());
+    if (!result.success) setError(result.error || 'An error occurred');
+    else if (onSuccess) onSuccess();
     setIsLoading(false);
   };
 
-  const switchToRegister = () => {
-    setIsLogin(false);
-    setError('');
-    setEmail('');
-    setUsername('');
-    setPassword('');
-    setConfirmPassword('');
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(''); setSuccess('');
+    if (!isAllowedEmail(email.trim().toLowerCase())) { setError('Please use your Islander email'); return; }
+    if (password.length < 6) { setError('Password must be at least 6 characters'); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match'); return; }
+    setIsLoading(true);
+    const result = await resetPassword(email.trim().toLowerCase(), password);
+    if (!result.success) setError(result.error || 'An error occurred');
+    else setSuccess('Password reset! You can now sign in.');
+    setIsLoading(false);
   };
-
-  const switchToLogin = () => {
-    setIsLogin(true);
-    setError('');
-    setUsername('');
-    setPassword('');
-    setConfirmPassword('');
-  };
-
-  const inputClass = "bg-[#0D0F14] border-[#222] text-[white/90] placeholder:text-[white/40] focus:border-[#22C55E] focus:ring-1 focus:ring-[#22C55E]/20 rounded-md h-11 text-sm";
-
-  if (isLogin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0A0C10]">
-        <div className="w-full max-w-sm">
-          <div className="text-center mb-10">
-            <div className="font-mono text-2xl font-bold text-[#22C55E] mb-2">&lt;v/&gt;</div>
-            <h1 className="text-2xl font-semibold text-[white/90] mb-1">vibeclub</h1>
-            <p className="text-[white/60] text-sm">Welcome back</p>
-          </div>
-
-          <form onSubmit={handleLoginSubmit} className="space-y-5">
-            {error && (
-              <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/15 rounded-md px-4 py-3">
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[white/80]">Username</label>
-              <Input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                className={inputClass}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[white/80]">Password</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className={inputClass}
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-medium h-11 rounded-md text-sm"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Signing in...</>
-              ) : (
-                'Sign in'
-              )}
-            </Button>
-
-            <div className="text-center pt-2">
-              <button type="button" onClick={switchToRegister} className="text-sm text-[white/60] hover:text-[#22C55E] transition-colors">
-                New here? Create an account
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#0A0C10]">
       <div className="w-full max-w-sm">
+        {/* Logo */}
         <div className="text-center mb-10">
-          <div className="font-mono text-2xl font-bold text-[#22C55E] mb-2">&lt;v/&gt;</div>
-          <h1 className="text-2xl font-semibold text-[white/90] mb-1">Join vibeclub</h1>
-          <p className="text-[white/60] text-sm">Create your free account</p>
-        </div>
-
-        <div className="mb-5 px-4 py-3 rounded-lg bg-[#22C55E]/5 border border-[#22C55E]/15 text-center">
-          <p className="text-sm text-[white/60]">
-            Currently in <span className="text-[#22C55E] font-medium">beta</span> — available exclusively to TAMUCC students.
-            A valid Islander email is required to sign up.
+          <div className="font-mono text-2xl font-bold text-[#4ADE80] mb-2">&lt;v/&gt;</div>
+          <h1 className="text-2xl font-semibold text-white/90 mb-1">
+            {mode === 'login' ? 'vibeclub' : mode === 'register' ? 'Join vibeclub' : 'Reset password'}
+          </h1>
+          <p className="text-white/50 text-sm">
+            {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create your free account' : 'Enter your email and new password'}
           </p>
         </div>
 
-        <form onSubmit={handleRegisterSubmit} className="space-y-5">
+        {mode === 'register' && (
+          <div className="mb-5 px-4 py-3 rounded-lg bg-[#4ADE80]/[0.05] border border-[#4ADE80]/[0.12] text-center">
+            <p className="text-sm text-white/60">
+              Currently in <span className="text-[#4ADE80] font-medium">beta</span> — available exclusively to TAMUCC students.
+            </p>
+          </div>
+        )}
+
+        {mode === 'reset' && (
+          <button onClick={() => { setMode('login'); clear(); }} className="flex items-center gap-1 text-sm text-white/40 hover:text-white/70 mb-4 transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
+          </button>
+        )}
+
+        <form onSubmit={mode === 'login' ? handleLogin : mode === 'register' ? handleRegister : handleReset} className="space-y-4">
           {error && (
-            <div className="text-sm text-red-400 bg-red-400/5 border border-red-400/15 rounded-md px-4 py-3">
-              {error}
+            <div className="text-sm text-[#F87171] bg-[#F87171]/[0.05] border border-[#F87171]/[0.12] rounded-lg px-4 py-3">{error}</div>
+          )}
+          {success && (
+            <div className="text-sm text-[#4ADE80] bg-[#4ADE80]/[0.05] border border-[#4ADE80]/[0.12] rounded-lg px-4 py-3">{success}</div>
+          )}
+
+          {(mode === 'register' || mode === 'reset') && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-white/70">Islander email</label>
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@islander.tamucc.edu" className={inputClass} required />
+              {mode === 'register' && <p className="text-xs text-white/30">@islander.tamucc.edu or @tamucc.edu</p>}
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[white/80]">Islander email</label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@islander.tamucc.edu"
-              className={inputClass}
-              required
-            />
-            <p className="text-xs text-[white/40]">@islander.tamucc.edu or @tamucc.edu</p>
+          {mode !== 'reset' && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-white/70">Username</label>
+              <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={mode === 'login' ? 'Enter your username' : 'Choose a username'} className={inputClass} required minLength={3} />
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-white/70">{mode === 'reset' ? 'New password' : 'Password'}</label>
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === 'login' ? 'Enter your password' : 'At least 6 characters'} className={inputClass} required minLength={6} />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[white/80]">Username</label>
-            <Input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Choose a username"
-              className={inputClass}
-              required
-              minLength={3}
-            />
-          </div>
+          {(mode === 'register' || mode === 'reset') && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-white/70">Confirm password</label>
+              <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" className={inputClass} required minLength={6} />
+            </div>
+          )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[white/80]">Password</label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              className={inputClass}
-              required
-              minLength={6}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[white/80]">Confirm password</label>
-            <Input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter your password"
-              className={inputClass}
-              required
-              minLength={6}
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-white font-medium h-11 rounded-md text-sm"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Creating account...</>
-            ) : (
-              'Create account'
-            )}
+          <Button type="submit" className="w-full bg-[#4ADE80] hover:bg-[#22C55E] text-black font-semibold h-11 rounded-lg text-sm" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Please wait...</> :
+              mode === 'login' ? 'Sign in' : mode === 'register' ? 'Create account' : 'Reset password'}
           </Button>
 
-          <div className="text-center pt-2">
-            <button type="button" onClick={switchToLogin} className="text-sm text-[white/60] hover:text-[#22C55E] transition-colors">
-              Already have an account? Sign in
-            </button>
+          <div className="text-center space-y-2 pt-2">
+            {mode === 'login' && (
+              <>
+                <button type="button" onClick={() => { setMode('reset'); clear(); }} className="block w-full text-sm text-white/40 hover:text-[#4ADE80] transition-colors">
+                  Forgot password?
+                </button>
+                <button type="button" onClick={() => { setMode('register'); clear(); }} className="block w-full text-sm text-white/40 hover:text-[#4ADE80] transition-colors">
+                  New here? Create an account
+                </button>
+              </>
+            )}
+            {mode === 'register' && (
+              <button type="button" onClick={() => { setMode('login'); clear(); }} className="text-sm text-white/40 hover:text-[#4ADE80] transition-colors">
+                Already have an account? Sign in
+              </button>
+            )}
           </div>
         </form>
       </div>

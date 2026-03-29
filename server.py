@@ -148,6 +148,12 @@ def init_db():
             longest_streak INTEGER NOT NULL DEFAULT 0,
             last_solve_date TEXT NOT NULL DEFAULT ''
         );""",
+        """CREATE TABLE IF NOT EXISTS bookmarks (
+            username TEXT NOT NULL,
+            problem_id INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (username, problem_id)
+        );""",
     ]
     if USE_POSTGRES:
         conn = psycopg2_module.connect(DATABASE_URL)
@@ -307,6 +313,77 @@ def login():
         return jsonify({"success": False, "error": "Incorrect password"}), 401
 
     return jsonify({"success": True, "username": get_row_value(user, "username")})
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def reset_password():
+    """Reset password by verifying email ownership."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "error": "Invalid request body"}), 400
+
+    email = data.get("email", "").strip().lower()
+    new_password = data.get("newPassword", "")
+
+    if not email or not _is_allowed_email(email):
+        return jsonify({"success": False, "error": "Invalid email"}), 400
+    if len(new_password) < 6:
+        return jsonify({"success": False, "error": "Password must be at least 6 characters"}), 400
+
+    db = get_db()
+    user = db_fetchone(db, "SELECT * FROM users WHERE email = ?", (email,))
+    if not user:
+        return jsonify({"success": False, "error": "No account found with this email"}), 404
+
+    cursor = db_execute(db,
+        "UPDATE users SET password_hash = ? WHERE email = ?",
+        (hash_password(new_password), email))
+    if USE_POSTGRES:
+        cursor.close()
+    db.commit()
+
+    return jsonify({"success": True})
+
+
+# ---------------------------------------------------------------------------
+# Bookmarks API
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/bookmarks/<username>", methods=["GET"])
+def get_bookmarks(username):
+    username = username.lower()
+    db = get_db()
+    rows = db_fetchall(db, "SELECT problem_id FROM bookmarks WHERE username = ?", (username,))
+    ids = [get_row_value(r, "problem_id") if not USE_POSTGRES else r[0] for r in rows]
+    return jsonify({"bookmarks": ids})
+
+
+@app.route("/api/bookmarks/<username>/<int:problem_id>", methods=["POST"])
+def toggle_bookmark(username, problem_id):
+    username = username.lower()
+    db = get_db()
+    existing = db_fetchone(db,
+        "SELECT 1 FROM bookmarks WHERE username = ? AND problem_id = ?",
+        (username, problem_id))
+
+    if existing:
+        cursor = db_execute(db,
+            "DELETE FROM bookmarks WHERE username = ? AND problem_id = ?",
+            (username, problem_id))
+        if USE_POSTGRES:
+            cursor.close()
+        db.commit()
+        return jsonify({"bookmarked": False})
+    else:
+        now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        cursor = db_execute(db,
+            "INSERT INTO bookmarks (username, problem_id, created_at) VALUES (?, ?, ?)",
+            (username, problem_id, now))
+        if USE_POSTGRES:
+            cursor.close()
+        db.commit()
+        return jsonify({"bookmarked": True})
 
 
 # ---------------------------------------------------------------------------

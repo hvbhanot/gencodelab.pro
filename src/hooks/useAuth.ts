@@ -92,6 +92,39 @@ export async function getDailyChallenge(): Promise<{ date: string; seed: number 
   }
 }
 
+export async function resetPassword(email: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, newPassword }),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Cannot connect to server' };
+  }
+}
+
+export async function getBookmarks(username: string): Promise<number[]> {
+  try {
+    const res = await fetch(`${API_BASE}/bookmarks/${username}`);
+    const data = await res.json();
+    return data.bookmarks || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function toggleBookmark(username: string, problemId: number): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/bookmarks/${username}/${problemId}`, { method: 'POST' });
+    const data = await res.json();
+    return data.bookmarked;
+  } catch {
+    return false;
+  }
+}
+
 export async function saveUserProgress(
   username: string,
   problemId: number,

@@ -1049,6 +1049,11 @@ export function ProblemSolver({
           <div className="flex items-center justify-between px-4 py-2 border-b border-[rgba(255,255,255,0.06)]">
             <div className="flex items-center gap-3">
               <span className="text-sm text-white/40">Python</span>
+              {(problem.type === 'fix' || problem.type === 'recall') && !showResult && (
+                <span className="text-[11px] text-white/15 hidden md:inline">
+                  <kbd className="px-1 py-0.5 rounded border border-white/10">Ctrl+Enter</kbd> run · <kbd className="px-1 py-0.5 rounded border border-white/10">Ctrl+Shift+Enter</kbd> submit
+                </span>
+              )}
               {problem.type === 'find' && selectedLines.length > 0 && (
                 <span className="text-sm text-white/60">
                   {selectedLines.length} line(s) selected
