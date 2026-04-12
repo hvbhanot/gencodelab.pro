@@ -1,6 +1,6 @@
 # Python Library Support - Complete List
 
-This document lists all Python libraries and modules supported by the VibeClub code execution server.
+This document lists all Python libraries and modules supported by the gencodelab.pro code execution server.
 
 ## Standard Library Modules (Pre-imported)
 
@@ -93,4 +93,4 @@ matches = re.findall(r'\d+', 'test123')
 print(f"Matches: {matches}")
 ```
 
-All of these work correctly in the VibeClub code execution server!
+All of these work correctly in the gencodelab.pro code execution server!

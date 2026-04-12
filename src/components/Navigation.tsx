@@ -22,8 +22,8 @@ export function Navigation({ totalPoints, currentStreak, onLogout, theme, onTogg
       <div className="max-w-[1400px] mx-auto px-6 h-14 flex items-center relative">
         {/* Left */}
         <Link to="/problems" className="flex items-center gap-2.5">
-          <span className="font-mono text-base font-bold text-[#4ADE80]">&lt;v/&gt;</span>
-          <span className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--vc-text)' }}>vibeclub</span>
+          <span className="font-mono text-base font-bold text-[#4ADE80]">&lt;g/&gt;</span>
+          <span className="text-[15px] font-semibold tracking-tight" style={{ color: 'var(--vc-text)' }}>gencodelab.pro</span>
         </Link>
 
         {/* Center */}

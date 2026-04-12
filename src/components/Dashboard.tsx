@@ -92,8 +92,8 @@ export function Dashboard({ userProgress, currentUser, onSelectProblem, onLogout
       <header className="border-b border-[rgba(255,255,255,0.06)]">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="font-mono text-sm font-bold text-[#22C55E]">&lt;v/&gt;</span>
-            <span className="text-sm font-semibold text-[white/90]">vibeclub</span>
+            <span className="font-mono text-sm font-bold text-[#22C55E]">&lt;g/&gt;</span>
+            <span className="text-sm font-semibold text-[white/90]">gencodelab.pro</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-[white/40]">{stats.total.solved} / {stats.total.total}</span>

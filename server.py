@@ -95,7 +95,7 @@ EXEC_TIMEOUT_SECONDS = 10
 # ---------------------------------------------------------------------------
 # Database setup - Supports both PostgreSQL (production) and SQLite (local)
 # ---------------------------------------------------------------------------
-DB_PATH = os.path.join(BASE_DIR, "vibeclub.db")
+DB_PATH = os.path.join(BASE_DIR, "gencodelab.db")
 
 
 def get_db():

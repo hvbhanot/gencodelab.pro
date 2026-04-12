@@ -88,9 +88,9 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="font-mono text-2xl font-bold text-[#4ADE80] mb-2">&lt;v/&gt;</div>
+          <div className="font-mono text-2xl font-bold text-[#4ADE80] mb-2">&lt;g/&gt;</div>
           <h1 className="text-2xl font-semibold text-white/90 mb-1">
-            {mode === 'login' ? 'vibeclub' : mode === 'register' ? 'Join vibeclub' : 'Reset password'}
+            {mode === 'login' ? 'gencodelab.pro' : mode === 'register' ? 'Join gencodelab.pro' : 'Reset password'}
           </h1>
           <p className="text-white/50 text-sm">
             {mode === 'login' ? 'Welcome back' : mode === 'register' ? 'Create your free account' : 'Enter your email and new password'}
@@ -99,7 +99,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
 
         {mode === 'register' && inviteCode && (
           <div className="mb-4 px-4 py-3 rounded-lg bg-[#A78BFA]/[0.06] border border-[#A78BFA]/[0.12] text-center">
-            <p className="text-sm text-[#A78BFA]">You've been invited! Sign up to join vibeclub.</p>
+            <p className="text-sm text-[#A78BFA]">You've been invited! Sign up to join gencodelab.pro.</p>
           </div>
         )}
         {mode === 'register' && (

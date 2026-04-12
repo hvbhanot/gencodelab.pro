@@ -27,9 +27,9 @@ dist-ssr
 .env
 
 # Database
-vibeclub.db
-vibeclub.db-wal
-vibeclub.db-shm
+gencodelab.db
+gencodelab.db-wal
+gencodelab.db-shm
 
 # Python
 __pycache__/

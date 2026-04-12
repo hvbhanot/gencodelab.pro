@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 type Theme = 'dark' | 'light';
 
-const THEME_KEY = 'vibeclub_theme';
+const THEME_KEY = 'gencodelab_theme';
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {

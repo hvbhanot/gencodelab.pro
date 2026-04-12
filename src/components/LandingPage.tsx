@@ -51,7 +51,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
 
   useEffect(() => {
     if (!showBugHighlight) return;
-    const fullText = '$ vibeclub scan --file bug_challenge.py\n  Found 1 bug on line 6: assignment operator =- should be -=\n  Severity: high | Category: syntax\n  Fix: Replace =- with -=';
+    const fullText = '$ gencodelab scan --file bug_challenge.py\n  Found 1 bug on line 6: assignment operator =- should be -=\n  Severity: high | Category: syntax\n  Fix: Replace =- with -=';
     let i = 0;
     const typeTimer = setInterval(() => {
       if (i <= fullText.length) {
@@ -77,8 +77,8 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-5 max-w-7xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <span className="font-mono text-base font-bold text-[#22C55E]">&lt;v/&gt;</span>
-          <span className="text-base font-semibold tracking-tight">vibeclub</span>
+          <span className="font-mono text-base font-bold text-[#22C55E]">&lt;g/&gt;</span>
+          <span className="text-base font-semibold tracking-tight">gencodelab.pro</span>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={() => navigate('/problems')} variant="ghost" className="text-[#A1A1AA] hover:text-white hover:bg-white/5 text-sm hidden sm:inline-flex">
@@ -365,7 +365,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
       <section className="border-t border-[rgba(255,255,255,0.06)]">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-24">
           <div className="rounded-2xl border border-[#22C55E]/15 bg-[#22C55E]/[0.03] p-12 md:p-16 text-center">
-            <div className="font-mono text-3xl font-bold text-[#22C55E] mb-4">&lt;v/&gt;</div>
+            <div className="font-mono text-3xl font-bold text-[#22C55E] mb-4">&lt;g/&gt;</div>
             <h2 className="text-3xl font-bold tracking-tight mb-3">Start building your intuition</h2>
             <p className="text-[#A1A1AA] mb-8 max-w-md mx-auto">
               {totalProblems} problems. 3 modes. No setup required. Completely free.
@@ -388,8 +388,8 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
       <footer className="border-t border-[rgba(255,255,255,0.06)] py-8">
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="font-mono text-sm text-[#22C55E]">&lt;v/&gt;</span>
-            <span className="text-sm text-[#3F3F46]">vibeclub</span>
+            <span className="font-mono text-sm text-[#22C55E]">&lt;g/&gt;</span>
+            <span className="text-sm text-[#3F3F46]">gencodelab.pro</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-[#3F3F46]">
             <span onClick={() => navigate('/problems')} className="hover:text-[#A1A1AA] cursor-pointer transition-colors">Problems</span>

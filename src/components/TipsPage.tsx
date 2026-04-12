@@ -546,7 +546,7 @@ if not API_KEY:
               </StepBlock>
 
               <Callout type="warning" title="Practice on TraceBack">
-                VibeClub has 30+ security-focused problems that let you practice spotting and fixing
+                gencodelab.pro has 30+ security-focused problems that let you practice spotting and fixing
                 real vulnerabilities — SQL injection, XSS, SSRF, command injection, and more.
                 These are the exact bugs that cause data breaches in production.
               </Callout>
@@ -574,7 +574,7 @@ if not API_KEY:
                     Pick an open-source project you admire. Read one file, one function, or one pull request.
                     Focus on understanding, not speed. Take notes on patterns you find interesting.
                   </TimeBlock>
-                  <TimeBlock time="10 min" title="Solve one problem on VibeClub" color="purple">
+                  <TimeBlock time="10 min" title="Solve one problem on gencodelab.pro" color="purple">
                     Practice spotting bugs or fixing broken code. Each problem builds your pattern recognition
                     and security awareness. Try without hints first.
                   </TimeBlock>

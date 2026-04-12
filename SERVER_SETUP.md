@@ -1,4 +1,4 @@
-# VibeClub - Python Code Execution Server
+# gencodelab.pro - Python Code Execution Server
 
 This project now includes a backend server for executing Python code server-side.
 
