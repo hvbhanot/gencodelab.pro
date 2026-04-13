@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut, Flame, Sun, Moon, User, MessageCircle } from 'lucide-react';
+import { LogOut, Flame, Sun, Moon, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DiscordLogo } from './DiscordLogo';
 
 interface NavigationProps {
   currentUser: string;
@@ -53,7 +54,7 @@ export function Navigation({ totalPoints, currentStreak, onLogout, theme, onTogg
 
           <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-md" style={{ color: 'var(--vc-text-muted)' }}>
             <a href={DISCORD_URL} target="_blank" rel="noreferrer" aria-label="Join Discord" title="Join Discord">
-              <MessageCircle className="w-4 h-4" />
+              <DiscordLogo className="w-4 h-4" />
             </a>
           </Button>
 
