@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
+import { AuthForm } from './AuthForm';
 import {
   CheckCircle2,
   Search,
@@ -32,6 +33,8 @@ interface ProblemsPageProps {
   leaderboard?: LeaderboardEntry[];
   bookmarks?: number[];
   onToggleBookmark?: (problemId: number) => void;
+  onLogin?: (username: string, password: string) => { success: boolean; error?: string } | Promise<{ success: boolean; error?: string }>;
+  onRegister?: (username: string, password: string, email: string) => { success: boolean; error?: string } | Promise<{ success: boolean; error?: string }>;
 }
 
 const getCategoryLabel = (category: Category) => {
@@ -59,7 +62,18 @@ type SortKey = 'default' | 'difficulty' | 'category' | 'status';
 
 const categoryCount = (cat: Category) => allProblems.filter(p => p.category === cat).length;
 
-export function ProblemsPage({ userProgress, onSelectProblem, currentUser, currentStreak = 0, dailyProblem, leaderboard = [], bookmarks = [], onToggleBookmark }: ProblemsPageProps) {
+export function ProblemsPage({
+  userProgress,
+  onSelectProblem,
+  currentUser,
+  currentStreak = 0,
+  dailyProblem,
+  leaderboard = [],
+  bookmarks = [],
+  onToggleBookmark,
+  onLogin,
+  onRegister,
+}: ProblemsPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<Difficulty | 'all'>('all');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
@@ -67,6 +81,8 @@ export function ProblemsPage({ userProgress, onSelectProblem, currentUser, curre
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>('default');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showAuthForm, setShowAuthForm] = useState(false);
+  const [pendingProblem, setPendingProblem] = useState<Problem | null>(null);
   const PROBLEMS_PER_PAGE = 15;
   const isLoggedIn = !!currentUser;
 
@@ -92,8 +108,39 @@ export function ProblemsPage({ userProgress, onSelectProblem, currentUser, curre
   const paginatedProblems = filteredAndSorted.slice((currentPage - 1) * PROBLEMS_PER_PAGE, currentPage * PROBLEMS_PER_PAGE);
   const globalIndexOffset = (currentPage - 1) * PROBLEMS_PER_PAGE;
 
-  const handleProblemClick = (problem: Problem) => { if (isLoggedIn) onSelectProblem(problem); else setShowLoginPrompt(true); };
+  const handleProblemClick = (problem: Problem) => {
+    if (isLoggedIn) {
+      onSelectProblem(problem);
+      return;
+    }
+
+    setPendingProblem(problem);
+    setShowLoginPrompt(true);
+  };
   const handleBookmark = useCallback((e: React.MouseEvent, problemId: number) => { e.stopPropagation(); onToggleBookmark?.(problemId); }, [onToggleBookmark]);
+  const handleAuthSuccess = useCallback(() => {
+    setShowAuthForm(false);
+    setShowLoginPrompt(false);
+    if (pendingProblem) {
+      onSelectProblem(pendingProblem);
+      setPendingProblem(null);
+    }
+  }, [onSelectProblem, pendingProblem]);
+
+  if (showAuthForm && onLogin && onRegister) {
+    return (
+      <AuthForm
+        onLogin={onLogin}
+        onRegister={onRegister}
+        initialMode="login"
+        onSuccess={handleAuthSuccess}
+        onCancel={() => {
+          setShowAuthForm(false);
+          setPendingProblem(null);
+        }}
+      />
+    );
+  }
 
   const stats = useMemo(() => {
     const count = (d: Difficulty) => allProblems.filter(p => p.difficulty === d).length;
@@ -401,8 +448,26 @@ export function ProblemsPage({ userProgress, onSelectProblem, currentUser, curre
             <h3 className="text-xl font-bold text-white mb-2">Sign in to start</h3>
             <p className="text-white/50 text-[15px] mb-8">Create a free account to solve problems and track progress.</p>
             <div className="flex gap-3 justify-center">
-              <Button onClick={() => window.location.href = '/'} className="bg-[#4ADE80] hover:bg-[#22C55E] text-black font-semibold px-6 h-11 rounded-xl text-sm">Sign in <ArrowRight className="w-4 h-4 ml-2" /></Button>
-              <Button variant="ghost" onClick={() => setShowLoginPrompt(false)} className="text-white/50 hover:text-white hover:bg-white/[0.06] h-11 rounded-xl text-sm">Cancel</Button>
+              <Button
+                onClick={() => {
+                  setShowLoginPrompt(false);
+                  if (onLogin && onRegister) setShowAuthForm(true);
+                  else window.location.href = '/?auth=login';
+                }}
+                className="bg-[#4ADE80] hover:bg-[#22C55E] text-black font-semibold px-6 h-11 rounded-xl text-sm"
+              >
+                Sign in <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowLoginPrompt(false);
+                  setPendingProblem(null);
+                }}
+                className="text-white/50 hover:text-white hover:bg-white/[0.06] h-11 rounded-xl text-sm"
+              >
+                Cancel
+              </Button>
             </div>
           </div>
         </div>

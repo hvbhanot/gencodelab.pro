@@ -126,7 +126,17 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage onRegister={handleRegister} onLogin={login} />} />
-          <Route path="/problems" element={<ProblemsPage userProgress={{ username: '', problems: {} }} onSelectProblem={() => {}} />} />
+          <Route
+            path="/problems"
+            element={
+              <ProblemsPage
+                userProgress={{ username: '', problems: {} }}
+                onSelectProblem={handleSelectProblem}
+                onRegister={handleRegister}
+                onLogin={login}
+              />
+            }
+          />
           <Route path="/u/:username" element={<PublicProfilePage />} />
           <Route path="/tips" element={<TipsPage />} />
         </Routes>

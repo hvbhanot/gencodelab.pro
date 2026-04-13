@@ -11,6 +11,7 @@ interface AuthFormProps {
   onRegister: (username: string, password: string, email: string) => AuthResult | Promise<AuthResult>;
   initialMode?: 'login' | 'register';
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 const ALLOWED_DOMAINS = ['islander.tamucc.edu', 'tamucc.edu'];
@@ -22,7 +23,7 @@ const API_BASE_AUTH = import.meta.env.VITE_API_URL || '/api';
 
 type Mode = 'login' | 'register' | 'reset';
 
-export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess }: AuthFormProps) {
+export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess, onCancel }: AuthFormProps) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const inviteCode = new URLSearchParams(window.location.search).get('invite') || '';
   const [username, setUsername] = useState('');
@@ -86,6 +87,16 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#0A0C10]">
       <div className="w-full max-w-sm">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex items-center gap-1 text-sm text-white/40 hover:text-white/70 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
+        )}
+
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="font-mono text-2xl font-bold text-[#4ADE80] mb-2">&lt;g/&gt;</div>
