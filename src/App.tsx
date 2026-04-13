@@ -6,6 +6,7 @@ import { ProblemsPage } from '@/components/ProblemsPage';
 import { ProfilePage } from '@/components/ProfilePage';
 import { PublicProfilePage } from '@/components/PublicProfilePage';
 import { TipsPage } from '@/components/TipsPage';
+import { TermsPage } from '@/components/TermsPage';
 import { ProblemSolver } from '@/components/ProblemSolver';
 import { useAuth, getUserProgress, saveUserProgress, getStreaks, getDailyChallenge, getBookmarks, toggleBookmark } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
@@ -126,9 +127,20 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage onRegister={handleRegister} onLogin={login} />} />
-          <Route path="/problems" element={<ProblemsPage userProgress={{ username: '', problems: {} }} onSelectProblem={() => {}} />} />
+          <Route
+            path="/problems"
+            element={
+              <ProblemsPage
+                userProgress={{ username: '', problems: {} }}
+                onSelectProblem={handleSelectProblem}
+                onRegister={handleRegister}
+                onLogin={login}
+              />
+            }
+          />
           <Route path="/u/:username" element={<PublicProfilePage />} />
           <Route path="/tips" element={<TipsPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
       </BrowserRouter>
     );
@@ -164,6 +176,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage currentUser={currentUser} userProgress={userProgress} currentStreak={currentStreak} longestStreak={longestStreak} />} />
           <Route path="/u/:username" element={<PublicProfilePage />} />
           <Route path="/tips" element={<TipsPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
       </div>
     </BrowserRouter>
