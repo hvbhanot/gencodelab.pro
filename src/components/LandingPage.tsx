@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Terminal, Eye, RefreshCw, Bug, CheckCircle2, Code2, Shield, Zap, Brain, ChevronRight, MessageCircle, ExternalLink } from 'lucide-react';
+import { ArrowRight, Terminal, Eye, RefreshCw, Bug, CheckCircle2, Code2, Shield, Zap, Brain, ChevronRight, ExternalLink } from 'lucide-react';
 import { AuthForm } from './AuthForm';
+import { DiscordLogo } from './DiscordLogo';
 import { problems } from '@/data/problems';
 
 type AuthResult = { success: boolean; error?: string };
@@ -91,7 +92,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
           </Button>
           <Button asChild variant="ghost" className="text-[#A1A1AA] hover:text-white hover:bg-white/5 text-sm hidden sm:inline-flex">
             <a href={DISCORD_URL} target="_blank" rel="noreferrer">
-              <MessageCircle className="w-4 h-4" />
+              <DiscordLogo className="w-4 h-4" />
               Discord
             </a>
           </Button>
@@ -408,6 +409,7 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 hover:text-[#A1A1AA] transition-colors"
             >
+              <DiscordLogo className="w-4 h-4" />
               Discord
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
