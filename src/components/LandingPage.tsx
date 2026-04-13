@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Terminal, Eye, RefreshCw, Bug, CheckCircle2, Code2, Shield, Zap, Brain, ChevronRight } from 'lucide-react';
+import { ArrowRight, Terminal, Eye, RefreshCw, Bug, CheckCircle2, Code2, Shield, Zap, Brain, ChevronRight, MessageCircle, ExternalLink } from 'lucide-react';
 import { AuthForm } from './AuthForm';
 import { problems } from '@/data/problems';
 
@@ -21,6 +21,8 @@ const codeLines = [
   { num: 6, text: '            total =- item["discount"]', type: 'bug' },
   { num: 7, text: '    return total', type: 'normal' },
 ];
+
+const DISCORD_URL = 'https://discord.gg/UveSX7Wz';
 
 export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
   const navigate = useNavigate();
@@ -86,6 +88,12 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
           </Button>
           <Button onClick={() => navigate('/tips')} variant="ghost" className="text-[#A1A1AA] hover:text-white hover:bg-white/5 text-sm hidden sm:inline-flex">
             Tips
+          </Button>
+          <Button asChild variant="ghost" className="text-[#A1A1AA] hover:text-white hover:bg-white/5 text-sm hidden sm:inline-flex">
+            <a href={DISCORD_URL} target="_blank" rel="noreferrer">
+              <MessageCircle className="w-4 h-4" />
+              Discord
+            </a>
           </Button>
           <div className="w-px h-5 bg-[rgba(255,255,255,0.1)] mx-1 hidden sm:block" />
           <Button onClick={handleLoginClick} variant="ghost" className="text-[#A1A1AA] hover:text-white hover:bg-white/5 text-sm">
@@ -394,6 +402,15 @@ export function LandingPage({ onLogin, onRegister }: LandingPageProps) {
           <div className="flex items-center gap-6 text-sm text-[#3F3F46]">
             <span onClick={() => navigate('/problems')} className="hover:text-[#A1A1AA] cursor-pointer transition-colors">Problems</span>
             <span onClick={() => navigate('/tips')} className="hover:text-[#A1A1AA] cursor-pointer transition-colors">Tips</span>
+            <a
+              href={DISCORD_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 hover:text-[#A1A1AA] transition-colors"
+            >
+              Discord
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       </footer>
