@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { resetPassword } from '@/hooks/useAuth';
 
@@ -30,11 +32,12 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const clear = () => { setError(''); setSuccess(''); setUsername(''); setPassword(''); setConfirmPassword(''); setEmail(''); };
+  const clear = () => { setError(''); setSuccess(''); setUsername(''); setPassword(''); setConfirmPassword(''); setEmail(''); setAcceptedTerms(false); };
 
   const inputClass = "bg-[#0D0F14] border-white/[0.08] text-white/90 placeholder:text-white/30 focus:border-[#4ADE80]/40 focus:ring-1 focus:ring-[#4ADE80]/20 rounded-lg h-11 text-sm";
 
@@ -53,6 +56,7 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
     setError('');
     if (!isAllowedEmail(email.trim().toLowerCase())) { setError('Please use your Islander email'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match'); return; }
+    if (!acceptedTerms) { setError('You must accept the Terms & Conditions to create an account.'); return; }
     setIsLoading(true);
     const result = await onRegister(username, password, email.trim().toLowerCase());
     if (!result.success) { setError(result.error || 'An error occurred'); }
@@ -159,6 +163,34 @@ export function AuthForm({ onLogin, onRegister, initialMode = 'login', onSuccess
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-white/70">Confirm password</label>
               <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" className={inputClass} required minLength={6} />
+            </div>
+          )}
+
+          {mode === 'register' && (
+            <div className="rounded-lg border border-white/[0.08] bg-[#0D0F14] px-4 py-3">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="accept-terms"
+                  checked={acceptedTerms}
+                  onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                  className="mt-0.5 border-white/20 data-[state=checked]:bg-[#4ADE80] data-[state=checked]:border-[#4ADE80] text-black"
+                />
+                <Label htmlFor="accept-terms" className="leading-relaxed text-sm text-white/60">
+                  <span>
+                    I agree to the{' '}
+                    <a
+                      href="/terms"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#4ADE80] hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Terms &amp; Conditions
+                    </a>
+                    .
+                  </span>
+                </Label>
+              </div>
             </div>
           )}
 
