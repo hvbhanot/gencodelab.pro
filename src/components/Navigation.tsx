@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut, Flame, Sun, Moon, User } from 'lucide-react';
+import { LogOut, Flame, Sun, Moon, User, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavigationProps {
@@ -10,6 +10,8 @@ interface NavigationProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
 }
+
+const DISCORD_URL = 'https://discord.gg/UveSX7Wz';
 
 export function Navigation({ totalPoints, currentStreak, onLogout, theme, onToggleTheme }: NavigationProps) {
   const location = useLocation();
@@ -48,6 +50,12 @@ export function Navigation({ totalPoints, currentStreak, onLogout, theme, onTogg
             <span className="text-[13px] font-mono font-bold text-[#4ADE80]">{totalPoints}</span>
             <span className="text-[12px]" style={{ color: 'var(--vc-text-faint)' }}>pts</span>
           </div>
+
+          <Button asChild variant="ghost" size="icon" className="h-8 w-8 rounded-md" style={{ color: 'var(--vc-text-muted)' }}>
+            <a href={DISCORD_URL} target="_blank" rel="noreferrer" aria-label="Join Discord" title="Join Discord">
+              <MessageCircle className="w-4 h-4" />
+            </a>
+          </Button>
 
           <Button variant="ghost" size="icon" onClick={onToggleTheme} className="h-8 w-8 rounded-md" style={{ color: 'var(--vc-text-muted)' }}>
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
